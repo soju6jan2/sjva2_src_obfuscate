@@ -1,16 +1,16 @@
 import os
-Q=object
-w=staticmethod
-L=len
-A=Exception
-v=None
+a=object
+L=staticmethod
+s=len
+S=Exception
+y=None
 import traceback
 import logging
 import urllib
 import xml.etree.ElementTree as ET
 from framework import logger,py_urllib2
-class RssUtil(Q):
- @w
+class RssUtil(a):
+ @L
  def get_rss(url):
   try:
    logger.debug('get_rss : %s',url)
@@ -20,7 +20,7 @@ class RssUtil(Q):
    tree=ET.ElementTree(file=resp)
    root=tree.getroot()
    item_list=root.find('channel').findall('item')
-   logger.debug('xml item count:%s',L(item_list))
+   logger.debug('xml item count:%s',s(item_list))
    ret=[]
    for item in item_list:
     try:
@@ -34,15 +34,15 @@ class RssUtil(Q):
        link=item.find('link').text.strip()
      rss=Feed(item.find('title').text.strip(),link)
      ret.append(rss)
-    except A as e:
+    except S as e:
      logger.debug(e)
      logger.debug(traceback.format_exc())
    return ret
-  except A as e:
+  except S as e:
    logger.debug(e)
    logger.debug(traceback.format_exc())
    logger.debug('url:%s',url)
-   return v
+   return y
  """
     @staticmethod
     def make_rss(title, rss_list, torrent_mode, ddns, is_bot=False):
@@ -79,13 +79,13 @@ class RssUtil(Q):
         xml += '</rss>'
         return xml
     """ 
- @w
+ @L
  def replace_xml(xml):
   tmp=[['&','&amp;'],['<','&lt;'],['>','&gt;'],['‘','&apos;'],['"','&quot;']]
   for t in tmp:
    xml=xml.replace(t[0],t[1])
   return xml
- @w
+ @L
  def make_rss(package_name,rss_list):
   xml='<rss xmlns:showrss=\"http://showrss.info/\" version=\"2.0\">\n'
   xml+='\t<channel>\n'
@@ -102,13 +102,13 @@ class RssUtil(Q):
     item_str+='\t\t\t<pubDate>%s</pubDate>\n'%date_str
     item_str+='\t\t</item>\n'
     xml+=item_str
-   except A as e:
+   except S as e:
     logger.debug('Exception:%s',e)
     logger.debug(traceback.format_exc())
   xml+='\t</channel>\n'
   xml+='</rss>'
   return xml
-class Feed(Q):
+class Feed(a):
  def __init__(self,title,link):
   self.title=title
   self.link=link

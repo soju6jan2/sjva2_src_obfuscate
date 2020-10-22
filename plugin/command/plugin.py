@@ -1,9 +1,9 @@
 import os
-l=Exception
-n=True
-I=int
-A=False
-J=str
+k=Exception
+L=True
+S=int
+y=False
+w=str
 import traceback
 import time
 from datetime import datetime
@@ -44,7 +44,7 @@ def first_menu(sub):
   elif sub=='log':
    return render_template('log.html',package=package_name)
   return render_template('sample.html',title='%s - %s'%(package_name,sub))
- except l as e:
+ except k as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc()) 
 @blueprint.route('/ajax/<sub>',methods=['GET','POST'])
@@ -96,7 +96,7 @@ def ajax(sub):
    job=ModelCommand.get_job_by_id(job_id)
    import framework.common.util as CommonUtil
    ret['data']=CommonUtil.read_file(job.filename)
-   ret['ret']=n
+   ret['ret']=L
    return jsonify(ret)
   elif sub=='file_save':
    ret={}
@@ -107,7 +107,7 @@ def ajax(sub):
    import framework.common.util as CommonUtil
    logger.debug(job.filename)
    CommonUtil.write_file(data,job.filename)
-   ret['ret']=n
+   ret['ret']=L
    return jsonify(ret)
   elif sub=='foreground_command_by_job':
    ret={}
@@ -118,7 +118,7 @@ def ajax(sub):
   elif sub=='process_close':
    ret={'ret':'fail'}
    job_id=request.form['job_id']
-   if LogicNormal.process_close(LogicNormal.process_list[I(job_id)]):
+   if LogicNormal.process_close(LogicNormal.process_list[S(job_id)]):
     ret['ret']='success'
    return jsonify(ret)
   elif sub=='send_process_command':
@@ -133,7 +133,7 @@ def ajax(sub):
    ret['ret']=LogicNormal.save(request)
    ret['list']=ModelCommand.job_list()
    return jsonify(ret)
- except l as e:
+ except k as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 """
@@ -167,10 +167,10 @@ def api(sub):
    logger.debug(file_url)
    r=requests.get(file_url)
    download_path=os.path.join(path_data,'command',filename)
-   update=A
+   update=y
    if os.path.exists(download_path):
     os.remove(download_path)
-    update=n
+    update=L
    import framework.common.util as CommonUtil
    CommonUtil.write_file(r.text,download_path)
    ret['ret']='success'
@@ -178,25 +178,25 @@ def api(sub):
     ret['log']=u'정상적으로 설치하였습니다.<br>파일을 업데이트 하였습니다.'
    else:
     ret['log']=u'정상적으로 설치하였습니다.'
- except l as e:
+ except k as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc()) 
   ret['ret']='exception'
-  ret['log']=J(e)
+  ret['log']=w(e)
  return jsonify(ret)
 @socketio.on('connect',namespace='/%s'%package_name)
 def connect():
  try:
   logger.debug('socket_connect')
   LogicNormal.send_queue_start()
- except l as e:
+ except k as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 @socketio.on('disconnect',namespace='/%s'%package_name)
 def disconnect():
  try:
   logger.debug('socket_disconnect')
- except l as e:
+ except k as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,93 +1,74 @@
 import os
-E=reload
-W=print
-t=Exception
-B=range
-V=str
-n=KeyboardInterrupt
-u=os.remove
-O=os.system
-w=os.path
 import sys
-Q=sys.exit
-J=sys.argv
-C=sys.path
-H=sys.setdefaultencoding
-f=sys.version_info
-if f[0]==2:
- E(sys)
- H('utf-8')
-C.insert(0,w.join(w.dirname(w.abspath(__file__)),'lib'))
+if sys.version_info[0]==2:
+ reload(sys)
+ sys.setdefaultencoding('utf-8')
+sys.path.insert(0,os.path.join(os.path.dirname(os.path.abspath(__file__)),'lib'))
 import platform
-M=platform.system
-W(C)
+print(sys.path)
 try:
  from gevent import monkey;monkey.patch_all()
 except:
- W('not monkey')
+ print('not monkey')
 try:
- W(J)
- W(J)
- W(J)
- if J[0].startswith('sjva.py'):
+ print(sys.argv)
+ print(sys.argv)
+ print(sys.argv)
+ if sys.argv[0].startswith('sjva.py'):
   try:
-   if M()!='Windows':
-    custom=w.join(w.dirname(w.abspath(__file__)),'data','custom')
-    O("chmod 777 -R %s"%custom)
-    custom=w.join(w.dirname(w.abspath(__file__)),'bin')
-    O("chmod 777 -R %s"%custom)
+   if platform.system()!='Windows':
+    custom=os.path.join(os.path.dirname(os.path.abspath(__file__)),'data','custom')
+    os.system("chmod 777 -R %s"%custom)
+    custom=os.path.join(os.path.dirname(os.path.abspath(__file__)),'bin')
+    os.system("chmod 777 -R %s"%custom)
   except:
-   W('Exception:%s',e)
-  server_plugin_path=w.join(w.dirname(w.abspath(__file__)),'data','custom')
+   print('Exception:%s',e)
+  server_plugin_path=os.path.join(os.path.dirname(os.path.abspath(__file__)),'data','custom')
   try:
    import shutil
    remove_plugin=['ani24','manamoa','launcher_gateone']
    for plugin in remove_plugin:
     try:
-     plugin_path=w.join(server_plugin_path,plugin)
-     if w.exists(plugin_path):
-      W('remove plugin:%s',plugin)
+     plugin_path=os.path.join(server_plugin_path,plugin)
+     if os.path.exists(plugin_path):
+      print('remove plugin:%s',plugin)
       shutil.rmtree(plugin_path)
-     tmp=w.join(w.dirname(w.abspath(__file__)),'data','db','%s.db'%plugin)
-     if w.exists(tmp):
-      W('remove plugin db:%s'%plugin)
-      u(tmp)
-    except t as e:
-     W('Exception:%s'%e) 
-  except t as e:
-   W('Exception:%s'%e)
-except t as e:
- W('Exception:%s'%e)
+     tmp=os.path.join(os.path.dirname(os.path.abspath(__file__)),'data','db','%s.db'%plugin)
+     if os.path.exists(tmp):
+      print('remove plugin db:%s'%plugin)
+      os.remove(tmp)
+    except Exception as e:
+     print('Exception:%s'%e) 
+  except Exception as e:
+   print('Exception:%s'%e)
+except Exception as e:
+ print('Exception:%s'%e)
 import framework
-l=framework.exit_code
-T=framework.socketio
-U=framework.celery
-v=framework.app
 import system
-app=v
-celery=U
+app=framework.app
+celery=framework.celery
 def start_app():
- for i in B(10):
+ for i in range(10):
   try:
-   T.run(app,host='0.0.0.0',port=app.config['config']['port'])
-   W('EXIT CODE : %s'%l)
-   if l!=-1:
-    Q(l)
+   framework.socketio.run(app,host='0.0.0.0',port=app.config['config']['port'])
+   print('EXIT CODE : %s'%framework.exit_code)
+   if framework.exit_code!=-1:
+    sys.exit(framework.exit_code)
     break
    else:
-    W('framework.exit_code is -1')
+    print('framework.exit_code is -1')
    break
-  except t as e:
-   W(V(e))
+  except Exception as e:
+   print(str(e))
    import time
    time.sleep(10*i)
    continue
-  except n:
-   W('KeyboardInterrupt !!')
- W('start_app() end')
+  except KeyboardInterrupt:
+   print('KeyboardInterrupt !!')
+ print('start_app() end')
 if __name__=='__main__':
  try:
   start_app()
- except t as e:
-  W(V(e))
+ except Exception as e:
+  print(str(e))
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

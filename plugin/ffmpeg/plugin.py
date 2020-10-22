@@ -1,7 +1,7 @@
 import os
-V=str
-h=Exception
-f=None
+B=str
+D=Exception
+W=None
 import traceback
 import time
 from datetime import datetime
@@ -37,7 +37,7 @@ def detail(sub):
   arg['ffmpeg_path']=Logic.path_ffmpeg
   return render_template('plugin_ffmpeg.html',sub=sub,arg=arg)
  elif sub=='download':
-  now=V(datetime.now(timezone('Asia/Seoul'))).replace(':','').replace('-','').replace(' ','-')
+  now=B(datetime.now(timezone('Asia/Seoul'))).replace(':','').replace('-','').replace(' ','-')
   return render_template('plugin_ffmpeg.html',sub=sub,arg=('%s'%now).split('.')[0]+'.mp4')
  elif sub=='list':
   return render_template('plugin_ffmpeg_list2.html')
@@ -53,7 +53,7 @@ def ajax(sub):
    try:
     ret=Logic.setting_save(request)
     return jsonify(ret)
-   except h as e:
+   except D as e:
     logger.error('Exception:%s',e)
     logger.error(traceback.format_exc())
   elif sub=='ffmpeg_version':
@@ -81,7 +81,7 @@ def ajax(sub):
    for ffmpeg in Ffmpeg.instance_list:
     ret.append(ffmpeg.get_data())
    return jsonify(ret)
- except h as e:
+ except D as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 @blueprint.route('/api/<sub>',methods=['GET','POST'])
@@ -100,7 +100,7 @@ def api(sub):
    caller_id=request.args.get('id')
    package_name=request.args.get('caller')
    save_path=request.args.get('save_path')
-   if save_path is f:
+   if save_path is W:
     save_path=Logic.get_setting_value('save_path')
    else:
     if not os.path.exists(save_path):
@@ -110,11 +110,11 @@ def api(sub):
    logger.debug('caller_id : %s',caller_id)
    logger.debug('caller : %s',package_name)
    logger.debug('save_path : %s',save_path)
-   f=Ffmpeg(url,filename,plugin_id=caller_id,listener=f,max_pf_count=max_pf_count,call_plugin=package_name,save_path=save_path)
+   f=Ffmpeg(url,filename,plugin_id=caller_id,listener=W,max_pf_count=max_pf_count,call_plugin=package_name,save_path=save_path)
    f.start()
    ret['ret']='success'
    ret['data']=f.get_data()
-  except h as e:
+  except D as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    ret['ret']='exception'
@@ -129,7 +129,7 @@ def api(sub):
    Ffmpeg.stop_by_idx(f.idx)
    ret['ret']='success'
    ret['data']=f.get_data()
-  except h as e:
+  except D as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    ret['ret']='exception'
@@ -143,7 +143,7 @@ def api(sub):
    f=Ffmpeg.get_ffmpeg_by_caller(package_name,caller_id)
    ret['ret']='success'
    ret['data']=f.get_data()
-  except h as e:
+  except D as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    ret['ret']='exception'
