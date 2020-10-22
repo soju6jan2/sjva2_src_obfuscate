@@ -1,5 +1,5 @@
 import os
-r=Exception
+F=Exception
 import traceback
 import requests
 import json
@@ -31,7 +31,7 @@ def manual(sub):
       res=requests.get(r['url'])
       r['content']=Markup(markdown.markdown(res.text))
    return jsonify(ret)
-  except r as e:
+  except F as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
 def fileread(filename):
@@ -42,7 +42,7 @@ def fileread(filename):
   text_str=file_is.read() 
   file_is.close() 
   return text_str
- except r as e:
+ except F as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

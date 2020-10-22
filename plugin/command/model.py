@@ -1,14 +1,14 @@
 import os
-m=True
-J=False
-N=repr
-H=getattr
-P=staticmethod
-W=str
-S=None
-k=Exception
-U=id
-b=int
+G=True
+j=False
+T=repr
+d=getattr
+q=staticmethod
+O=str
+X=None
+C=Exception
+h=id
+R=int
 import traceback
 import json
 from datetime import datetime
@@ -20,7 +20,7 @@ class ModelCommand(db.Model):
  __tablename__='%s_job'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- U=db.Column(db.Integer,primary_key=m)
+ h=db.Column(db.Integer,primary_key=G)
  filename=db.Column(db.String) 
  command=db.Column(db.String)
  description=db.Column(db.String)
@@ -29,7 +29,7 @@ class ModelCommand(db.Model):
  schedule_info=db.Column(db.String) 
  def __init__(self,command):
   self.description=''
-  self.schedule_auto_start=J
+  self.schedule_auto_start=j
   self.schedule_type="0"
   self.schedule_info=''
   self.set_command(command)
@@ -44,24 +44,24 @@ class ModelCommand(db.Model):
     self.filename=t
     break
  def __repr__(self):
-  return N(self.as_dict())
+  return T(self.as_dict())
  def as_dict(self):
-  return{x.name:H(self,x.name)for x in self.__table__.columns}
- @P
+  return{x.name:d(self,x.name)for x in self.__table__.columns}
+ @q
  def job_list():
   try:
    db_list=db.session.query(ModelCommand).filter().all()
    db_list=[x.as_dict()for x in db_list]
    from.logic_normal import LogicNormal
    for item in db_list:
-    item['is_include']=W(scheduler.is_include('command_%s'%item['id']))
-    item['is_running']=W(scheduler.is_running('command_%s'%item['id']))
-    item['process_id']=LogicNormal.process_list[item['id']].pid if item['id']in LogicNormal.process_list and LogicNormal.process_list[item['id']]is not S else S
+    item['is_include']=O(scheduler.is_include('command_%s'%item['id']))
+    item['is_running']=O(scheduler.is_running('command_%s'%item['id']))
+    item['process_id']=LogicNormal.process_list[item['id']].pid if item['id']in LogicNormal.process_list and LogicNormal.process_list[item['id']]is not X else X
    return db_list
-  except k as e:
+  except C as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
- @P
+ @q
  def job_new(request):
   try:
    command=request.form['command']
@@ -69,15 +69,15 @@ class ModelCommand(db.Model):
    db.session.add(item)
    db.session.commit()
    return 'success'
-  except k as e:
+  except C as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    return 'fail'
- @P
+ @q
  def job_save(request):
   try:
-   U=request.form['job_id']
-   entity=db.session.query(ModelCommand).filter_by(U=U).with_for_update().first()
+   h=request.form['job_id']
+   entity=db.session.query(ModelCommand).filter_by(h=h).with_for_update().first()
    entity.set_command(request.form['job_command'])
    entity.description=request.form['job_description'] 
    entity.schedule_type=request.form['job_schedule_type']
@@ -85,30 +85,30 @@ class ModelCommand(db.Model):
    entity.schedule_auto_start=(request.form['job_schedule_auto_start']=='True')
    db.session.commit()
    from.logic_normal import LogicNormal
-   LogicNormal.scheduler_switch(U,J)
+   LogicNormal.scheduler_switch(h,j)
    return 'success'
-  except k as e:
+  except C as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    return 'fail'
- @P
+ @q
  def get_job_by_id(job_id):
   try:
-   return db.session.query(ModelCommand).filter_by(U=b(job_id)).first()
-  except k as e:
+   return db.session.query(ModelCommand).filter_by(h=R(job_id)).first()
+  except C as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
- @P
+ @q
  def job_remove(request):
   try:
-   U=request.form['job_id']
-   entity=db.session.query(ModelCommand).filter_by(U=U).first()
+   h=request.form['job_id']
+   entity=db.session.query(ModelCommand).filter_by(h=h).first()
    db.session.delete(entity)
    db.session.commit()
    from.logic_normal import LogicNormal
-   LogicNormal.scheduler_switch(U,J)
+   LogicNormal.scheduler_switch(h,j)
    return 'success'
-  except k as e:
+  except C as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    return 'fail'

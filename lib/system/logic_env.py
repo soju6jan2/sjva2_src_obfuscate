@@ -1,10 +1,10 @@
 import os
-s=object
-J=staticmethod
-Q=Exception
-x=False
-a=open
-h=True
+r=object
+q=staticmethod
+G=Exception
+a=False
+i=open
+s=True
 import traceback
 import logging
 import platform
@@ -16,37 +16,37 @@ from framework.logger import get_logger
 from framework import path_app_root,path_data,celery,app
 from.plugin import logger,package_name
 from.model import ModelSetting
-class SystemLogicEnv(s):
- @J
+class SystemLogicEnv(r):
+ @q
  def load_export():
   try:
    from framework.common.util import read_file
    f=os.path.join(path_app_root,'export.sh')
    if os.path.exists(f):
     return read_file(f)
-  except Q as e:
+  except G as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc()) 
- @J
+ @q
  def process_ajax(sub,req):
-  ret=x
+  ret=a
   try:
    if sub=='setting_save':
     data=req.form['export']
     data=data.replace("\r\n","\n").replace("\r","\n")
-    ret=x
+    ret=a
     if platform.system()!='Windows':
      f=os.path.join(path_app_root,'export.sh')
-     with a(f,'w')as f:
+     with i(f,'w')as f:
       f.write(data)
-     ret=h
+     ret=s
    elif sub=='ps':
     def func():
      import system
      commands=[['msg',u'잠시만 기다려주세요.'],['ps','-ef'],['top','-n1']]
      system.SystemLogicCommand.start('ps',commands)
     t=threading.Thread(target=func,args=())
-    t.setDaemon(h)
+    t.setDaemon(s)
     t.start()
    elif sub=='celery_test':
     ret=SystemLogicEnv.celery_test()
@@ -62,12 +62,12 @@ class SystemLogicEnv(s):
                 t.setDaemon(True)
                 t.start()
                 """    
-    ret=h
-  except Q as e:
+    ret=s
+  except G as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
   return jsonify(ret)
- @J
+ @q
  def celery_test():
   if app.config['config']['use_celery']:
    from celery import Celery
@@ -76,8 +76,8 @@ class SystemLogicEnv(s):
     result=SystemLogicEnv.celery_test2.apply_async()
     logger.debug(result)
     try:
-     tmp=result.get(timeout=5,propagate=h)
-    except Q as e:
+     tmp=result.get(timeout=5,propagate=s)
+    except G as e:
      logger.error('Exception:%s',e)
      logger.error(traceback.format_exc())
     data['ret']='success'
@@ -92,7 +92,7 @@ class SystemLogicEnv(s):
    data['ret']='no_celery'
    data['data']=u'celery 실행환경이 아닙니다.'
   return data
- @J
+ @q
  @celery.task
  def celery_test2():
   try:
@@ -101,7 +101,7 @@ class SystemLogicEnv(s):
    time.sleep(1)
    data=u'정상입니다. 이 메시지는 celery 에서 반환됩니다. '
    return data
-  except Q as e:
+  except G as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

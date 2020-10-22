@@ -1,11 +1,11 @@
 import os
-K=True
-E=repr
-e=getattr
-D=None
-v=staticmethod
-I=Exception
-Q=False
+V=True
+i=repr
+L=getattr
+k=None
+x=staticmethod
+O=Exception
+J=False
 import traceback
 from datetime import datetime
 import json
@@ -22,7 +22,7 @@ class ModelFileprocessMovieItem(db.Model):
  __tablename__='%s_item'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=K)
+ id=db.Column(db.Integer,primary_key=V)
  created_time=db.Column(db.DateTime)
  filename=db.Column(db.String)
  source_dir=db.Column(db.String)
@@ -39,16 +39,16 @@ class ModelFileprocessMovieItem(db.Model):
  def __init__(self):
   self.created_time=datetime.now()
  def __repr__(self):
-  return E(self.as_dict())
+  return i(self.as_dict())
  def as_dict(self):
-  ret={x.name:e(self,x.name)for x in self.__table__.columns}
+  ret={x.name:L(self,x.name)for x in self.__table__.columns}
   ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')
-  if self.json is not D:
+  if self.json is not k:
    ret['json']=json.loads(ret['json'])
   else:
    ret['json']={}
   return ret
- @v
+ @x
  def save(item):
   try:
    model=ModelFileprocessMovieItem()
@@ -58,7 +58,7 @@ class ModelFileprocessMovieItem(db.Model):
    model.flag_move=item['flag_move']
    model.target=item['target']
    model.dest_folder_name=item['dest_folder_name']
-   if item['movie']is not D:
+   if item['movie']is not k:
     model.movie_title=item['movie']['title']
     model.movie_id=item['movie']['id']
     if 'more' in item['movie']:
@@ -70,12 +70,12 @@ class ModelFileprocessMovieItem(db.Model):
    model.json=json.dumps(item)
    db.session.add(model)
    db.session.commit()
-   return K
-  except I as e:
+   return V
+  except O as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    logger.debug(item)
    db.session.rollback()
    logger.debug('ROLLBACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-   return Q
+   return J
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
