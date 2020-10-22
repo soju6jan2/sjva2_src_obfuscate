@@ -1,0 +1,71 @@
+import os
+g=Exception
+import traceback
+c=traceback.format_exc
+import time
+from datetime import datetime
+import urllib
+import json
+import requests
+from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify,session,send_from_directory 
+from flask_socketio import SocketIO,emit,send
+from flask_login import login_user,logout_user,current_user,login_required
+from framework.logger import get_logger
+from framework import app,db,scheduler,path_data,socketio
+from framework.util import Util,AlchemyEncoder
+from system.logic import SystemLogic
+from.model import ModelSetting
+from.logic import Logic
+Q=Logic.refresh
+W=Logic.db_list
+C=Logic.plugin_unload
+z=Logic.plugin_load
+package_name=__name__.split('.')[0]
+logger=get_logger(package_name)
+blueprint=Blueprint(package_name,package_name,url_prefix='/%s'%package_name,template_folder='templates')
+menu={'main':[package_name,u'Daum TV'],'sub':[['list',u'목록'],['log',u'로그']]}
+def plugin_load():
+ try:
+  logger.debug('plugin_load:%s',package_name)
+  z()
+ except g as e:
+  logger.error('Exception:%s',e)
+  logger.error(c())
+def plugin_unload():
+ try:
+  logger.debug('plugin_unload:%s',package_name)
+  C()
+ except g as e:
+  logger.error('Exception:%s',e)
+  logger.error(c())
+@blueprint.route('/')
+def home():
+ return redirect('/%s/list'%package_name)
+@blueprint.route('/<sub>')
+@login_required
+def detail(sub):
+ logger.debug('DETAIL %s %s',package_name,sub)
+ if sub=='list':
+  return render_template('%s_list.html'%package_name)
+ elif sub=='log':
+  return render_template('log.html',package=package_name)
+ return render_template('sample.html',title='%s - %s'%(package_name,sub))
+@blueprint.route('/ajax/<sub>',methods=['GET','POST'])
+@login_required
+def ajax(sub):
+ logger.debug('AJAX %s %s',package_name,sub)
+ if sub=='db_list':
+  try:
+   ret=W(request)
+   return jsonify(ret)
+  except g as e:
+   logger.error('Exception:%s',e)
+   logger.error(c())
+ elif sub=='refresh':
+  try:
+   ret=Q(request)
+   return jsonify(ret)
+  except g as e:
+   logger.error('Exception:%s',e)
+   logger.error(c())
+# Created by pyminifier (https://github.com/liftoff/pyminifier)
