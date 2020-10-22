@@ -1,14 +1,14 @@
 import os
-R=object
-w=None
-m=staticmethod
+J=object
+h=None
+d=staticmethod
 Y=True
-L=False
-f=Exception
-l=str
-Q=iter
-e=format
-N=enumerate
+x=False
+o=Exception
+M=str
+y=iter
+T=format
+U=enumerate
 import traceback
 import logging
 import platform
@@ -22,19 +22,19 @@ from framework.logger import get_logger
 from framework import path_app_root,socketio,py_queue
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class SystemLogicCommand(R):
- commands=w
- process=w
- stdout_queue=w
- thread=w
- send_to_ui_thread=w
- return_log=w
- @m
- def start(title,commands,clear=Y,wait=L,show_modal=Y):
+class SystemLogicCommand(J):
+ commands=h
+ process=h
+ stdout_queue=h
+ thread=h
+ send_to_ui_thread=h
+ return_log=h
+ @d
+ def start(title,commands,clear=Y,wait=x,show_modal=Y):
   try:
    if show_modal:
     if clear:
-     socketio.emit("command_modal_clear",w,namespace='/framework',broadcast=Y)
+     socketio.emit("command_modal_clear",h,namespace='/framework',broadcast=Y)
    SystemLogicCommand.return_log=[]
    SystemLogicCommand.title=title
    SystemLogicCommand.commands=commands
@@ -45,14 +45,14 @@ class SystemLogicCommand(R):
     time.sleep(1)
     SystemLogicCommand.thread.join()
     return SystemLogicCommand.return_log
-  except f as exception:
+  except o as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @m
+ @d
  def execute_thread_function(show_modal):
   try:
    if show_modal:
-    socketio.emit("loading_hide",w,namespace='/framework',broadcast=Y)
+    socketio.emit("loading_hide",h,namespace='/framework',broadcast=Y)
    for command in SystemLogicCommand.commands:
     if command[0]=='msg':
      if show_modal:
@@ -64,25 +64,25 @@ class SystemLogicCommand(R):
     else:
      show_command=Y
      if command[0]=='hide':
-      show_command=L
+      show_command=x
       command=command[1:]
      SystemLogicCommand.process=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=Y,bufsize=1)
      SystemLogicCommand.start_communicate(command,show_command=show_command)
      SystemLogicCommand.send_queue_start(show_modal)
-     if SystemLogicCommand.process is not w:
+     if SystemLogicCommand.process is not h:
       SystemLogicCommand.process.wait()
     time.sleep(1)
-  except f as exception:
+  except o as exception:
    if show_modal:
     socketio.emit("command_modal_show",SystemLogicCommand.title,namespace='/framework',broadcast=Y)
-    socketio.emit("command_modal_add_text",l(xception),namespace='/framework',broadcast=Y)
-    socketio.emit("command_modal_add_text",l(traceback.format_exc()),namespace='/framework',broadcast=Y)
- @m
+    socketio.emit("command_modal_add_text",M(xception),namespace='/framework',broadcast=Y)
+    socketio.emit("command_modal_add_text",M(traceback.format_exc()),namespace='/framework',broadcast=Y)
+ @d
  def start_communicate(current_command,show_command=Y):
   SystemLogicCommand.stdout_queue=py_queue.Queue()
   if show_command:
    SystemLogicCommand.stdout_queue.put('$ %s\n'%' '.join(current_command))
-  sout=io.open(SystemLogicCommand.process.stdout.fileno(),'rb',closefd=L)
+  sout=io.open(SystemLogicCommand.process.stdout.fileno(),'rb',closefd=x)
   def Pump(stream):
    queue=py_queue.Queue()
    def rdr():
@@ -92,35 +92,35 @@ class SystemLogicCommand(R):
      if buf:
       queue.put(buf)
      else:
-      queue.put(w)
+      queue.put(h)
       break
     logger.debug('END RDR')
-    queue.put(w)
+    queue.put(h)
     time.sleep(1)
    def clct():
     active=Y
     logger.debug('START clct')
     while active:
      r=queue.get()
-     if r is w:
+     if r is h:
       break
      try:
       while Y:
        r1=queue.get(timeout=0.005)
-       if r1 is w:
-        active=L
+       if r1 is h:
+        active=x
         break
        else:
         r+=r1
      except:
       pass
-     if r is not w:
+     if r is not h:
       try:
        r=r.decode('utf-8')
-      except f as exception:
+      except o as exception:
        try:
         r=r.decode('cp949')
-       except f as exception:
+       except o as exception:
         logger.error('Exception:%s',exception)
         logger.error(traceback.format_exc())
         try:
@@ -137,7 +137,7 @@ class SystemLogicCommand(R):
     th.setDaemon(Y)
     th.start()
   Pump(sout)
- @m
+ @d
  def send_queue_start(show_modal):
   def send_to_ui_thread_function():
    logger.debug('send_queue_thread_function START')
@@ -153,51 +153,51 @@ class SystemLogicCommand(R):
     else:
      if show_modal:
       socketio.emit("command_modal_add_text",line,namespace='/framework',broadcast=Y)
-   SystemLogicCommand.send_to_ui_thread=w
-   SystemLogicCommand.stdout_queue=w
-   SystemLogicCommand.process=w
+   SystemLogicCommand.send_to_ui_thread=h
+   SystemLogicCommand.stdout_queue=h
+   SystemLogicCommand.process=h
    logger.debug('send_to_ui_thread_function END')
-  if SystemLogicCommand.send_to_ui_thread is w:
+  if SystemLogicCommand.send_to_ui_thread is h:
    SystemLogicCommand.send_to_ui_thread=threading.Thread(target=send_to_ui_thread_function,args=())
    SystemLogicCommand.send_to_ui_thread.start()
- @m
+ @d
  def plugin_unload():
   try:
-   if SystemLogicCommand.process is not w and SystemLogicCommand.process.poll()is w:
+   if SystemLogicCommand.process is not h and SystemLogicCommand.process.poll()is h:
     import psutil
     process=psutil.Process(SystemLogicCommand.process.pid)
     for proc in SystemLogicCommand.process.children(recursive=Y):
      proc.kill()
     SystemLogicCommand.process.kill()
-  except f as exception:
+  except o as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @m
- def execute_command_return(command,e=w,force_log=L):
+ @d
+ def execute_command_return(command,T=h,force_log=x):
   try:
    logger.debug('execute_command_return : %s',' '.join(command))
    process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=Y,bufsize=1)
    ret=[]
    with process.stdout:
-    for line in Q(process.stdout.readline,b''):
+    for line in y(process.stdout.readline,b''):
      ret.append(line.strip())
      if force_log:
       logger.debug(line.strip())
     process.wait()
-   if e is w:
+   if T is h:
     ret2='\n'.join(ret)
-   elif e=='json':
+   elif T=='json':
     try:
      index=0
-     for idx,tmp in N(ret):
+     for idx,tmp in U(ret):
       if tmp.startswith('{')or tmp.startswith('['):
        index=idx
        break
      ret2=json.loads(''.join(ret[index:]))
     except:
-     ret2=w
+     ret2=h
    return ret2
-  except f as exception:
+  except o as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    logger.error('command : %s',command)

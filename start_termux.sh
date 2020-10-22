@@ -45,15 +45,15 @@ do
     chmod -R 777 ./bin
 
     if [ ! -f "./data/db/sjva.db" ] ; then
-        python3 -OO sjva.py 0 ${COUNT} init_db
+        python3 sjva.py 0 ${COUNT} init_db
     fi
 
     if [ "${USE_CELERY}" == "true" ] ; then
         sh worker_start.sh &
         echo "Run celery-worker.sh"
-        python3 -OO sjva.py 0 ${COUNT}
+        python3 sjva.py 0 ${COUNT}
     else
-        python3 -OO sjva.py 0 ${COUNT} no_celery
+        python3 sjva.py 0 ${COUNT} no_celery
     fi
     
     RESULT=$?

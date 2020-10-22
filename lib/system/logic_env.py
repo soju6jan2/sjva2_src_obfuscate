@@ -1,9 +1,9 @@
 import os
-R=object
-m=staticmethod
-f=Exception
-L=False
-o=open
+J=object
+d=staticmethod
+o=Exception
+x=False
+V=open
 Y=True
 import traceback
 import logging
@@ -16,28 +16,28 @@ from framework.logger import get_logger
 from framework import path_app_root,path_data,celery,app
 from.plugin import logger,package_name
 from.model import ModelSetting
-class SystemLogicEnv(R):
- @m
+class SystemLogicEnv(J):
+ @d
  def load_export():
   try:
    from framework.common.util import read_file
    f=os.path.join(path_app_root,'export.sh')
    if os.path.exists(f):
     return read_file(f)
-  except f as exception:
+  except o as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @m
+ @d
  def process_ajax(sub,req):
-  ret=L
+  ret=x
   try:
    if sub=='setting_save':
     data=req.form['export']
     data=data.replace("\r\n","\n").replace("\r","\n")
-    ret=L
+    ret=x
     if platform.system()!='Windows':
      f=os.path.join(path_app_root,'export.sh')
-     with o(f,'w')as f:
+     with V(f,'w')as f:
       f.write(data)
      ret=Y
    elif sub=='ps':
@@ -63,11 +63,11 @@ class SystemLogicEnv(R):
                 t.start()
                 """    
     ret=Y
-  except f as exception:
+  except o as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
   return jsonify(ret)
- @m
+ @d
  def celery_test():
   if app.config['config']['use_celery']:
    from celery import Celery
@@ -77,7 +77,7 @@ class SystemLogicEnv(R):
     logger.debug(result)
     try:
      tmp=result.get(timeout=5,propagate=Y)
-    except f as exception:
+    except o as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc())
     data['ret']='success'
@@ -92,7 +92,7 @@ class SystemLogicEnv(R):
    data['ret']='no_celery'
    data['data']=u'celery 실행환경이 아닙니다.'
   return data
- @m
+ @d
  @celery.task
  def celery_test2():
   try:
@@ -101,7 +101,7 @@ class SystemLogicEnv(R):
    time.sleep(1)
    data=u'정상입니다. 이 메시지는 celery 에서 반환됩니다. '
    return data
-  except f as exception:
+  except o as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
