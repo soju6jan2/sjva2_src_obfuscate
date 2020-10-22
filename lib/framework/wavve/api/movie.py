@@ -1,5 +1,5 @@
 import traceback
-n=Exception
+N=Exception
 import json
 from framework import py_urllib
 from framework.wavve.api import session,get_baseparameter,config,logger
@@ -14,8 +14,8 @@ def movie_contents_movieid(movie_id):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except n as e:
-  logger.error('Exception:%s',e)
+ except N as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def movie_contents(page=0,limit=20,genre='all'):
  try:
@@ -34,7 +34,7 @@ def movie_contents(page=0,limit=20,genre='all'):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except n as e:
-  logger.error('Exception:%s',e)
+ except N as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

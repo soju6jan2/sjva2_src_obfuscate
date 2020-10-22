@@ -1,11 +1,11 @@
 import os
 g=int
-L=staticmethod
-M=object
-G=None
-m=Exception
-i=True
-h=False
+I=staticmethod
+l=object
+t=None
+K=Exception
+x=True
+v=False
 from datetime import datetime
 import traceback
 import logging
@@ -47,24 +47,24 @@ class Status(enum.Enum):
   return kor[g(self)]
  def __repr__(self):
   return self.name
- @L
+ @I
  def get_instance(value):
   tmp=[Status.READY,Status.WRONG_URL,Status.WRONG_DIRECTORY,Status.EXCEPTION,Status.ERROR,Status.DOWNLOADING,Status.USER_STOP,Status.COMPLETED,Status.TIME_OVER,Status.PF_STOP,Status.FORCE_STOP,Status.HTTP_FORBIDDEN,Status.ALREADY_DOWNLOADING]
   return tmp[value]
-class Logic(M):
+class Logic(l):
  db_default={'temp_path':os.path.join(path_data,'download_tmp'),'save_path':os.path.join(path_data,'download'),'max_pf_count':'0','if_fail_remove_tmp_file':'True','timeout_minute':'60',}
- path_ffmpeg=G
- @L
+ path_ffmpeg=t
+ @I
  def db_init():
   try:
    for key,value in Logic.db_default.items():
     if db.session.query(ModelSetting).filter_by(key=key).count()==0:
      db.session.add(ModelSetting(key,value))
    db.session.commit()
-  except m as e:
-   logger.error('Exception:%s',e)
+  except K as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
+ @I
  def plugin_load():
   try:
    Logic.db_init()
@@ -73,18 +73,18 @@ class Logic(M):
     Logic.path_ffmpeg+='.exe'
    else:
     Logic.path_ffmpeg='ffmpeg'
-  except m as e:
-   logger.error('Exception:%s',e)
+  except K as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
+ @I
  def plugin_unload():
   try:
    from ffmpeg.interface_program_ffmpeg import Ffmpeg
    Ffmpeg.plugin_unload()
-  except m as e:
-   logger.error('Exception:%s',e)
+  except K as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
+ @I
  def setting_save(req):
   try:
    for key,value in req.form.items():
@@ -92,21 +92,21 @@ class Logic(M):
     entity=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
     entity.value=value
    db.session.commit()
-   return i 
-  except m as e:
-   logger.error('Exception:%s',e)
+   return x 
+  except K as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return h
- @L
+   return v
+ @I
  def get_setting_value(key):
   try:
    return db.session.query(ModelSetting).filter_by(key=key).first().value
-  except m as e:
-   logger.error('Exception:%s',e)
+  except K as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
+ @I
  def ffmpeg_listener(**args):
-  refresh_type=G
+  refresh_type=t
   if args['type']=='status_change':
    if args['status']==Status.DOWNLOADING:
     refresh_type='status_change'
@@ -114,52 +114,52 @@ class Logic(M):
     refresh_type='status_change'
    elif args['status']==Status.READY:
     data={'type':'info','msg':u'다운로드중 Duration(%s)'%args['data']['duration_str']+'<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    socketio.emit("notify",data,namespace='/framework',broadcast=i)
+    socketio.emit("notify",data,namespace='/framework',broadcast=x)
     refresh_type='add' 
   elif args['type']=='last':
    if args['status']==Status.WRONG_URL:
     data={'type':'warning','msg':u'잘못된 URL입니다'}
-    socketio.emit("notify",data,namespace='/framework',broadcast=i)
+    socketio.emit("notify",data,namespace='/framework',broadcast=x)
     refresh_type='add'
    elif args['status']==Status.WRONG_DIRECTORY:
     data={'type':'warning','msg':u'잘못된 디렉토리입니다.<br>'+args['data']['save_fullpath']}
-    socketio.emit("notify",data,namespace='/framework',broadcast=i)
+    socketio.emit("notify",data,namespace='/framework',broadcast=x)
     refresh_type='add'
    elif args['status']==Status.ERROR or args['status']==Status.EXCEPTION:
     data={'type':'warning','msg':u'다운로드 시작 실패.<br>'+args['data']['save_fullpath']}
-    socketio.emit("notify",data,namespace='/framework',broadcast=i)
+    socketio.emit("notify",data,namespace='/framework',broadcast=x)
     refresh_type='add'
    elif args['status']==Status.USER_STOP:
     data={'type':'warning','msg':u'다운로드가 중지 되었습니다.<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    socketio.emit("notify",data,namespace='/framework',broadcast=i) 
+    socketio.emit("notify",data,namespace='/framework',broadcast=x) 
     refresh_type='last'
    elif args['status']==Status.COMPLETED:
     data={'type':'success','msg':u'다운로드가 완료 되었습니다.<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    socketio.emit("notify",data,namespace='/framework',broadcast=i) 
+    socketio.emit("notify",data,namespace='/framework',broadcast=x) 
     refresh_type='last'
    elif args['status']==Status.TIME_OVER:
     data={'type':'warning','msg':u'시간초과로 중단 되었습니다.<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    socketio.emit("notify",data,namespace='/framework',broadcast=i) 
+    socketio.emit("notify",data,namespace='/framework',broadcast=x) 
     refresh_type='last'
    elif args['status']==Status.PF_STOP:
     data={'type':'warning','msg':u'PF초과로 중단 되었습니다.<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    socketio.emit("notify",data,namespace='/framework',broadcast=i) 
+    socketio.emit("notify",data,namespace='/framework',broadcast=x) 
     refresh_type='last'
    elif args['status']==Status.FORCE_STOP:
     data={'type':'warning','msg':u'강제 중단 되었습니다.<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    socketio.emit("notify",data,namespace='/framework',broadcast=i) 
+    socketio.emit("notify",data,namespace='/framework',broadcast=x) 
     refresh_type='last' 
    elif args['status']==Status.HTTP_FORBIDDEN:
     data={'type':'warning','msg':u'403에러로 중단 되었습니다.<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    socketio.emit("notify",data,namespace='/framework',broadcast=i) 
+    socketio.emit("notify",data,namespace='/framework',broadcast=x) 
     refresh_type='last' 
    elif args['status']==Status.ALREADY_DOWNLOADING:
     data={'type':'warning','msg':u'임시파일폴더에 파일이 있습니다.<br>'+args['data']['temp_fullpath'],'url':'/ffmpeg/list'}
-    socketio.emit("notify",data,namespace='/framework',broadcast=i) 
+    socketio.emit("notify",data,namespace='/framework',broadcast=x) 
     refresh_type='last'
   elif args['type']=='normal':
    if args['status']==Status.DOWNLOADING:
     refresh_type='status'
-  if refresh_type is not G:
-   socketio.emit(refresh_type,args['data'],namespace='/%s'%package_name,broadcast=i)
+  if refresh_type is not t:
+   socketio.emit(refresh_type,args['data'],namespace='/%s'%package_name,broadcast=x)
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

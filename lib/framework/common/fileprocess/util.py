@@ -1,27 +1,27 @@
 import os
-g=None
-G=False
-N=True
-C=UnicodeDecodeError
-n=Exception
+J=None
+R=False
+l=True
+w=UnicodeDecodeError
+u=Exception
 import traceback
 import time
 import threading
 import shutil
 from framework.common.fileprocess import logger
-def remove_small_file_and_move_target(path,size,target=g,except_ext=g):
+def remove_small_file_and_move_target(path,size,target=J,except_ext=J):
  try:
-  if target is g:
+  if target is J:
    target=path
-  if except_ext is g:
+  if except_ext is J:
    except_ext=['.smi','.srt','ass']
   lists=os.listdir(path)
   for f in lists:
    try:
     file_path=os.path.join(path,f)
-    except_file=G
+    except_file=R
     if os.path.splitext(file_path.lower())[1]in except_ext:
-     except_file=N
+     except_file=l
     if os.path.isdir(file_path):
      remove_small_file_and_move_target(file_path,size,target=target,except_ext=except_ext)
      if not os.listdir(file_path):
@@ -46,13 +46,13 @@ def remove_small_file_and_move_target(path,size,target=g,except_ext=g):
       except:
        logger.info(u'FILE REMOVE')
       os.remove(file_path)
-   except C:
+   except w:
     pass
-   except n as e:
-    logger.error('Exception:%s',e)
+   except u as exception:
+    logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
- except n as e:
-  logger.error('Exception:%s',e)
+ except u as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def remove_match_ext(path,ext_list):
  try:
@@ -66,12 +66,12 @@ def remove_match_ext(path,ext_list):
      if os.path.splitext(file_path.lower())[1][1:]in ext_list:
       logger.info(u'REMOVE : %s',file_path)
       os.remove(file_path)
-   except C:
+   except w:
     pass
-   except n as e:
-    logger.error('Exception:%s',e)
+   except u as exception:
+    logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
- except n as e:
-  logger.error('Exception:%s',e)
+ except u as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,14 +1,14 @@
 import os
-M=True
-h=False
-P=repr
-H=getattr
-Q=staticmethod
-K=str
-v=None
-V=Exception
-B=id
-z=int
+w=True
+m=False
+S=repr
+r=getattr
+x=staticmethod
+A=str
+H=None
+t=Exception
+W=id
+Q=int
 import traceback
 import json
 from datetime import datetime
@@ -20,7 +20,7 @@ class ModelCommand(db.Model):
  __tablename__='%s_job'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- B=db.Column(db.Integer,primary_key=M)
+ W=db.Column(db.Integer,primary_key=w)
  filename=db.Column(db.String) 
  command=db.Column(db.String)
  description=db.Column(db.String)
@@ -29,7 +29,7 @@ class ModelCommand(db.Model):
  schedule_info=db.Column(db.String) 
  def __init__(self,command):
   self.description=''
-  self.schedule_auto_start=h
+  self.schedule_auto_start=m
   self.schedule_type="0"
   self.schedule_info=''
   self.set_command(command)
@@ -44,24 +44,24 @@ class ModelCommand(db.Model):
     self.filename=t
     break
  def __repr__(self):
-  return P(self.as_dict())
+  return S(self.as_dict())
  def as_dict(self):
-  return{x.name:H(self,x.name)for x in self.__table__.columns}
- @Q
+  return{x.name:r(self,x.name)for x in self.__table__.columns}
+ @x
  def job_list():
   try:
    db_list=db.session.query(ModelCommand).filter().all()
    db_list=[x.as_dict()for x in db_list]
    from.logic_normal import LogicNormal
    for item in db_list:
-    item['is_include']=K(scheduler.is_include('command_%s'%item['id']))
-    item['is_running']=K(scheduler.is_running('command_%s'%item['id']))
-    item['process_id']=LogicNormal.process_list[item['id']].pid if item['id']in LogicNormal.process_list and LogicNormal.process_list[item['id']]is not v else v
+    item['is_include']=A(scheduler.is_include('command_%s'%item['id']))
+    item['is_running']=A(scheduler.is_running('command_%s'%item['id']))
+    item['process_id']=LogicNormal.process_list[item['id']].pid if item['id']in LogicNormal.process_list and LogicNormal.process_list[item['id']]is not H else H
    return db_list
-  except V as e:
-   logger.error('Exception:%s',e)
+  except t as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @Q
+ @x
  def job_new(request):
   try:
    command=request.form['command']
@@ -69,15 +69,15 @@ class ModelCommand(db.Model):
    db.session.add(item)
    db.session.commit()
    return 'success'
-  except V as e:
-   logger.error('Exception:%s',e)
+  except t as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @Q
+ @x
  def job_save(request):
   try:
-   B=request.form['job_id']
-   entity=db.session.query(ModelCommand).filter_by(B=B).with_for_update().first()
+   W=request.form['job_id']
+   entity=db.session.query(ModelCommand).filter_by(W=W).with_for_update().first()
    entity.set_command(request.form['job_command'])
    entity.description=request.form['job_description'] 
    entity.schedule_type=request.form['job_schedule_type']
@@ -85,31 +85,31 @@ class ModelCommand(db.Model):
    entity.schedule_auto_start=(request.form['job_schedule_auto_start']=='True')
    db.session.commit()
    from.logic_normal import LogicNormal
-   LogicNormal.scheduler_switch(B,h)
+   LogicNormal.scheduler_switch(W,m)
    return 'success'
-  except V as e:
-   logger.error('Exception:%s',e)
+  except t as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @Q
+ @x
  def get_job_by_id(job_id):
   try:
-   return db.session.query(ModelCommand).filter_by(B=z(job_id)).first()
-  except V as e:
-   logger.error('Exception:%s',e)
+   return db.session.query(ModelCommand).filter_by(W=Q(job_id)).first()
+  except t as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @Q
+ @x
  def job_remove(request):
   try:
-   B=request.form['job_id']
-   entity=db.session.query(ModelCommand).filter_by(B=B).first()
+   W=request.form['job_id']
+   entity=db.session.query(ModelCommand).filter_by(W=W).first()
    db.session.delete(entity)
    db.session.commit()
    from.logic_normal import LogicNormal
-   LogicNormal.scheduler_switch(B,h)
+   LogicNormal.scheduler_switch(W,m)
    return 'success'
-  except V as e:
-   logger.error('Exception:%s',e)
+  except t as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

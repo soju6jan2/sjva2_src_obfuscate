@@ -1,17 +1,17 @@
 import os
-P=object
-x=None
-q=staticmethod
-m=Exception
-p=False
-W=True
-o=type
-H=len
-B=int
-L=enumerate
-U=sorted
-u=range
-E=str
+V=object
+Q=None
+K=staticmethod
+S=Exception
+w=False
+h=True
+P=type
+b=len
+D=int
+q=enumerate
+i=sorted
+c=range
+t=str
 from datetime import datetime,timedelta
 import traceback
 import logging
@@ -38,38 +38,38 @@ from framework.common.daum import DaumTV
 from.model import ModelSetting
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Logic(P):
+class Logic(V):
  db_default={'id':'','pw':'','server_name':'','server_url':'','server_token':'','download_path':'','machineIdentifier':'','scan_server':'','use_lc':'True','lc_json':'[{"type":"recent_add","section":"episode","count":40,"start_number":999,"reverse":true},{"type":"recent_add","section":"movie","count":40,"start_number":959,"reverse":true}]','tivimate_json':'[{"type":"recent_add","section":"episode","count":50},{"type":"recent_add","section":"movie","count":50}]'}
- account=x 
- server=x 
+ account=Q 
+ server=Q 
  """
     [{"type" : "recent_add", "section" : "episode", "count" : 40, "start_number" : 999, "reverse" : true }, {"type" : "recent_add", "section" : "movie", "count" : 40, "start_number" : 959, "reverse" : true }, {"type" : "section_to_channel", "section" : "0", "include_content_count" : 10, "channel_number" : 899, } ]
     """ 
- @q
+ @K
  def db_init():
   try:
    for key,value in Logic.db_default.items():
     if db.session.query(ModelSetting).filter_by(key=key).count()==0:
      db.session.add(ModelSetting(key,value))
    db.session.commit()
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @K
  def plugin_load():
   try:
    Logic.db_init()
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @K
  def plugin_unload():
   try:
    pass
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @K
  def setting_save(req):
   try:
    for key,value in req.form.items():
@@ -84,22 +84,22 @@ class Logic(P):
       json.loads(value)
      except:
       logger.debug('Wrong JSON!')
-      return p
+      return w
     entity.value=value
    db.session.commit()
-   return W 
-  except m as e:
-   logger.error('Exception:%s',e)
+   return h 
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return p
- @q
+   return w
+ @K
  def get_setting_value(key):
   try:
    return db.session.query(ModelSetting).filter_by(key=key).first().value
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @K
  def get_plex_server_list(req):
   try:
    plex_id=req.form['id']
@@ -109,26 +109,26 @@ class Logic(P):
     Logic.account=MyPlexAccount(plex_id,plex_pw)
    except BadRequest:
     logger.debug('login fail!!')
-    return x
+    return Q
    devices=Logic.account.devices()
    ret=[]
    for device in devices:
     if 'server' in device.provides:
-     logger.debug('type :%s',o(device))
+     logger.debug('type :%s',P(device))
      logger.debug('server : %s',device)
      ret.append(device.name)
    return ret
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @K
  def get_server_hash():
   return db.session.query(ModelSetting).filter_by(key='machineIdentifier').first().value
- @q
+ @K
  def connect_plex_server_by_name(req):
   try:
    server_name=req.form['server_name']
-   if Logic.account is x:
+   if Logic.account is Q:
     return 'need_login'
    devices=Logic.account.devices()
    ret=[]
@@ -137,23 +137,23 @@ class Logic(P):
      if server_name==device.name:
       server=device.connect()
       return[server._baseurl,server._token,server.machineIdentifier]
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @q
+ @K
  def connect_plex_server_by_url(req):
   try:
    server_url=req.form['server_url']
    server_token=req.form['server_token']
    plex=PlexServer(server_url,server_token)
    sections=plex.library.sections()
-   return H(sections)
-  except m as e:
-   logger.error('Exception:%s',e)
+   return b(sections)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @q
+ @K
  def get_sjva_plugin_version(req):
   try:
    server_url=req.form['server_url']
@@ -162,11 +162,11 @@ class Logic(P):
    logger.debug(url)
    page=requests.get(url)
    return page.text
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @q
+ @K
  def get_sj_daum_version(req):
   try:
    server_url=req.form['server_url']
@@ -175,29 +175,29 @@ class Logic(P):
    logger.debug(url)
    page=requests.get(url)
    return page.text
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @q
- def get_section_id(entity,more=p):
+ @K
+ def get_section_id(entity,more=w):
   try:
    server_url=db.session.query(ModelSetting).filter_by(key='server_url').first().value
    server_token=db.session.query(ModelSetting).filter_by(key='server_token').first().value
-   if Logic.server is x:
+   if Logic.server is Q:
     Logic.server=PlexServer(server_url,server_token)
    logger.debug('get_section_id : %s',entity.plex_abspath)
    sections=Logic.server.library.sections()
-   select_section=x
+   select_section=Q
    for section in sections:
-    if section.o=='show':
+    if section.P=='show':
      for location in section.locations:
       if entity.plex_abspath.find(location)!=-1:
        logger.debug('Find Section section:%s location:%s id:%s',section.title,location,section.key)
        entity.plex_section_id=section.key
        select_section=section
        break
-   if select_section is not x:
+   if select_section is not Q:
     for show in select_section.all():
      for location in show.locations:
       if entity.plex_abspath.find(location)!=-1:
@@ -217,25 +217,25 @@ class Logic(P):
              entity.plex_part='%s%s?X-Plex-Token=%s'%(server_url,part.key,server_token)
              return entity.plex_section_id
    return-1
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @K
  def exist_file_in_library(entity):
   sections=Logic.server.library.sections()
   for section in sections:
-   if section.o=='show' and B(section.key)==entity.plex_section_id:
+   if section.P=='show' and D(section.key)==entity.plex_section_id:
     for show in section.all():
      if show.ratingKey==entity.plex_show_id:
-      ret=p
+      ret=w
       for episode in show.episodes():
        for location in episode.locations:
         if location==entity.plex_abspath:
-         ret=W
+         ret=h
          return ret
       return ret
-  return x
- @q
+  return Q
+ @K
  def send_scan_command(modelfile,plugin_name):
   entity=modelfile
   logger.debug('send_scan_command')
@@ -246,7 +246,7 @@ class Logic(P):
     logger.debug('server_url is empty!')
     return
    callback_url='%s/%s/api/scan_completed'%(SystemModelSetting.get('ddns'),plugin_name)
-   filename=entity.plex_abspath if entity.plex_abspath is not x else os.path.join(entity.scan_abspath,entity.filename)
+   filename=entity.plex_abspath if entity.plex_abspath is not Q else os.path.join(entity.scan_abspath,entity.filename)
    logger.debug('send_scan_command PATH:%s ID:%s',entity.plex_abspath,entity.plex_section_id)
    encode_filename=Logic.get_filename_encoding_for_plex(filename)
    url='%s/:/plugins/com.plexapp.plugins.SJVA/function/WaitFile?section_id=%s&filename=%s&callback=%s&callback_id=%s&type_add_remove=ADD&call_from=FILE_MANAGER&X-Plex-Token=%s'%(server_url,entity.plex_section_id,encode_filename,py_urllib.quote(callback_url),entity.id,server_token)
@@ -270,41 +270,41 @@ class Logic(P):
       data=response.read()
       logger.debug(url)
       logger.debug('scan_server : %s ret:%s',s_url,data)
-     except m as e:
-      logger.debug('Exception:%s',e)
+     except S as exception:
+      logger.debug('Exception:%s',exception)
       logger.debug(traceback.format_exc()) 
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @q
+ @K
  def get_section_id_by_file(filepath):
   try:
-   if Logic.server is x:
+   if Logic.server is Q:
     server_url=db.session.query(ModelSetting).filter_by(key='server_url').first().value
     server_token=db.session.query(ModelSetting).filter_by(key='server_token').first().value
     Logic.server=PlexServer(server_url,server_token)
    logger.debug('get_section_id : %s',filepath)
    sections=Logic.server.library.sections()
-   select_section=x
+   select_section=Q
    tmp_len=0
    tmp_section_id=-1
    for section in sections:
     for location in section.locations:
      if filepath.find(location)!=-1:
-      if H(location)>tmp_len:
-       tmp_len=H(location)
+      if b(location)>tmp_len:
+       tmp_len=b(location)
        tmp_section_id=section.key
    return tmp_section_id
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @K
  def is_exist_in_library(filename):
   try:
    server_url=db.session.query(ModelSetting).filter_by(key='server_url').first().value
    server_token=db.session.query(ModelSetting).filter_by(key='server_token').first().value
    if server_url=='' or server_token=='':
-    return W
+    return h
    url='%s/:/plugins/com.plexapp.plugins.SJVA/function/count_in_library?filename=%s&X-Plex-Token=%s'%(server_url,Logic.get_filename_encoding_for_plex(filename),server_token)
    logger.debug('URL:%s',url)
    request=py_urllib2.Request(url)
@@ -312,30 +312,30 @@ class Logic(P):
    data=response.read()
    logger.debug('is_exist_in_library ret:%s',data)
    if data=='0':
-    return p
+    return w
    else:
     try:
-     tmp=B(data)
+     tmp=D(data)
      if tmp>0:
-      return W
+      return h
     except:
-     return p
-  except m as e:
-   logger.error('Exception:%s',e)
+     return w
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return p
- @q
+   return w
+ @K
  def get_filename_encoding_for_plex(filename):
   try:
    ret=filename.encode('utf8')
-  except m as e:
-   logger.error('Exception1:%s',e)
+  except S as exception:
+   logger.error('Exception1:%s',exception)
    try:
     ret=filename.encode('utf8')
-   except m as e:
-    logger.error('Exception3:%s',e)
+   except S as exception:
+    logger.error('Exception3:%s',exception)
   return py_urllib.quote(ret)
- @q
+ @K
  def send_scan_command2(plugin_name,section_id,filename,callback_id,type_add_remove,call_from):
   logger.debug('send_scan_command2')
   try:
@@ -362,35 +362,35 @@ class Logic(P):
       response=py_urllib2.urlopen(request)
       s_data=response.read()
       logger.debug('scan_server2 : %s ret:%s',s_url,s_data)
-     except m as e:
-      logger.debug('Exception:%s',e)
+     except S as exception:
+      logger.debug('Exception:%s',exception)
       logger.debug(traceback.format_exc()) 
    return data
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- analyze_show_data=x
- @q
+ analyze_show_data=Q
+ @K
  def analyze_show(key):
   try:
    Logic.analyze_show_data=[]
    server_url=db.session.query(ModelSetting).filter_by(key='server_url').first().value
    server_token=db.session.query(ModelSetting).filter_by(key='server_token').first().value
-   if Logic.server is x:
+   if Logic.server is Q:
     Logic.server=PlexServer(server_url,server_token)
    sections=Logic.server.library.sections()
    for section in sections:
-    if section.o!='show':
+    if section.P!='show':
      continue
     if section.key!=key:
      continue
-    for index,show in L(section.all()):
+    for index,show in q(section.all()):
      try:
-      flag_media_season=p
-      if H(show.seasons())>1:
+      flag_media_season=w
+      if b(show.seasons())>1:
        for season in show.seasons():
-        if B(season.index)>1 and B(season.index)<1900:
-         flag_media_season=W
+        if D(season.index)>1 and D(season.index)<1900:
+         flag_media_season=h
          break
       if flag_media_season:
        season_data=DaumTV.get_show_info_on_home(DaumTV.get_show_info_on_home_title(show.title))
@@ -404,47 +404,47 @@ class Logic(P):
        if season.index==0:
         continue
        season_entity={}
-       season_entity['daum_info']=x
+       season_entity['daum_info']=Q
        if item['guid'].lower().find('daum'):
-        tmp=x
-        if flag_media_season and season_data is not x and H(season_data['series'])>1:
-         search_title=season_data['series'][B(season.index)-1]['title']
-         search_id=season_data['series'][B(season.index)-1]['id']
-         tmp=DaumTV.get_daum_tv_info(search_title,daum_id=search_id,on_home=W)
+        tmp=Q
+        if flag_media_season and season_data is not Q and b(season_data['series'])>1:
+         search_title=season_data['series'][D(season.index)-1]['title']
+         search_id=season_data['series'][D(season.index)-1]['id']
+         tmp=DaumTV.get_daum_tv_info(search_title,daum_id=search_id,on_home=h)
         else:
-         tmp=DaumTV.get_daum_tv_info(show.title,on_home=W)
+         tmp=DaumTV.get_daum_tv_info(show.title,on_home=h)
         if tmp:
          season_entity['daum_info']=tmp
        season_entity['poster']=season.thumbUrl
        season_entity['season_key']=season.key
        episodes=season.episodes()
        season_entity['season_number']=season.index
-       season_entity['episode_count']=H(episodes)
+       season_entity['episode_count']=b(episodes)
        season_entity['episode_index_list']=[]
        season_entity['episode_air_list']=[]
        season_entity['duplicate_list']=[]
        season_entity['episodes']={}
-       flag_originallyAvailableAt=p
-       flag_index=p
-       epi_min=x
-       epi_max=x
+       flag_originallyAvailableAt=w
+       flag_index=w
+       epi_min=Q
+       epi_max=Q
        epi_count_index=0
        epi_count_date=0
        for episode in episodes:
-        episode_key=x
-        if episode.index is x:
+        episode_key=Q
+        if episode.index is Q:
          episode_key=episode.originallyAvailableAt.strftime('%Y-%m-%d')
-         flag_originallyAvailableAt=W
+         flag_originallyAvailableAt=h
          season_entity['episode_air_list'].append(episode_key)
          epi_count_date+=1
         else:
          episode_key=episode.index
-         flag_index=W
-         if epi_min is x or epi_min>B(episode.index):
-          epi_min=B(episode.index)
-         if epi_max is x or epi_max<B(episode.index):
-          epi_max=B(episode.index)
-         season_entity['episode_index_list'].append(B(episode.index))
+         flag_index=h
+         if epi_min is Q or epi_min>D(episode.index):
+          epi_min=D(episode.index)
+         if epi_max is Q or epi_max<D(episode.index):
+          epi_max=D(episode.index)
+         season_entity['episode_index_list'].append(D(episode.index))
          epi_count_index+=1
         season_entity['episodes'][episode_key]=[]
         for part in episode.iterParts():
@@ -452,13 +452,13 @@ class Logic(P):
          part_entity['file']=part.file
          part_entity['part']='%s%s?X-Plex-Token=%s'%(server_url,part.key,server_token)
          season_entity['episodes'][episode_key].append(part_entity)
-        if H(season_entity['episodes'][episode_key])>1:
+        if b(season_entity['episodes'][episode_key])>1:
          season_entity['duplicate_list'].append(episode_key)
        season_entity['flag_originallyAvailableAt']=flag_originallyAvailableAt
        season_entity['flag_index']=flag_index
-       season_entity['episode_index_list']=U(season_entity['episode_index_list'])
-       season_entity['episode_air_list']=U(season_entity['episode_air_list'])
-       season_entity['duplicate_list']=U(season_entity['duplicate_list'])
+       season_entity['episode_index_list']=i(season_entity['episode_index_list'])
+       season_entity['episode_air_list']=i(season_entity['episode_air_list'])
+       season_entity['duplicate_list']=i(season_entity['duplicate_list'])
        season_entity['epi_min']=epi_min
        season_entity['epi_max']=epi_max
        season_entity['epi_count_index']=epi_count_index
@@ -466,7 +466,7 @@ class Logic(P):
        status=-1
        one_file_how_many_episodes=1
        msg=''
-       if season_entity['daum_info']is not x:
+       if season_entity['daum_info']is not Q:
         if season_entity['daum_info']['episode_count_one_day']>1:
          one_file_how_many_episodes=2
        if flag_index:
@@ -478,7 +478,7 @@ class Logic(P):
           status=1
           msg='비어 있는 에피소드 있음'
           empty_episode_no=[]
-          for idx in u(season_entity['episode_index_list'][0],season_entity['episode_index_list'][-1],1):
+          for idx in c(season_entity['episode_index_list'][0],season_entity['episode_index_list'][-1],1):
            if idx not in season_entity['episode_index_list']:
             empty_episode_no.append(idx)
           season_entity['empty_episode_no']=empty_episode_no
@@ -490,7 +490,7 @@ class Logic(P):
           status=3
           msg='비어 있는 에피소드 있음'
           empty_episode_no=[]
-          for idx in u(season_entity['episode_index_list'][0],season_entity['episode_index_list'][-1],one_file_how_many_episodes):
+          for idx in c(season_entity['episode_index_list'][0],season_entity['episode_index_list'][-1],one_file_how_many_episodes):
            if idx not in season_entity['episode_index_list']:
             empty_episode_no.append(idx)
           season_entity['empty_episode_no']=empty_episode_no
@@ -500,14 +500,14 @@ class Logic(P):
         if flag_originallyAvailableAt:
          status+=4
          msg+='<br>회차 없이 날짜만 있는 에피소드 있음'
-        if season_entity['daum_info']is not x and season_entity['daum_info']['last_episode_no']is not x:
+        if season_entity['daum_info']is not Q and season_entity['daum_info']['last_episode_no']is not Q:
          if one_file_how_many_episodes==1:
           msg+='<br>마지막 회차 - PLEX:%s, DAUM:%s.'%(epi_max,season_entity['daum_info']['last_episode_no'])
          else:
-          msg+='<br>마지막 회차 - PLEX:%s, DAUM:%s.'%(epi_max,B(season_entity['daum_info']['last_episode_no'])-1)
-         if E(epi_max)==season_entity['daum_info']['last_episode_no']:
+          msg+='<br>마지막 회차 - PLEX:%s, DAUM:%s.'%(epi_max,D(season_entity['daum_info']['last_episode_no'])-1)
+         if t(epi_max)==season_entity['daum_info']['last_episode_no']:
           msg+=' 일치'
-         elif one_file_how_many_episodes==2 and E(epi_max+1)==season_entity['daum_info']['last_episode_no']:
+         elif one_file_how_many_episodes==2 and t(epi_max+1)==season_entity['daum_info']['last_episode_no']:
           msg+=' 일치'
          else:
           msg+=' <strong><span style="color: red">불일치 (%s)</span></strong>'%season_entity['daum_info']['last_episode_date']
@@ -519,76 +519,76 @@ class Logic(P):
        logger.debug('one_file_how_many_episodes %s %s %s %s %s %s',one_file_how_many_episodes,show.title,flag_index,flag_originallyAvailableAt,status,msg)
        item['seasons'].append(season_entity)
       Logic.analyze_show_data.append(item)
-      item['total']=H(section.all())
+      item['total']=b(section.all())
       item['index']=index
       """
                         noti_data = {'type':'info', 'msg' : u'%s / %s 분석중..' % ((index+1), item['total']), 'url':'/plex/list'}
                         socketio.emit("notify", noti_data, namespace='/framework', broadcast=True)
                         """      
       yield "data: %s\n\n"%json.dumps(item).decode('utf-8')
-     except m as e:
-      logger.error('Exception:%s',e)
+     except S as exception:
+      logger.error('Exception:%s',exception)
       logger.error(traceback.format_exc()) 
     break
    yield "data: -1\n\n"
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
    yield "data: -1\n\n"
- @q
+ @K
  def load_section_list():
   try:
    server_url=db.session.query(ModelSetting).filter_by(key='server_url').first().value
    server_token=db.session.query(ModelSetting).filter_by(key='server_token').first().value
-   if Logic.server is x:
+   if Logic.server is Q:
     Logic.server=PlexServer(server_url,server_token)
    sections=Logic.server.library.sections()
    ret=[]
    for section in sections:
     entity={}
-    entity['type']=section.o
+    entity['type']=section.P
     entity['key']=section.key
     entity['title']=section.title
     ret.append(entity)
    return ret
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @q
+ @K
  def library_search_show(title,daum_id):
   try:
    server_url=db.session.query(ModelSetting).filter_by(key='server_url').first().value
    server_token=db.session.query(ModelSetting).filter_by(key='server_token').first().value
-   if Logic.server is x:
+   if Logic.server is Q:
     Logic.server=PlexServer(server_url,server_token)
    ret=[]
    for video in Logic.server.search(title):
-    if E(video.TYPE)=='show':
+    if t(video.TYPE)=='show':
      if video.guid.find(daum_id)!=-1:
       ret.append(video)
    return ret
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @q
+ @K
  def library_search_movie(title,daum_id):
   try:
    server_url=db.session.query(ModelSetting).filter_by(key='server_url').first().value
    server_token=db.session.query(ModelSetting).filter_by(key='server_token').first().value
    if server_url=='' or server_token=='':
     return
-   if Logic.server is x:
+   if Logic.server is Q:
     Logic.server=PlexServer(server_url,server_token)
    ret=[]
    for video in Logic.server.search(title):
-    if E(video.TYPE)=='movie':
+    if t(video.TYPE)=='movie':
      if video.guid.find(daum_id)!=-1:
       ret.append(video)
    return ret
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @q
+ @K
  def plungin_command(req):
   try:
    command=req.form['cmd']
@@ -605,15 +605,15 @@ class Logic(P):
    data=response.read()
    data=json.loads(data)
    return data
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @q
+ @K
  def make_xml(root):
   try:
    server_url=db.session.query(ModelSetting).filter_by(key='server_url').first().value
    server_token=db.session.query(ModelSetting).filter_by(key='server_token').first().value
-   if Logic.server is x:
+   if Logic.server is Q:
     Logic.server=PlexServer(server_url,server_token)
    lc_json=Logic.get_setting_value('lc_json')
    json_info=json.loads(lc_json)
@@ -638,8 +638,8 @@ class Logic(P):
      doc=lxml.html.parse(py_urllib2.urlopen(url))
      videos=doc.xpath("//video")
      for tag_video in videos:
-      channel_tag=x
-      program_tag=x
+      channel_tag=Q
+      program_tag=Q
       try:
        if channel_title=='':
         channel_title=tag_video.attrib['librarysectiontitle']
@@ -660,22 +660,22 @@ class Logic(P):
         continue
        if 'duration' not in tag_media.attrib:
         continue
-       duration=B(tag_media.attrib['duration'])
+       duration=D(tag_media.attrib['duration'])
        video_url='%s%s?X-Plex-Token=%s'%(server_url,tag_part.attrib['key'],server_token)
        icon_url='%s%s?X-Plex-Token=%s'%(server_url,tag_video.attrib['thumb'],server_token)
        channel_tag=ET.SubElement(root,'channel')
-       channel_tag.set('id',E(channel_number))
+       channel_tag.set('id',t(channel_number))
        channel_tag.set('repeat-programs','true')
        display_name_tag=ET.SubElement(channel_tag,'display-name')
        display_name_tag.text='%s(%s)'%(channel_title,channel_index)
        display_name_tag=ET.SubElement(channel_tag,'display-number')
-       display_name_tag.text=E(channel_number)
+       display_name_tag.text=t(channel_number)
        datetime_start=datetime(2019,1,1)+timedelta(hours=-9)
        datetime_stop=datetime_start+timedelta(seconds=duration/1000+1)
        program_tag=ET.SubElement(root,'programme')
        program_tag.set('start',datetime_start.strftime('%Y%m%d%H%M%S')+' +0900')
        program_tag.set('stop',datetime_stop.strftime('%Y%m%d%H%M%S')+' +0900')
-       program_tag.set('channel',E(channel_number))
+       program_tag.set('channel',t(channel_number))
        program_tag.set('video-src',video_url)
        program_tag.set('video-type','HTTP_PROGRESSIVE')
        title_tag=ET.SubElement(program_tag,'title')
@@ -687,21 +687,21 @@ class Logic(P):
         desc_tag=ET.SubElement(program_tag,'desc')
         desc_tag.set('lang','ko')
         desc_tag.text=tag_video.attrib['summary']
-       channel_tag=x
-       program_tag=x
+       channel_tag=Q
+       program_tag=Q
        channel_index+=1
        channel_number+=channel_step
        if channel_index>max_count:
         break
-      except m as e:
-       logger.error('Exception:%s',e)
+      except S as exception:
+       logger.error('Exception:%s',exception)
        logger.error(traceback.format_exc())
-       if channel_tag is not x:
+       if channel_tag is not Q:
         root.remove(channel_tag)
-       if program_tag is not x:
+       if program_tag is not Q:
         root.remove(channel_tag)
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
   """
         [{"type" : "recent_add", "section" : "episode", "count" : 40, "start_number" : 999, "reverse" : true }, {"type" : "recent_add", "section" : "movie", "count" : 40, "start_number" : 959, "reverse" : true }, {"type" : "section_to_channel", "section" : "0", "include_content_count" : 10, "channel_number" : 899, } ]

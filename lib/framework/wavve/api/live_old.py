@@ -1,7 +1,7 @@
 import traceback
-n=Exception
-f=range
-q=str
+N=Exception
+m=range
+d=str
 import json
 from framework import py_urllib,py_urllib2
 from framework.wavve.api import session,get_baseparameter,config,logger
@@ -17,8 +17,8 @@ def get_live_list():
   response=py_urllib2.urlopen(request)
   data=json.load(response,encoding='utf8')
   return data['result']['list']
- except n as e:
-  logger.error('Exception:%s',e)
+ except N as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc()) 
 def get_live_json(source_id,quality,credential):
  try:
@@ -39,8 +39,8 @@ def get_live_json(source_id,quality,credential):
   response=py_urllib2.urlopen(request)
   data=json.load(response,encoding='utf8')
   return data
- except n as e:
-  logger.error('Exception:%s',e)
+ except N as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def get_live_quality_list(source_id):
  try:
@@ -53,8 +53,8 @@ def get_live_quality_list(source_id):
   data=json.load(response,encoding='utf8')
   result=data['result']['qualityList'][0]['quality']
   return result
- except n as e:
-  logger.error('Exception:%s',e)
+ except N as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def get_quality_to_pooq(quality):
  if quality=='FHD':
@@ -76,11 +76,11 @@ def get_guid():
  def GenerateRandomString(num):
   from random import randint
   rstr=""
-  for i in f(0,num):
-   s=q(randint(1,5))
+  for i in m(0,num):
+   s=d(randint(1,5))
    rstr+=s
   return rstr
  uuid=GenerateID("POOQ")
  m.update(uuid)
- return q(m.hexdigest())
+ return d(m.hexdigest())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

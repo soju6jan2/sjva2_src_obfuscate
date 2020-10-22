@@ -1,11 +1,11 @@
 import os
-t=None
-D=str
-H=Exception
-P=True
-T=super
-O=False
-x=classmethod
+W=None
+A=str
+V=Exception
+k=True
+c=super
+C=False
+O=classmethod
 import traceback
 import logging
 import threading
@@ -47,13 +47,13 @@ def normal():
  return redirect('/%s/setting'%package_name)
 @login_required
 def home():
- return render_template('info.html',arg=t)
+ return render_template('info.html',arg=W)
 @blueprint.route('/<sub>',methods=['GET','POST'])
 @login_required
 def first_menu(sub):
- arg=t
+ arg=W
  if sub=='home':
-  return render_template('%s_%s.html'%(package_name,sub),arg=t)
+  return render_template('%s_%s.html'%(package_name,sub),arg=W)
  elif sub=='setting':
   return redirect('/%s/%s/basic'%(package_name,sub))
  elif sub=='plugin':
@@ -101,17 +101,17 @@ def second_menu(sub,sub2):
     arg['auth_result']=SystemLogicAuth.get_auth_status()
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
    elif sub2=='telegram_bot':
-    arg['scheduler']=D(scheduler.is_include('%s_%s'%(package_name,sub2)))
-    arg['is_running']=D(scheduler.is_running('%s_%s'%(package_name,sub2)))
+    arg['scheduler']=A(scheduler.is_include('%s_%s'%(package_name,sub2)))
+    arg['is_running']=A(scheduler.is_running('%s_%s'%(package_name,sub2)))
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
    elif sub2=='env':
     arg['export']=SystemLogicEnv.load_export()
-    if arg['export']is t:
+    if arg['export']is W:
      arg['export']=u'export.sh 파일이 없습니다.'
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
    elif sub2=='site':
-    arg['scheduler']=D(scheduler.is_include('%s_%s'%(package_name,sub2)))
-    arg['is_running']=D(scheduler.is_running('%s_%s'%(package_name,sub2)))
+    arg['scheduler']=A(scheduler.is_include('%s_%s'%(package_name,sub2)))
+    arg['is_running']=A(scheduler.is_running('%s_%s'%(package_name,sub2)))
     from system.model import ModelSetting as SystemModelSetting
     arg['site_get_daum_cookie_url']='{ddns}/{package_name}/api/{sub2}/daum_cookie'.format(ddns=SystemModelSetting.get('ddns'),package_name=package_name,sub2=sub2)
     if SystemModelSetting.get_bool('auth_use_apikey'):
@@ -119,8 +119,8 @@ def second_menu(sub,sub2):
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
    elif sub2=='memo':
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
- except H as e:
-  logger.error('Exception:%s',e)
+ except V as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def restart():
  try:
@@ -128,11 +128,11 @@ def restart():
    import framework
    framework.exit_code=1
    app_close()
-  except H as e:
-   logger.error('Exception:%s',e)
+  except V as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- except H as e:
-  logger.error('Exception:%s',e)
+ except V as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def shutdown():
  try:
@@ -140,22 +140,22 @@ def shutdown():
    nginx_kill='/app/data/custom/nginx/files/kill.sh'
    if os.path.exists(nginx_kill):
     SystemLogicCommand.execute_command_return([nginx_kill])
-  except H as e:
-   logger.error('Exception:%s',e)
+  except V as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
   import framework
   framework.exit_code=0
   app_close()
- except H as e:
-  logger.error('Exception:%s',e)
+ except V as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def app_close():
  try:
   from framework.init_plugin import plugin_unload
   plugin_unload()
   socketio.stop()
- except H as e:
-  logger.error('Exception:%s',e)
+ except V as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @blueprint.route('/ajax/<sub>/<sub2>',methods=['GET','POST'])
 @login_required
@@ -178,8 +178,8 @@ def second_ajax(sub,sub2):
    return SystemLogicEnv.process_ajax(sub2,request)
   elif sub=='site':
    return SystemLogicSite.process_ajax(sub2,request) 
- except H as e:
-  logger.error('Exception:%s',e)
+ except V as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @blueprint.route('/ajax/<sub>',methods=['GET','POST'])
 @login_required
@@ -191,16 +191,16 @@ def ajax(sub):
     ret['system']=SystemLogic.get_info()
     ret['scheduler']=scheduler.get_job_list_info()
     return jsonify(ret)
-   except H as e:
-    logger.error('Exception:%s',e)
+   except V as exception:
+    logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
     return jsonify()
   elif sub=='setting_save_system':
    try:
     ret=SystemLogic.setting_save_system(request)
     return jsonify(ret)
-   except H as e:
-    logger.error('Exception:%s',e)
+   except V as exception:
+    logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
   elif sub=='setting_save':
    ret=ModelSetting.setting_save(request)
@@ -212,8 +212,8 @@ def ajax(sub):
     res=requests.get(url)
     data=res.text
     return jsonify(data)
-   except H as e:
-    logger.error('Exception:%s',e)
+   except V as exception:
+    logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
     return jsonify('fail')
   elif sub=='celery_test':
@@ -222,117 +222,117 @@ def ajax(sub):
      import framework
      framework.exit_code=1
      socketio.stop()
-    except H as e:
-     logger.error('Exception:%s',e)
+    except V as exception:
+     logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc())
     return jsonify()
-   except H as e:
-    logger.error('Exception:%s',e)
+   except V as exception:
+    logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
   elif sub=='command_run':
    try:
     command_text=request.form['command_text']
     ret=SystemLogic.command_run(command_text)
     return jsonify(ret)
-   except H as e:
-    logger.error('Exception:%s',e)
+   except V as exception:
+    logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
   elif sub=='get_link_list':
    try:
     link_json=SystemLogic.get_setting_value('link_json')
     j=json.loads(link_json)
     return jsonify(j)
-   except H as e:
-    logger.error('Exception:%s',e)
+   except V as exception:
+    logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
   elif sub=='link_save':
    try:
     link_data_str=request.form['link_data']
     ret=SystemLogic.link_save(link_data_str)
     return jsonify(ret)
-   except H as e:
-    logger.error('Exception:%s',e)
+   except V as exception:
+    logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
   elif sub=='plugin_list':
    try:
     return jsonify(LogicPlugin.get_plugin_list())
-   except H as e:
-    logger.error('Exception:%s',e)
+   except V as exception:
+    logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
   elif sub=='plugin_install':
    try:
     plugin_git=request.form['plugin_git']
     return jsonify(LogicPlugin.plugin_install_by_api(plugin_git))
-   except H as e:
-    logger.error('Exception:%s',e)
+   except V as exception:
+    logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
   elif sub=='plugin_uninstall':
    try:
     plugin_name=request.form['plugin_name']
     return jsonify(LogicPlugin.plugin_uninstall(plugin_name))
-   except H as e:
-    logger.error('Exception:%s',e)
+   except V as exception:
+    logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
   elif sub=='recent_version':
    ret=SystemLogic.get_recent_version()
    ret={'ret':ret,'version':SystemLogic.recent_version}
    return jsonify(ret)
- except H as e:
-  logger.error('Exception:%s',e)
+ except V as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @socketio.on('connect',namespace='/%s'%package_name)
 def connect():
  try:
   InfoProcess.instance().connect(request.sid)
- except H as e:
-  logger.error('Exception:%s',e)
+ except V as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @socketio.on('disconnect',namespace='/%s'%package_name)
 def disconnect():
  try:
   InfoProcess.instance().disconnect(request.sid)
- except H as e:
-  logger.error('Exception:%s',e)
+ except V as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @socketio.on('connect',namespace='/system_restart')
 def connect_system_restart():
  try:
-  socketio.emit("on_connect",'restart',namespace='/system_restart',broadcast=P)
- except H as e:
-  logger.error('Exception:%s',e)
+  socketio.emit("on_connect",'restart',namespace='/system_restart',broadcast=k)
+ except V as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @socketio.on('disconnect',namespace='/system_restart')
 def disconnect_system_restart():
  try:
   pass
- except H as e:
-  logger.error('Exception:%s',e)
+ except V as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 class InfoThread(threading.Thread):
  def __init__(self):
-  T(InfoThread,self).__init__()
-  self.stop_flag=O
-  self.daemon=P
+  c(InfoThread,self).__init__()
+  self.stop_flag=C
+  self.daemon=k
  def stop(self):
-  self.stop_flag=P
+  self.stop_flag=k
  def run(self):
   while not self.stop_flag:
    ret={}
    ret['system']=SystemLogic.get_info()
    ret['scheduler']=scheduler.get_job_list_info()
-   socketio.emit("status",ret,namespace='/system',broadcast=P)
+   socketio.emit("status",ret,namespace='/system',broadcast=k)
    time.sleep(1)
 class InfoProcess(SingletonClass):
  sid_list=[]
- thread=t
- @x
+ thread=W
+ @O
  def connect(cls,sid):
   logger.debug('Info connect:%s',InfoProcess.sid_list)
   if not InfoProcess.sid_list:
    InfoProcess.thread=InfoThread()
    InfoProcess.thread.start()
   InfoProcess.sid_list.append(sid)
- @x
+ @O
  def disconnect(cls,sid):
   logger.debug('Info disconnect:%s',InfoProcess.sid_list)
   InfoProcess.sid_list.remove(sid)
@@ -352,8 +352,8 @@ def first_api(sub):
    import system
    system.restart()
    return jsonify({'ret':'success'})
- except H as e:
-  logger.error('Exception:%s',e)
+ except V as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @blueprint.route('/api/<sub>/<sub2>',methods=['GET','POST'])
 @check_api
@@ -365,7 +365,7 @@ def second_api(sub,sub2):
   elif sub=='site':
    from.logic_site import SystemLogicSite
    return SystemLogicSite.process_api(sub2,request)
- except H as e:
-  logger.error('Exception:%s',e)
+ except V as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

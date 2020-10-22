@@ -1,5 +1,5 @@
 import traceback
-n=Exception
+N=Exception
 import json
 from framework import py_urllib,py_urllib2
 from framework.wavve.api import session,get_baseparameter,config,logger
@@ -19,8 +19,8 @@ def live_all_channels(genre='all'):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except n as e:
-  logger.error('Exception:%s',e)
+ except N as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc()) 
 def live_epgs_channels(channel_id,startdatetime,enddatetime):
  try:
@@ -40,8 +40,8 @@ def live_epgs_channels(channel_id,startdatetime,enddatetime):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except n as e:
-  logger.error('Exception:%s',e)
+ except N as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def get_live_quality_list(source_id):
  try:
@@ -54,8 +54,8 @@ def get_live_quality_list(source_id):
   data=json.load(response,encoding='utf8')
   result=data['result']['qualityList'][0]['quality']
   return result
- except n as e:
-  logger.error('Exception:%s',e)
+ except N as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def get_quality_to_pooq(quality):
  if quality=='FHD':

@@ -1,5 +1,5 @@
 import os
-m=Exception
+S=Exception
 import traceback
 import time
 from datetime import datetime
@@ -23,15 +23,15 @@ def plugin_load():
  try:
   logger.debug('plugin_load:%s',package_name)
   Logic.plugin_load()
- except m as e:
-  logger.error('Exception:%s',e)
+ except S as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def plugin_unload():
  try:
   logger.debug('plugin_unload:%s',package_name)
   Logic.plugin_unload()
- except m as e:
-  logger.error('Exception:%s',e)
+ except S as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 last_data={}
 @blueprint.route('/')
@@ -59,8 +59,8 @@ def detail(sub):
     arg['lc_json']="[]"
    tmp=json.loads(arg['lc_json'])
    arg['lc_json']=json.dumps(tmp,indent=4)
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    arg['lc_json']=Logic.db_default['lc_json']
    tmp=json.loads(arg['lc_json'])
@@ -74,8 +74,8 @@ def detail(sub):
     arg['tivimate_json']="[]"
    tmp=json.loads(arg['tivimate_json'])
    arg['tivimate_json']=json.dumps(tmp,indent=4)
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    arg['tivimate_json']=Logic.db_default['tivimate_json']
    tmp=json.loads(arg['tivimate_json'])
@@ -92,58 +92,58 @@ def ajax(sub):
   try:
    ret=Logic.get_plex_server_list(request)
    return jsonify(ret)
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='setting_save':
   try:
    ret=Logic.setting_save(request)
    return jsonify(ret)
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='connect_by_name':
   try:
    ret=Logic.connect_plex_server_by_name(request)
    return jsonify(ret)
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='connect_by_url':
   try:
    ret=Logic.connect_plex_server_by_url(request)
    return jsonify(ret)
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='get_sjva_version':
   try:
    ret=Logic.get_sjva_plugin_version(request)
    return jsonify(ret)
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
  elif sub=='get_sj_daum_version':
   try:
    ret=Logic.get_sj_daum_version(request)
    return jsonify(ret)
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
  elif sub=='analyze_show':
   try:
    ret=Logic.analyze_show(request)
    last_data['analyze_show']=ret
    return jsonify(ret)
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='analyze_show_event':
   try:
    key=request.args.get('key')
    return Response(Logic.analyze_show(key),mimetype="text/event-stream")
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='load_tool':
   try:
@@ -151,15 +151,15 @@ def ajax(sub):
    last_data['plex_server_hash']=Logic.get_server_hash()
    last_data['analyze_show']=Logic.analyze_show_data
    return jsonify(last_data)
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='send_command':
   try:
    ret=Logic.plungin_command(request)
    return jsonify(ret)
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 @blueprint.route('/api/<sub>',methods=['GET','POST'])
 def api(sub):
@@ -167,16 +167,16 @@ def api(sub):
   try:
    from.logic_m3u import LogicM3U
    return LogicM3U.make_m3u()[0]
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='xml' or sub=='xmltv.php':
   try:
    from.logic_m3u import LogicM3U
    data=LogicM3U.make_m3u()[1]
    return Response(data,mimetype='application/xml')
-  except m as e:
-   logger.error('Exception:%s',e)
+  except S as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 @blueprint.route('/get.php')
 def get_php():

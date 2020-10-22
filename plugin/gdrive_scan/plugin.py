@@ -1,6 +1,6 @@
 import os
-l=Exception
-Q=str
+B=Exception
+E=str
 import traceback
 import time
 from datetime import datetime
@@ -25,15 +25,15 @@ def plugin_load():
  try:
   logger.debug('plugin_load:%s',package_name)
   Logic.plugin_load()
- except l as e:
-  logger.error('Exception:%s',e) 
+ except B as exception:
+  logger.error('Exception:%s',exception) 
   logger.error(traceback.format_exc())
 def plugin_unload():
  try:
   logger.debug('plugin_unload:%s',package_name)
   Logic.plugin_unload()
- except l as e:
-  logger.error('Exception:%s',e)
+ except B as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @blueprint.route('/')
 def home():
@@ -45,8 +45,8 @@ def detail(sub):
  if sub=='setting':
   setting_list=db.session.query(ModelSetting).all()
   arg=Util.db_list_to_dict(setting_list)
-  arg['is_include']=Q(scheduler.is_include(package_name))
-  arg['is_running']=Q(scheduler.is_running(package_name))
+  arg['is_include']=E(scheduler.is_include(package_name))
+  arg['is_running']=E(scheduler.is_running(package_name))
   return render_template('%s_setting.html'%package_name,sub=sub,arg=arg)
  elif sub=='list':
   return render_template('%s_list.html'%package_name)
@@ -62,8 +62,8 @@ def ajax(sub):
    ret=Auth.make_token_cli(request.form['account_type'])
    logger.debug(ret)
    return jsonify(ret)
-  except l as e:
-   logger.error('Exception:%s',e)
+  except B as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='gdrive_save':
   try:
@@ -71,16 +71,16 @@ def ajax(sub):
    ret['ret']=Logic.gdrive_save(request)
    ret['gdrive_list']=Logic.gdrive_list()
    return jsonify(ret)
-  except l as e:
-   logger.error('Exception:%s',e)
+  except B as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='load':
   try:
    ret={}
    ret['gdrive_list']=Logic.gdrive_list()
    return jsonify(ret)
-  except l as e:
-   logger.error('Exception:%s',e)
+  except B as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='gdrive_delete':
   try:
@@ -88,8 +88,8 @@ def ajax(sub):
    ret['ret']=Logic.gdrive_delete(request)
    ret['gdrive_list']=Logic.gdrive_list()
    return jsonify(ret)
-  except l as e:
-   logger.error('Exception:%s',e)
+  except B as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='scheduler':
   try:
@@ -100,7 +100,7 @@ def ajax(sub):
    else:
     Logic.scheduler_stop()
    return jsonify(go)
-  except l as e:
+  except B as exception:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    return jsonify('fail')
@@ -108,22 +108,22 @@ def ajax(sub):
   try:
    ret=Logic.filelist(request)
    return jsonify(ret)
-  except l as e:
-   logger.error('Exception:%s',e)
+  except B as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='setting_save':
   try:
    ret=Logic.setting_save(request)
    return jsonify(ret)
-  except l as e:
-   logger.error('Exception:%s',e)
+  except B as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='reset_db':
   try:
    ret=Logic.reset_db()
    return jsonify(ret)
-  except l as e:
-   logger.error('Exception:%s',e)
+  except B as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return jsonify('fail')
 @blueprint.route('/api/<sub>',methods=['GET','POST'])
@@ -135,7 +135,7 @@ def api(sub):
    logger.debug('SCAN COMPLETED:%s %s',filename,db_id)
    Logic.receive_scan_result(db_id,filename)
    return 'ok'
-  except l as e:
-   logger.error('Exception:%s',e)
+  except B as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

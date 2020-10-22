@@ -1,10 +1,10 @@
 import os
-U=object
-W=staticmethod
-l=str
-S=None
-V=Exception
-J=True
+V=object
+U=staticmethod
+u=str
+N=None
+C=Exception
+r=True
 from datetime import datetime
 import traceback
 import logging
@@ -24,20 +24,20 @@ from.logic import Logic
 import plugin
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class LogicServe(U):
+class LogicServe(V):
  serve_process={}
- @W
+ @U
  def serve_list():
   try:
    job_list=db.session.query(ModelRcloneServe).filter_by().all()
    ret=[x.as_dict()for x in job_list]
    for t in ret:
-    t['current_status']=(l(t['id'])in LogicServe.serve_process and LogicServe.serve_process[l(t['id'])]is not S)
+    t['current_status']=(u(t['id'])in LogicServe.serve_process and LogicServe.serve_process[u(t['id'])]is not N)
    return ret
-  except V as e:
-   logger.error('Exception:%s',e)
+  except C as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @W
+ @U
  def serve_save(req):
   try:
    serve_id=req.form['id']
@@ -55,11 +55,11 @@ class LogicServe(U):
    db.session.add(item)
    db.session.commit()
    return 'success'
-  except V as e:
-   logger.error('Exception:%s',e)
+  except C as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @W
+ @U
  def serve_execute(serve_id):
   try:
    item=db.session.query(ModelRcloneServe).filter_by(id=serve_id).with_for_update().first()
@@ -80,25 +80,25 @@ class LogicServe(U):
    process=subprocess.Popen(command)
    LogicServe.serve_process[serve_id]=process
    return 'success'
-  except V as e:
-   logger.error('Exception:%s',e)
+  except C as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @W
+ @U
  def serve_stop(req):
   serve_id=req.form['id']
   logger.debug('serve stop:%s'%serve_id)
   return LogicServe.serve_kill(serve_id)
- @W
+ @U
  def serve_kill(serve_id):
   try:
    if serve_id in LogicServe.serve_process:
     process=LogicServe.serve_process[serve_id]
     logger.debug('process:%s,%s',process,process.poll())
-    if process is not S and process.poll()is S:
+    if process is not N and process.poll()is N:
      import psutil
      p=psutil.Process(process.pid)
-     for proc in p.children(recursive=J):
+     for proc in p.children(recursive=r):
       proc.kill()
      p.kill()
      return 'success'
@@ -106,13 +106,13 @@ class LogicServe(U):
      return 'already_stop'
    else:
     return 'not_running'
-  except V as e:
-   logger.error('Exception:%s',e)
+  except C as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
   finally:
-   LogicServe.serve_process[serve_id]=S
- @W
+   LogicServe.serve_process[serve_id]=N
+ @U
  def serve_remove(serve_id):
   try:
    logger.debug('remove_job id:%s',serve_id)
@@ -120,8 +120,8 @@ class LogicServe(U):
    db.session.delete(job)
    db.session.commit()
    return 'success'
-  except V as e:
-   logger.error('Exception:%s',e)
+  except C as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
    return 'fail'
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

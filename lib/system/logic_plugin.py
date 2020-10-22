@@ -1,12 +1,12 @@
 import os
-n=object
-O=False
-X=staticmethod
-C=getattr
-H=Exception
-t=None
-P=True
-D=str
+f=object
+C=False
+v=staticmethod
+q=getattr
+V=Exception
+W=None
+k=True
+A=str
 import traceback
 import logging
 import json
@@ -23,13 +23,13 @@ from.model import ModelSetting
 import system
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class LogicPlugin(n):
- plugin_loading=O
+class LogicPlugin(f):
+ plugin_loading=C
  """
     custom_plugin_list = [{'name' : 'torrent_info', 'plugin_name' : 'torrent_info_sjva', 'json_url' : 'https://raw.githubusercontent.com/wiserain/torrent_info_sjva/master/info.json', 'git' : 'https://github.com/wiserain/torrent_info_sjva.git', }, {'name' : 'hdhomerun', 'plugin_name' : 'hdhomerun_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/hdhomerun_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/hdhomerun_sjva.git', }, {'name' : 'nsearch', 'plugin_name' : 'nsearch_sjva', 'json_url' : 'https://raw.githubusercontent.com/starbuck15/nsearch_sjva/master/info.json', 'git' : 'https://github.com/starbuck15/nsearch_sjva.git', }, {'name' : 'tving', 'plugin_name' : 'tving_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/tving_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/tving_sjva.git', }, {'name' : 'wavve', 'plugin_name' : 'wavve_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/wavve_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/wavve_sjva.git', }, {'name' : 'ani24', 'plugin_name' : 'ani24_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/ani24_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/ani24_sjva.git', }, {'name' : 'telegram_receiver', 'plugin_name' : 'telegram_receiver_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/telegram_receiver_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/telegram_receiver_sjva.git', }, {'name' : 'launcher_guacamole', 'plugin_name' : 'launcher_guacamole_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_guacamole_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_guacamole_sjva.git', 'running_type' : ['docker'] }, {'name' : 'launcher_greentunnel', 'plugin_name' : 'launcher_greentunnel_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_greentunnel_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_greentunnel_sjva.git', 'running_type' : ['docker'] }, {'name' : 'launcher_torrssen2', 'plugin_name' : 'launcher_torrssen2_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_torrssen2_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_torrssen2_sjva.git', }, {'name' : 'launcher_gateone', 'plugin_name' : 'launcher_gateone_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_gateone_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_gateone_sjva.git', 'platform' : ['Linux', 'Darwin'] }, {'name' : 'launcher_tautulli', 'plugin_name' : 'launcher_tautulli_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_tautulli_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_tautulli_sjva.git' }, {'name' : 'launcher_calibre_web', 'plugin_name' : 'launcher_calibre_web_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_calibre_web_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_calibre_web_sjva.git' }, {'name' : 'launcher_xteve', 'plugin_name' : 'launcher_xteve_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_xteve_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_xteve_sjva.git' }, {'name' : 'manamoa', 'plugin_name' : 'manamoa_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/manamoa_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/manamoa_sjva.git' }, {'name' : 'vnStat', 'plugin_name' : 'vnStat_sjva', 'json_url' : 'https://raw.githubusercontent.com/wiserain/vnStat_sjva/master/info.json', 'git' : 'https://github.com/wiserain/vnStat_sjva.git' }, {'name' : 'Synoindex', 'plugin_name' : 'synoindex_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/synoindex_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/synoindex_sjva.git' } ]
     """ 
  custom_plugin_list=[]
- @X
+ @v
  def loading():
   try:
    custom_path=os.path.join(path_data,'custom')
@@ -41,13 +41,13 @@ class LogicPlugin(n):
      p['name']=name
      p['plugin_name']=name
      mod=__import__('%s'%(p['plugin_name']),fromlist=[])
-     p['local_info']=C(mod,'plugin_info')
+     p['local_info']=q(mod,'plugin_info')
      p['status']='latest'
      LogicPlugin.custom_plugin_list.append(p)
-    except H as e:
-     logger.error('NO Exception:%s',e)
+    except V as exception:
+     logger.error('NO Exception:%s',exception)
      logger.debug('plunin not import : %s',p['plugin_name'])
-     p['local_info']=t
+     p['local_info']=W
      p['status']='no' 
    """
             for p in LogicPlugin.custom_plugin_list:
@@ -62,38 +62,38 @@ class LogicPlugin(n):
                         p['status'] = 'latest'
                     else:
                         p['status'] = 'no_latest'
-                except Exception as e: 
-                    logger.error('NO Exception:%s', e)
+                except Exception as exception: 
+                    logger.error('NO Exception:%s', exception)
                     #logger.error(traceback.format_exc())
                     logger.debug('plunin not import : %s', p['plugin_name'])
                     p['local_info'] = None
                     p['status'] = 'no'
             #logger.debug(LogicPlugin.custom_plugin_list)
             """   
-  except H as e:
-   logger.error('Exception:%s',e)
+  except V as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @v
  def get_plugin_list():
   try:
    if not LogicPlugin.plugin_loading:
     LogicPlugin.loading()
-    LogicPlugin.plugin_loading=P
+    LogicPlugin.plugin_loading=k
    return LogicPlugin.custom_plugin_list
-  except H as e:
-   logger.error('Exception:%s',e)
+  except V as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @v
  def get_plugin_info(plugin_name):
   try:
    lists=LogicPlugin.get_plugin_list()
    for l in lists:
     if l['plugin_name']==plugin_name:
      return l
-  except H as e:
-   logger.error('Exception:%s',e)
+  except V as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @v
  def plugin_install(plugin_name):
   logger.debug('plugin_name : %s',plugin_name)
   try:
@@ -105,24 +105,24 @@ class LogicPlugin(n):
    if 'running_type' in plugin_info:
     if app.config['config']['running_type']not in plugin_info['running_type']:
      return 'not_support_running_type'
-   git_clone_flag=P
+   git_clone_flag=k
    if git_clone_flag:
     command=['git','-C',custom_path,'clone',plugin_info['git'],'--depth','1']
     ret=Util.execute_command(command)
    return 'success'
-  except H as e:
-   logger.error('Exception:%s',e)
+  except V as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @v
  def plugin_uninstall(plugin_name):
   logger.debug('plugin_name : %s',plugin_name)
   try:
    mod=__import__('%s'%(plugin_name),fromlist=[])
-   mod_plugin_unload=C(mod,'plugin_unload')
+   mod_plugin_unload=q(mod,'plugin_unload')
    mod_plugin_unload()
    time.sleep(1)
-  except H as e:
-   logger.error('Exception:%s',e)
+  except V as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
   try:
    custom_path=os.path.join(path_data,'custom')
@@ -131,19 +131,19 @@ class LogicPlugin(n):
     try:
      import framework.common.celery as celery_task
      celery_task.rmtree(plugin_path)
-    except H as e:
+    except V as exception:
      try:
       logger.debug('plugin_uninstall')
       os.system('rmdir /S /Q "%s"'%plugin_path)
      except:
-      logger.error('Exception:%s',e)
+      logger.error('Exception:%s',exception)
       logger.error(traceback.format_exc())
    if os.path.exists(plugin_path):
     return 'fail'
    else:
     return 'success'
-  except H as e:
-   logger.error('Exception:%s',e)
+  except V as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  """
     @staticmethod
@@ -159,11 +159,11 @@ class LogicPlugin(n):
                         flag = True
                         LogicPlugin.plungin_install(p['plugin_name'], True)
             return flag
-        except Exception as e: 
-            logger.error('Exception:%s', e)
+        except Exception as exception: 
+            logger.error('Exception:%s', exception)
             logger.error(traceback.format_exc())
     """ 
- @X
+ @v
  def custom_plugin_update():
   try:
    custom_path=os.path.join(path_data,'custom')
@@ -180,10 +180,10 @@ class LogicPlugin(n):
     command=['git','-C',plugin_path,'pull']
     ret=Util.execute_command(command)
     logger.debug("%s\n%s",plugin_path,ret)
-  except H as e:
-   logger.error('Exception:%s',e)
+  except V as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @v
  def plugin_install_by_api(plugin_git):
   logger.debug('plugin_name : %s',plugin_git)
   ret={}
@@ -200,22 +200,22 @@ class LogicPlugin(n):
      try:
       info_url=plugin_git.replace('github.com','raw.githubusercontent.com')+'/%s/info.json'%tag
       plugin_info=requests.get(info_url).json()
-      if plugin_info is not t:
+      if plugin_info is not W:
        break
      except:
       pass
     logger.debug(plugin_info)
-    flag=P
+    flag=k
     if 'platform' in plugin_info:
      if platform.system()not in plugin_info['platform']:
       ret['ret']='not_support_os'
       ret['log']='설치 가능한 OS가 아닙니다.'
-      flag=O
+      flag=C
     elif 'running_type' in plugin_info:
      if app.config['config']['running_type']not in plugin_info['running_type']:
       ret['ret']='not_support_running_type'
       ret['log']='설치 가능한 실행타입이 아닙니다.'
-      flag=O
+      flag=C
     if flag:
      command=['git','-C',custom_path,'clone',plugin_git+'.git','--depth','1']
      log=Util.execute_command(command)
@@ -223,10 +223,10 @@ class LogicPlugin(n):
      ret['log']=[u'정상적으로 설치하였습니다. 재시작시 적용됩니다.']
      ret['log']+=log
      ret['log']='<br>'.join(ret['log'])
-  except H as e:
-   logger.error('Exception:%s',e)
+  except V as exception:
+   logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    ret['ret']='exception'
-   ret['log']=D(e)
+   ret['log']=A(exception)
   return ret
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,7 +1,7 @@
 import os
-w=True
-Q=False
-d=Exception
+p=True
+i=False
+Y=Exception
 import sys
 from datetime import datetime,timedelta
 import json
@@ -21,14 +21,14 @@ def login():
   elif not USERS[username].can_login(password):
    return jsonify('wrong_password')
   else:
-   USERS[username].authenticated=w
+   USERS[username].authenticated=p
    login_user(USERS[username],remember=remember)
    return jsonify('redirect')
  else:
   if db.session.query(system.ModelSetting).filter_by(key='use_login').first().value=='False':
    username=db.session.query(system.ModelSetting).filter_by(key='id').first().value
-   USERS[username].authenticated=w
-   login_user(USERS[username],remember=w)
+   USERS[username].authenticated=p
+   login_user(USERS[username],remember=p)
    return redirect(request.args.get("next"))
   return render_template('login.html',next=request.args.get("next"))
 @app.errorhandler(401)
@@ -41,8 +41,8 @@ def user_loader(user_id):
 @login_required
 def logout():
  user=current_user
- user.authenticated=Q
- json_res={'ok':w,'msg':'user <%s> logout'%user.user_id}
+ user.authenticated=i
+ json_res={'ok':p,'msg':'user <%s> logout'%user.user_id}
  logout_user()
  return redirect('/login')
 @app.route("/")
@@ -67,7 +67,7 @@ def file2(path):
 @login_required
 def download_file(path):
  logger.debug('download_file :%s',path)
- return send_from_directory('',path,as_attachment=w)
+ return send_from_directory('',path,as_attachment=p)
 @app.route("/hls")
 def hls_play():
  url=request.args.get('url')
@@ -103,8 +103,8 @@ def upload():
    logger.debug('upload : %s',tmp)
    f.save(os.path.join(path_data,'upload',tmp))
    return jsonify('success')
- except d as e:
-  logger.error('Exception:%s',e)
+ except Y as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
   return jsonify('fail')
 @app.route('/robots.txt')
@@ -115,8 +115,8 @@ def rc():
  try:
   logger.debug('XXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
   logger.debug(path)
- except d as e:
-  logger.error('Exception:%s',e)
+ except Y as exception:
+  logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
   return jsonify('fail')
 @app.route('/get_ip')
