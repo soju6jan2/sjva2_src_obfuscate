@@ -1,5 +1,5 @@
 import traceback
-x=Exception
+A=Exception
 import requests
 from framework import logger
 def get_json_with_auth_session(referer,url,data):
@@ -14,7 +14,7 @@ def get_json_with_auth_session(referer,url,data):
   headers['Cookie']='ci_session=%s; USERCONTRY=kr; LANGU=kr;'%ci_session
   res=session.post(url,headers=headers,data=data)
   return res.json(),headers
- except x as exception:
+ except A as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
