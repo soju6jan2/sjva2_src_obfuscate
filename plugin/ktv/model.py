@@ -1,11 +1,11 @@
 import os
-P=True
-i=repr
-h=getattr
-o=None
-p=staticmethod
-q=int
-I=Exception
+I=True
+x=repr
+w=getattr
+v=None
+R=staticmethod
+Q=int
+q=Exception
 import traceback
 import datetime
 from framework.logger import get_logger
@@ -20,7 +20,7 @@ class ModelKtvLibrary(db.Model):
  __tablename__='%s_library'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=P)
+ id=db.Column(db.Integer,primary_key=I)
  library_type=db.Column(db.Integer)
  library_path=db.Column(db.String)
  rclone_path=db.Column(db.String)
@@ -28,14 +28,14 @@ class ModelKtvLibrary(db.Model):
  replace_for_plex_target=db.Column(db.String)
  index=db.Column(db.Integer)
  def __repr__(self):
-  return i(self.as_dict())
+  return x(self.as_dict())
  def as_dict(self):
-  return{x.name:h(self,x.name)for x in self.__table__.columns}
+  return{x.name:w(self,x.name)for x in self.__table__.columns}
 class ModelKtvFile(db.Model):
  __tablename__='%s_file'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=P)
+ id=db.Column(db.Integer,primary_key=I)
  original_filename=db.Column(db.String)
  filename=db.Column(db.String)
  created_time=db.Column(db.DateTime)
@@ -57,28 +57,28 @@ class ModelKtvFile(db.Model):
  plex_part=db.Column(db.String)
  log=db.Column(db.String)
  def __repr__(self):
-  return i(self.as_dict())
+  return x(self.as_dict())
  def as_dict(self):
-  ret={x.name:h(self,x.name)for x in self.__table__.columns}
-  ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')if self.created_time is not o else ''
-  ret['send_command_time']=self.send_command_time.strftime('%m-%d %H:%M:%S')if self.send_command_time is not o else ''
-  ret['scan_time']=self.scan_time.strftime('%m-%d %H:%M:%S')if self.scan_time is not o else ''
+  ret={x.name:w(self,x.name)for x in self.__table__.columns}
+  ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')if self.created_time is not v else ''
+  ret['send_command_time']=self.send_command_time.strftime('%m-%d %H:%M:%S')if self.send_command_time is not v else ''
+  ret['scan_time']=self.scan_time.strftime('%m-%d %H:%M:%S')if self.scan_time is not v else ''
   return ret
- @p
+ @R
  def create(entity):
   try:
    f=ModelKtvFile()
    f.original_filename=entity.original_filename
    f.filename=entity.filename
    f.created_time=entity.download_time
-   f.move_type=q(entity.move_type)
+   f.move_type=Q(entity.move_type)
    f.match_folder_name=entity.match_folder_name
    f.move_abspath_local=entity.move_abspath_local
    f.move_abspath_sync=entity.move_abspath_sync
    f.move_abspath_cloud=entity.move_abspath_cloud
    if entity.send_command_time!='':
     f.send_command_time=entity.send_command_time
-   f.scan_status=q(entity.scan_status)
+   f.scan_status=Q(entity.scan_status)
    f.scan_abspath=entity.scan_abspath
    f.plex_section_id=entity.plex_section_id
    f.plex_show_id=entity.plex_show_id
@@ -88,30 +88,30 @@ class ModelKtvFile(db.Model):
    f.plex_abspath=entity.plex_abspath
    f.log=entity.log
    return f
-  except I as e:
+  except q as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
- @p
+ @R
  def get_library_check_list():
   try:
    query=db.session.query(ModelKtvFile).filter_by(scan_status=1)
-   query=query.filter(or_(ModelKtvFile.send_command_time.is_(o),ModelKtvFile.send_command_time<datetime.datetime.now()+datetime.timedelta(hours=-1)))
+   query=query.filter(or_(ModelKtvFile.send_command_time.is_(v),ModelKtvFile.send_command_time<datetime.datetime.now()+datetime.timedelta(hours=-1)))
    query=query.filter(ModelKtvFile.created_time>datetime.datetime.now()+datetime.timedelta(hours=-24))
    ret=query.all()
    return ret
-  except I as e:
+  except q as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
- @p
+ @R
  def get_image_empty_list():
   try:
    query=db.session.query(ModelKtvFile).filter_by(scan_status=3)
-   query=query.filter(ModelKtvFile.plex_image.is_(o))
+   query=query.filter(ModelKtvFile.plex_image.is_(v))
    query=query.filter(ModelKtvFile.plex_show_id!=-1)
    query=query.filter(ModelKtvFile.created_time>datetime.datetime.now()+datetime.timedelta(hours=-24))
    ret=query.all()
    return ret
-  except I as e:
+  except q as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,13 +1,13 @@
 import os
-i=None
-D=Exception
-e=len
-K=True
-t=False
-U=ord
-E=str
-N=range
-l=reversed
+U=None
+u=Exception
+S=len
+g=True
+O=False
+W=ord
+J=str
+V=range
+q=reversed
 import traceback
 import sys
 import requests
@@ -20,7 +20,7 @@ from framework.util import Util
 logger=get_logger('tving_api')
 session=requests.session()
 headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36','Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8','Accept-Language':'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7','Referer':'',}
-config={'token':i,'param':"&free=all&lastFrequency=y&order=broadDate",'program_param':'&free=all&order=frequencyDesc&programCode=%s','default_param':'&screenCode=CSSD0100&networkCode=CSND0900&osCode=CSOD0900&teleCode=CSCD0900&apiKey=1e7952d0917d6aab1f0293a063697610'}
+config={'token':U,'param':"&free=all&lastFrequency=y&order=broadDate",'program_param':'&free=all&order=frequencyDesc&programCode=%s','default_param':'&screenCode=CSSD0100&networkCode=CSND0900&osCode=CSOD0900&teleCode=CSCD0900&apiKey=1e7952d0917d6aab1f0293a063697610'}
 def do_login(user_id,user_pw,login_type):
  try:
   url='https://user.tving.com/user/doLogin.tving'
@@ -36,25 +36,25 @@ def do_login(user_id,user_pw,login_type):
    if c.startswith('_tving_token'):
     ret=c.split(';')[0]
     return ret
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
-def get_vod_list(p=i,page=1):
+def get_vod_list(p=U,page=1):
  try:
   url='http://api.tving.com/v1/media/episodes?pageNo=%s&pageSize=18&adult=all&guest=all&scope=all&personal=N'%page
-  if p is not i:
+  if p is not U:
    url+=p
   else:
    url+=config['param']
   url+=config['default_param']
   res=requests.get(url)
   return res.json()
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
-def get_episode_json_default(episode_code,quality,token,proxy=i):
+def get_episode_json_default(episode_code,quality,token,proxy=U):
  ts='%d'%time.time()
- if token is i:
+ if token is U:
   token=config['token']
  try:
   if quality=='stream70':
@@ -62,8 +62,8 @@ def get_episode_json_default(episode_code,quality,token,proxy=i):
    url='http://api.tving.com/v2/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH'%(tmp_param,ts,episode_code,quality) 
   else:
    url='http://api.tving.com/v2/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH'%(config['default_param'],ts,episode_code,quality)
-  proxies=i
-  if proxy is not i:
+  proxies=U
+  if proxy is not U:
    proxies={"https":proxy,'http':proxy}
   headers['Cookie']=token
   r=session.get(url,headers=headers,proxies=proxies)
@@ -81,25 +81,25 @@ def get_episode_json_default(episode_code,quality,token,proxy=i):
    lines=r.text.split('\n')
    i=-1
    last=''
-   while e(last)==0:
+   while S(last)==0:
     last=lines[i].strip()
     i-=1
    decrypted_url='%s%s'%(tmps[0],last)
   return data,decrypted_url
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
-def get_episode_json_default_live(episode_code,quality,token,proxy=i,inc_quality=K):
+def get_episode_json_default_live(episode_code,quality,token,proxy=U,inc_quality=g):
  ts='%d'%time.time()
- if token is i:
+ if token is U:
   token=config['token']
  try:
   if inc_quality:
    url='http://api.tving.com/v2/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH'%(config['default_param'],ts,episode_code,quality)
   else:
    url='http://api.tving.com/v2/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&callingFrom=FLASH'%(config['default_param'],ts,episode_code)
-  proxies=i
-  if proxy is not i:
+  proxies=U
+  if proxy is not U:
    proxies={"https":proxy,'http':proxy}
   headers['Cookie']=token
   r=session.get(url,headers=headers,proxies=proxies)
@@ -109,12 +109,12 @@ def get_episode_json_default_live(episode_code,quality,token,proxy=i,inc_quality
   if decrypted_url.find('.mp4')!=-1 and decrypted_url.find('/VOD/')!=-1:
    return data,decrypted_url
   if decrypted_url.find('Policy=')==-1:
-   data,ret=get_episode_json_default_live(episode_code,quality,token,proxy=proxy,inc_quality=t)
+   data,ret=get_episode_json_default_live(episode_code,quality,token,proxy=proxy,inc_quality=O)
    if quality=='stream50' and ret.find('live2000.smil'):
     ret=ret.replace('live2000.smil','live5000.smil')
     return data,ret
   return data,decrypted_url
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 """
@@ -142,13 +142,13 @@ def get_episode_json_proxy(episode_code, quality, proxy_url, token):
         logger.error('Exception:%s', e)
         logger.error(traceback.format_exc())
 """
-def get_episode_json(episode_code,quality,token,proxy=i,is_live=t):
+def get_episode_json(episode_code,quality,token,proxy=U,is_live=O):
  try:
   if is_live:
    return get_episode_json_default_live(episode_code,quality,token=token,proxy=proxy)
   else:
    return get_episode_json_default(episode_code,quality,token=token,proxy=proxy)
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def decrypt(code,key,value):
@@ -160,12 +160,12 @@ def decrypt(code,key,value):
   des3=DES3.new(key,DES3.MODE_ECB)
   ret=des3.decrypt(data)
   if app.config['config']['is_py2']:
-   pad_len=U(ret[-1])
+   pad_len=W(ret[-1])
   else:
    pad_len=ret[-1]
   ret=ret[:-pad_len]
   return ret.decode()
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def get_filename(episode_data):
@@ -173,25 +173,25 @@ def get_filename(episode_data):
   title=episode_data["body"]["content"]["program_name"]
   title=title.replace("<","").replace(">","").replace("\\","").replace("/","").replace(":","").replace("*","").replace("\"","").replace("|","").replace("?","").replace("  "," ").strip()
   episodeno=episode_data["body"]["content"]["frequency"]
-  airdate=E(episode_data["body"]["content"]["info"]["episode"]["broadcast_date"])[2:]
-  currentQuality=i
-  if episode_data["body"]["stream"]["quality"]is i:
+  airdate=J(episode_data["body"]["content"]["info"]["episode"]["broadcast_date"])[2:]
+  currentQuality=U
+  if episode_data["body"]["stream"]["quality"]is U:
    currentQuality="stream40"
   else:
-   qualityCount=e(episode_data["body"]["stream"]["quality"])
-   for i in N(qualityCount):
+   qualityCount=S(episode_data["body"]["stream"]["quality"])
+   for i in V(qualityCount):
     if episode_data["body"]["stream"]["quality"][i]["selected"]=="Y":
      currentQuality=episode_data["body"]["stream"]["quality"][i]["code"]
      break
-  if currentQuality is i:
+  if currentQuality is U:
    return
   qualityRes=get_quality_to_res(currentQuality)
-  episodeno_str=E(episodeno)
+  episodeno_str=J(episodeno)
   if episodeno<10:
    episodeno_str='0'+episodeno_str
   ret='%s.E%s.%s.%s-ST.mp4'%(title,episodeno_str,airdate,qualityRes)
   return ret
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def get_quality_to_tving(quality):
@@ -226,7 +226,7 @@ def get_live_list(list_type=0,order='rating'):
  ret=[]
  for param in params:
   page=1
-  while K:
+  while g:
    hasMore,data=get_live_list2(param,page,order=order)
    for i in data:
     ret.append(i)
@@ -239,7 +239,7 @@ def get_live_list2(param,page,order='rating'):
  try:
   result=[]
   url='http://api.tving.com/v1/media/lives?pageNo=%s&pageSize=20&order=%s&adult=all&free=all&guest=all&scope=all'%(page,order)
-  if param is not i:
+  if param is not U:
    url+=param
   url+=config['default_param'] 
   res=requests.get(url)
@@ -249,29 +249,29 @@ def get_live_list2(param,page,order='rating'):
     if item["live_code"]in['C07381','C05661','C44441','C04601','C07382']:
      continue
     info={}
-    if K:
+    if g:
      info['id']=item["live_code"]
      info['title']=item['schedule']['channel']['name']['ko']
      info['episode_title']=' '
      info['img']='http://image.tving.com/upload/cms/caic/CAIC1900/%s.png'%item["live_code"]
-     if item['schedule']['episode']is not i:
+     if item['schedule']['episode']is not U:
       info['episode_title']=item['schedule']['episode']['name']['ko']
-      if info['title'].startswith('CH.')and e(item['schedule']['episode']['image'])>0:
+      if info['title'].startswith('CH.')and S(item['schedule']['episode']['image'])>0:
        info['img']='http://image.tving.com'+item['schedule']['episode']['image'][0]['url']
      info['free']=(item['schedule']['broadcast_url'][0]['broad_url1'].find('drm')==-1)
      info['summary']=info['episode_title']
     result.append(info)
-   except D as e:
+   except u as e:
     logger.error('Exception:%s',e)
     logger.error(traceback.format_exc())
   has_more=data["body"]["has_more"]
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
  return has_more,result
-def get_movie_json(code,deviceid,token,proxy=i):
+def get_movie_json(code,deviceid,token,proxy=U):
  ts='%d'%time.time()
- if token is i:
+ if token is U:
   token=config['token']
  try:
   quality='stream70'
@@ -281,8 +281,8 @@ def get_movie_json(code,deviceid,token,proxy=i):
   else:
    url='http://api.tving.com/v1/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH'%(config['default_param'],ts,code,quality)
   url+='&deviceId=%s'%deviceid
-  proxies=i
-  if proxy is not i:
+  proxies=U
+  if proxy is not U:
    proxies={"https":proxy,'http':proxy}
   headers['Cookie']=token
   r=session.get(url,headers=headers,proxies=proxies)
@@ -295,43 +295,43 @@ def get_movie_json(code,deviceid,token,proxy=i):
     if decrypted_url.find('5000k_PC.mp4')!=-1:
      data['ret']['ret']='ok'
      data['ret']['decrypted_url']=decrypted_url
-     data['ret']['filename']=Util.change_text_for_use_filename('%s.%s.%s.2160p-ST.mp4'%(data['body']['content']['info']['movie']['name']['ko'],E(data['body']['content']['info']['movie']['release_date'])[:4],data['body']['content']['info']['movie']['name']['en']))
+     data['ret']['filename']=Util.change_text_for_use_filename('%s.%s.%s.2160p-ST.mp4'%(data['body']['content']['info']['movie']['name']['ko'],J(data['body']['content']['info']['movie']['release_date'])[:4],data['body']['content']['info']['movie']['name']['en']))
     else:
      data['ret']['ret']='no_4k'
      data['ret']['decrypted_url']=decrypted_url
   else:
    data['ret']['ret']='need_pay'
   return data
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def get_prefer_url(url):
  try:
   response=session.get(url,headers=config['headers'])
   data=response.text.strip()
-  last_url=i
-  for t in l(data.split('\n')):
+  last_url=U
+  for t in q(data.split('\n')):
    if t.strip().find('chunklist.m3u8')!=-1:
     last_url=t
     break
-  if last_url is not i and last_url!='':
+  if last_url is not U and last_url!='':
    last_url=url.split('chunklist')[0]+last_url
    return last_url
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
  return url
-def get_vod_list2(param=i,page=1,genre='all'):
+def get_vod_list2(param=U,page=1,genre='all'):
  try:
   url='https://api.tving.com/v2/media/episodes?pageNo=%s&pageSize=24&order=new&adult=all&free=all&guest=all&scope=all&lastFrequency=y&personal=N'%(page)
   if genre!='all':
    url+='&categoryCode=%s'%genre
-  if param is not i:
+  if param is not U:
    url+=param
   url+=config['default_param']
   res=requests.get(url)
   return res.json()
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def get_program_programid(programid):
@@ -340,7 +340,7 @@ def get_program_programid(programid):
   url+=config['default_param']
   res=requests.get(url)
   return res.json()
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def get_frequency_programid(programid,page=1):
@@ -349,7 +349,7 @@ def get_frequency_programid(programid,page=1):
   url+=config['default_param']
   res=requests.get(url)
   return res.json()
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def get_movies(page=1,category='all'):
@@ -360,7 +360,7 @@ def get_movies(page=1,category='all'):
   url+=config['default_param']
   res=requests.get(url)
   return res.json()
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 """
@@ -370,15 +370,15 @@ https://api.tving.com/v2/media/movies?callback=jQuery112307642887056924332_16030
 https://api.tving.com/v2/media/movies?callback=jQuery112307642887056924332_1603081489114&pageNo=1&pageSize=24&order=new&free=all&adult=all&guest=all&scope=all&productPackageCode=338723&personal=N&diversityYn=N&screenCode=CSSD0100&networkCode=CSND0900&osCode=CSOD0900&teleCode=CSCD0900&apiKey=1e7952d0917d6aab1f0293a063697610&_=1603081489123
 &multiCategoryCode=MG100%2CMG190%2CMG230%2CMG270%2CMG290  %2C = ,
 """
-def get_movie_json2(code,deviceid,token,proxy=i,quality='stream50'):
+def get_movie_json2(code,deviceid,token,proxy=U,quality='stream50'):
  ts='%d'%time.time()
- if token is i:
+ if token is U:
   token=config['token']
  try:
   url='http://api.tving.com/v1/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH'%(config['default_param'],ts,code,quality)
   url+='&deviceId=%s'%deviceid
-  proxies=i
-  if proxy is not i:
+  proxies=U
+  if proxy is not U:
    proxies={"https":proxy,'http':proxy}
   headers['Cookie']=token
   r=session.get(url,headers=headers,proxies=proxies)
@@ -386,7 +386,7 @@ def get_movie_json2(code,deviceid,token,proxy=i,quality='stream50'):
   if 'broad_url' in data['body']['stream']['broadcast']:
    data['body']['decrypted_url']=decrypt(code,ts,data['body']['stream']['broadcast']['broad_url'])
   return data
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def get_schedules(code,date,start_time,end_time):
@@ -395,7 +395,7 @@ def get_schedules(code,date,start_time,end_time):
   url+=config['default_param']
   res=requests.get(url)
   return res.json()
- except D as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

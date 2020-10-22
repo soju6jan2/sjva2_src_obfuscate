@@ -1,7 +1,7 @@
 import os
-X=True
-i=False
-w=Exception
+U=True
+s=False
+u=Exception
 import sys
 from datetime import datetime,timedelta
 import json
@@ -21,14 +21,14 @@ def login():
   elif not USERS[username].can_login(password):
    return jsonify('wrong_password')
   else:
-   USERS[username].authenticated=X
+   USERS[username].authenticated=U
    login_user(USERS[username],remember=remember)
    return jsonify('redirect')
  else:
   if db.session.query(system.ModelSetting).filter_by(key='use_login').first().value=='False':
    username=db.session.query(system.ModelSetting).filter_by(key='id').first().value
-   USERS[username].authenticated=X
-   login_user(USERS[username],remember=X)
+   USERS[username].authenticated=U
+   login_user(USERS[username],remember=U)
    return redirect(request.args.get("next"))
   return render_template('login.html',next=request.args.get("next"))
 @app.errorhandler(401)
@@ -41,8 +41,8 @@ def user_loader(user_id):
 @login_required
 def logout():
  user=current_user
- user.authenticated=i
- json_res={'ok':X,'msg':'user <%s> logout'%user.user_id}
+ user.authenticated=s
+ json_res={'ok':U,'msg':'user <%s> logout'%user.user_id}
  logout_user()
  return redirect('/login')
 @app.route("/")
@@ -67,7 +67,7 @@ def file2(path):
 @login_required
 def download_file(path):
  logger.debug('download_file :%s',path)
- return send_from_directory('',path,as_attachment=X)
+ return send_from_directory('',path,as_attachment=U)
 @app.route("/hls")
 def hls_play():
  url=request.args.get('url')
@@ -103,7 +103,7 @@ def upload():
    logger.debug('upload : %s',tmp)
    f.save(os.path.join(path_data,'upload',tmp))
    return jsonify('success')
- except w as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
   return jsonify('fail')
@@ -115,7 +115,7 @@ def rc():
  try:
   logger.debug('XXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
   logger.debug(path)
- except w as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
   return jsonify('fail')

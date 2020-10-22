@@ -1,6 +1,6 @@
 import os
-w=Exception
-d=file
+u=Exception
+K=file
 import traceback
 import requests
 import json
@@ -32,18 +32,18 @@ def manual(sub):
       res=requests.get(r['url'])
       r['content']=Markup(markdown.markdown(res.text))
    return jsonify(ret)
-  except w as e:
+  except u as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
 def fileread(filename):
  try:
   import io
   filename=os.path.join(path_app_root,'manual',filename)
-  d=io.open(filename,'r',encoding="utf8") 
-  text_str=d.read() 
-  d.close() 
+  K=io.open(filename,'r',encoding="utf8") 
+  text_str=K.read() 
+  K.close() 
   return text_str
- except w as e:
+ except u as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

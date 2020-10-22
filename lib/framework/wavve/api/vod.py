@@ -1,17 +1,17 @@
 import traceback
-z=int
-a=type
-c=Exception
-n=False
-H=None
-f=len
+T=int
+e=type
+l=Exception
+R=False
+k=None
+S=len
 import json
 from framework.wavve.api import session,get_baseparameter,config,logger
 from framework.util import Util
 from framework import py_urllib
 def vod_newcontents(page=1,limit=20,genre='all'):
  try:
-  page=z(page)if a(page)!=z else page
+  page=T(page)if e(page)!=T else page
   param=get_baseparameter()
   param['genre']='all'
   param['channel']='all'
@@ -28,12 +28,12 @@ def vod_newcontents(page=1,limit=20,genre='all'):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except c as e:
+ except l as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
-def vod_contents(page=1,limit=20,content_type='newcontents',genre='all',orderby='new',is_cf=n):
+def vod_contents(page=1,limit=20,content_type='newcontents',genre='all',orderby='new',is_cf=R):
  try:
-  page=z(page)if a(page)!=z else page
+  page=T(page)if e(page)!=T else page
   param=get_baseparameter()
   param['genre']=genre
   param['channel']='all'
@@ -53,12 +53,12 @@ def vod_contents(page=1,limit=20,content_type='newcontents',genre='all',orderby=
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except c as e:
+ except l as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
-def vod_allprograms(page=1,limit=20,contenttype='program',genre='all',subgenre=H,orderby='new',is_cf=n):
+def vod_allprograms(page=1,limit=20,contenttype='program',genre='all',subgenre=k,orderby='new',is_cf=R):
  try:
-  page=z(page)if a(page)!=z else page
+  page=T(page)if e(page)!=T else page
   param=get_baseparameter()
   param['genre']=genre
   param['contenttype']=contenttype
@@ -67,7 +67,7 @@ def vod_allprograms(page=1,limit=20,contenttype='program',genre='all',subgenre=H
   param['offset']=(page-1)*limit
   param['limit']=limit
   param['orderby']=orderby 
-  if subgenre is not H:
+  if subgenre is not k:
    param['subgenre']=subgenre
   if is_cf:
    url="%s/cf/vod/allprograms?%s"%(config['base_url'],py_urllib.urlencode(param))
@@ -80,7 +80,7 @@ def vod_allprograms(page=1,limit=20,contenttype='program',genre='all',subgenre=H
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except c as e:
+ except l as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def vod_contents_contentid(contentid):
@@ -94,7 +94,7 @@ def vod_contents_contentid(contentid):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except c as e:
+ except l as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def vod_programs_programid(programid):
@@ -108,12 +108,12 @@ def vod_programs_programid(programid):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except c as e:
+ except l as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def vod_program_contents_programid(programid,page=1,limit=20):
  try:
-  page=z(page)if a(page)!=z else page
+  page=T(page)if e(page)!=T else page
   param=get_baseparameter()
   param['offset']=(page-1)*limit
   param['limit']=limit
@@ -126,7 +126,7 @@ def vod_program_contents_programid(programid,page=1,limit=20):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except c as e:
+ except l as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def get_filename(data,quality):
@@ -140,12 +140,12 @@ def get_filename(data,quality):
    title=Util.change_text_for_use_filename(data['programtitle'])
    tmp=data["episodenumber"]
    episodeno=''
-   if f(tmp):
+   if S(tmp):
     if tmp=='특집':
      episodeno='.특집'
     else:
      tmps=tmp.split('-')
-     episodeno='.E0%s'%tmps[0]if f(tmps[0])==1 else '.E%s'%tmps[0]
+     episodeno='.E0%s'%tmps[0]if S(tmps[0])==1 else '.E%s'%tmps[0]
    airdate=data["releasedate"].replace('-','')[2:]
    release="SW"
    if data['type']=='onair':
@@ -170,8 +170,8 @@ def get_filename(data,quality):
    release="SP"
    if episode_data["result"]["contentType"]=='qvod':
     release='SPQ'
-   if f(episodeno):
-    if f(episodeno)==1:
+   if S(episodeno):
+    if S(episodeno)==1:
      episodeno="0"+episodeno
     if episodeno=="특집":
      ret="%s.%s.%s.%s-%s.mp4"%(title,episodeno,airdate,qualityRes,release)
@@ -180,7 +180,7 @@ def get_filename(data,quality):
    else:
     ret="%s.%s.%s-%s.mp4"%(title,airdate,qualityRes,release)
    return ret
- except c as e:
+ except l as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def movie_contents_detail(movie_id):
@@ -194,7 +194,7 @@ def movie_contents_detail(movie_id):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except c as e:
+ except l as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

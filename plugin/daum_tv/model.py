@@ -1,11 +1,11 @@
 import traceback,os
-I=True
-W=None
-T=repr
-y=getattr
+f=True
+J=None
+v=repr
+j=getattr
 A=Exception
-i=len
-P=staticmethod
+F=len
+E=staticmethod
 from datetime import datetime
 import json
 from framework.logger import get_logger
@@ -20,7 +20,7 @@ class ModelDaumTVShow(db.Model):
  __tablename__='%s_show_library'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=I)
+ id=db.Column(db.Integer,primary_key=f)
  daum_id=db.Column(db.Integer)
  title=db.Column(db.String)
  status=db.Column(db.Integer)
@@ -43,11 +43,11 @@ class ModelDaumTVShow(db.Model):
   self.studio=''
   self.broadcast_info=''
   self.broadcast_term=''
-  self.episode_list=W
+  self.episode_list=J
  def __repr__(self):
-  return T(self.as_dict())
+  return v(self.as_dict())
  def as_dict(self):
-  ret={x.name:y(self,x.name)for x in self.__table__.columns}
+  ret={x.name:j(self,x.name)for x in self.__table__.columns}
   ret['episode_list_json']=json.loads(ret['episode_list_json'])
   ret['update_time']=self.update_time.strftime('%m-%d %H:%M:%S')
   return ret
@@ -61,15 +61,15 @@ class ModelDaumTVShow(db.Model):
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc()) 
  def has_episode_info(self):
-  return i(self.episode_list)>0
- @P
+  return F(self.episode_list)>0
+ @E
  def get(daum_id):
   try:
    logger.debug('GET DaumID:%s',daum_id)
    item=db.session.query(ModelDaumTVShow).filter_by(daum_id=daum_id).with_for_update().first()
    if not item:
     item=ModelDaumTVShow(daum_id)
-   if item.episode_list_json is not W:
+   if item.episode_list_json is not J:
     item.episode_list=json.loads(item.episode_list_json)
    return item
   except A as e:
