@@ -1,14 +1,14 @@
 import os
-N=object
-c=staticmethod
-E=None
-U=True
-p=len
-O=False
-C=Exception
-X=int
-r=str
-b=range
+c=object
+E=staticmethod
+s=None
+g=True
+M=len
+D=False
+r=Exception
+P=int
+G=str
+T=range
 from datetime import datetime,timedelta
 import traceback
 import logging
@@ -34,15 +34,15 @@ from framework.util import Util
 from system.logic import SystemLogic
 from.plugin import logger,package_name
 from.model import ModelSetting
-class LogicM3U(N):
+class LogicM3U(c):
  channel_index=1
- @c
+ @E
  def make_m3u():
   try:
    from.logic import Logic
    server_url=ModelSetting.get('server_url')
    server_token=ModelSetting.get('server_token')
-   if Logic.server is E:
+   if Logic.server is s:
     Logic.server=PlexServer(server_url,server_token)
    json_info=json.loads(ModelSetting.get('tivimate_json'))
    data="#EXTM3U\n"
@@ -74,7 +74,7 @@ class LogicM3U(N):
      logger.debug(seasons)
      if seasons:
       channel_title=doc.xpath("//mediacontainer")[0].attrib['title2']
-      include_parent=U if p(seasons)>1 else O
+      include_parent=g if M(seasons)>1 else D
       for s in seasons:
        logger.debug(s.attrib)
        if 'ratingkey' in s.attrib:
@@ -86,21 +86,21 @@ class LogicM3U(N):
      else:
       channel_title='%s %s'%(doc.xpath("//mediacontainer")[0].attrib['title1'],doc.xpath("//mediacontainer")[0].attrib['title2'])
       videos=doc.xpath("//video")
-      data,root=LogicM3U.make_list(data,root,videos,info,channel_title,include_parent=U)
+      data,root=LogicM3U.make_list(data,root,videos,info,channel_title,include_parent=g)
    tree=ET.ElementTree(root)
-   ret=ET.tostring(root,pretty_print=U,xml_declaration=U,encoding="utf-8")
+   ret=ET.tostring(root,pretty_print=g,xml_declaration=g,encoding="utf-8")
    return data,ret
-  except C as exception:
+  except r as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @c
- def make_list(data,root,videos,info,channel_title,include_parent=O):
+ @E
+ def make_list(data,root,videos,info,channel_title,include_parent=D):
   server_url=ModelSetting.get('server_url')
   server_token=ModelSetting.get('server_token')
   current_count=0
   for tag_video in videos:
-   channel_tag=E
-   program_tag=E
+   channel_tag=s
+   program_tag=s
    try:
     tmp=tag_video.xpath('.//media')
     if tmp:
@@ -122,25 +122,25 @@ class LogicM3U(N):
     elif tag_video.attrib['type']=='clip':
      title=u'%s'%tag_video.attrib['title']
     title=title.replace('  ',' ')
-    duration=X(tag_media.attrib['duration'])
+    duration=P(tag_media.attrib['duration'])
     video_url='%s%s?X-Plex-Token=%s&dummy=/series/'%(server_url,tag_part.attrib['key'],server_token)
     icon_url='%s%s?X-Plex-Token=%s'%(server_url,tag_video.attrib['thumb'],server_token)
     tmp='#EXTINF:-1 tvg-id="{channel_number}" tvg-name="{channel_title}" tvh-chno="{channel_number}" tvg-logo="{logo}" group-title="{channel_title}",{title}\n{url}\n'
     data+=tmp.format(channel_title=channel_title,channel_number=LogicM3U.channel_index,logo=icon_url,url=video_url,title=title)
     channel_tag=ET.SubElement(root,'channel')
-    channel_tag.set('id',r(LogicM3U.channel_index))
+    channel_tag.set('id',G(LogicM3U.channel_index))
     channel_tag.set('repeat-programs','true')
     display_name_tag=ET.SubElement(channel_tag,'display-name')
     display_name_tag.text='%s(%s)'%(channel_title,LogicM3U.channel_index)
     display_name_tag=ET.SubElement(channel_tag,'display-number')
-    display_name_tag.text=r(LogicM3U.channel_index)
+    display_name_tag.text=G(LogicM3U.channel_index)
     datetime_start=datetime.now()
-    for i in b(3):
+    for i in T(3):
      datetime_stop=datetime_start+timedelta(seconds=duration/1000+1)
      program_tag=ET.SubElement(root,'programme')
      program_tag.set('start',datetime_start.strftime('%Y%m%d%H%M%S')+' +0900')
      program_tag.set('stop',datetime_stop.strftime('%Y%m%d%H%M%S')+' +0900')
-     program_tag.set('channel',r(LogicM3U.channel_index))
+     program_tag.set('channel',G(LogicM3U.channel_index))
      datetime_start=datetime_stop
      title_tag=ET.SubElement(program_tag,'title')
      title_tag.set('lang','ko')
@@ -151,18 +151,18 @@ class LogicM3U(N):
       desc_tag=ET.SubElement(program_tag,'desc')
       desc_tag.set('lang','ko')
       desc_tag.text=tag_video.attrib['summary']
-    channel_tag=E
-    program_tag=E
+    channel_tag=s
+    program_tag=s
     LogicM3U.channel_index+=1
     current_count+=1
     if 'count' in info and current_count>info['count']:
      break
-   except C as exception:
+   except r as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
-    if channel_tag is not E:
+    if channel_tag is not s:
      root.remove(channel_tag)
-    if program_tag is not E:
+    if program_tag is not s:
      root.remove(channel_tag)
   return data,root
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

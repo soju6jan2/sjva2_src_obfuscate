@@ -1,11 +1,11 @@
 import traceback,os
-n=True
-E=None
-r=repr
-e=getattr
-v=Exception
-H=len
-x=staticmethod
+X=True
+G=None
+B=repr
+b=getattr
+u=Exception
+R=len
+U=staticmethod
 from datetime import datetime
 import json
 from framework.logger import get_logger
@@ -20,7 +20,7 @@ class ModelDaumTVShow(db.Model):
  __tablename__='%s_show_library'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=n)
+ id=db.Column(db.Integer,primary_key=X)
  daum_id=db.Column(db.Integer)
  title=db.Column(db.String)
  status=db.Column(db.Integer)
@@ -43,11 +43,11 @@ class ModelDaumTVShow(db.Model):
   self.studio=''
   self.broadcast_info=''
   self.broadcast_term=''
-  self.episode_list=E
+  self.episode_list=G
  def __repr__(self):
-  return r(self.as_dict())
+  return B(self.as_dict())
  def as_dict(self):
-  ret={x.name:e(self,x.name)for x in self.__table__.columns}
+  ret={x.name:b(self,x.name)for x in self.__table__.columns}
   ret['episode_list_json']=json.loads(ret['episode_list_json'])
   ret['update_time']=self.update_time.strftime('%m-%d %H:%M:%S')
   return ret
@@ -57,22 +57,22 @@ class ModelDaumTVShow(db.Model):
    self.search_title=self.title.replace(' ','').replace('-','').replace('/','').replace('!','').replace('(','').replace(')','').replace('#','')
    db.session.add(self)
    db.session.commit()
-  except v as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
  def has_episode_info(self):
-  return H(self.episode_list)>0
- @x
+  return R(self.episode_list)>0
+ @U
  def get(daum_id):
   try:
    logger.debug('GET DaumID:%s',daum_id)
    item=db.session.query(ModelDaumTVShow).filter_by(daum_id=daum_id).with_for_update().first()
    if not item:
     item=ModelDaumTVShow(daum_id)
-   if item.episode_list_json is not E:
+   if item.episode_list_json is not G:
     item.episode_list=json.loads(item.episode_list_json)
    return item
-  except v as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
