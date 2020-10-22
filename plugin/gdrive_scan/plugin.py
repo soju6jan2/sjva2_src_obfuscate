@@ -1,6 +1,6 @@
 import os
 B=Exception
-E=str
+e=str
 import traceback
 import time
 from datetime import datetime
@@ -45,8 +45,8 @@ def detail(sub):
  if sub=='setting':
   setting_list=db.session.query(ModelSetting).all()
   arg=Util.db_list_to_dict(setting_list)
-  arg['is_include']=E(scheduler.is_include(package_name))
-  arg['is_running']=E(scheduler.is_running(package_name))
+  arg['is_include']=e(scheduler.is_include(package_name))
+  arg['is_running']=e(scheduler.is_running(package_name))
   return render_template('%s_setting.html'%package_name,sub=sub,arg=arg)
  elif sub=='list':
   return render_template('%s_list.html'%package_name)

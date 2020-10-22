@@ -1,12 +1,12 @@
 import os
-K=object
-p=staticmethod
+y=object
+N=staticmethod
 B=Exception
-Y=True
-c=False
-w=int
-A=id
-U=None
+P=True
+A=False
+M=int
+j=id
+u=None
 from datetime import datetime
 import traceback
 import logging
@@ -26,10 +26,10 @@ from.model import ModelSetting,ModelGDriveScanJob,ModelGDriveScanFile
 from.gdrive import GDrive,Auth
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Logic(K):
+class Logic(y):
  db_default={'auto_start':'False','web_page_size':'30'}
  gdrive_instance_list=[]
- @p
+ @N
  def db_init():
   try:
    for key,value in Logic.db_default.items():
@@ -39,7 +39,7 @@ class Logic(K):
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @p
+ @N
  def plugin_load():
   try:
    Logic.db_init()
@@ -51,14 +51,14 @@ class Logic(K):
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @p
+ @N
  def plugin_unload():
   try:
    Logic.scheduler_stop()
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @p
+ @N
  def setting_save(req):
   try:
    for key,value in req.form.items():
@@ -66,12 +66,12 @@ class Logic(K):
     entity=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
     entity.value=value
    db.session.commit()
-   return Y 
+   return P 
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @p
+   return A
+ @N
  def scheduler_start():
   try:
    interval=9999
@@ -80,16 +80,16 @@ class Logic(K):
                 job = Job(package_name, '%s_%s' % (package_name, item.name), interval, Logic.start_gdrive, u"GDrive Scan : %s" % item.name, True, args=item.id)
                 scheduler.add_job_instance(job)
             """   
-   job=Job(package_name,package_name,interval,Logic.scheduler_thread_function,u"GDrive Scan",Y)
+   job=Job(package_name,package_name,interval,Logic.scheduler_thread_function,u"GDrive Scan",P)
    scheduler.add_job_instance(job)
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @p
+ @N
  def start_gdrive(*args,**kwargs):
   logger.debug('start_gdrive:%s id:%s',args,args[0])
   try:
-   job=db.session.query(ModelGDriveScanJob).filter_by(A=w(args[0])).first()
+   job=db.session.query(ModelGDriveScanJob).filter_by(j=M(args[0])).first()
    match_rule='%s:%s,%s'%(job.name,job.gdrive_path,job.plex_path)
    gdrive=GDrive(match_rule)
    gdrive.start_change_watch()
@@ -97,7 +97,7 @@ class Logic(K):
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @p
+ @N
  def scheduler_thread_function(*args,**kwargs):
   try:
    lists=db.session.query(ModelGDriveScanJob).filter().all()
@@ -112,7 +112,7 @@ class Logic(K):
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @p
+ @N
  def scheduler_stop():
   try:
    for ins in Logic.gdrive_instance_list:
@@ -121,7 +121,7 @@ class Logic(K):
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @p
+ @N
  def gdrive_save(req):
   try:
    code=req.form['gdrive_code']
@@ -133,12 +133,12 @@ class Logic(K):
    job.plex_path=req.form['plex_path']
    db.session.add(job)
    db.session.commit()
-   return Y
+   return P
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @p
+   return A
+ @N
  def gdrive_list():
   try:
    lists=db.session.query(ModelGDriveScanJob).filter().all()
@@ -155,12 +155,12 @@ class Logic(K):
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @p
+   return A
+ @N
  def gdrive_delete(req):
   try:
-   job_id=w(req.form['id'])
-   job=db.session.query(ModelGDriveScanJob).filter_by(A=job_id).first()
+   job_id=M(req.form['id'])
+   job=db.session.query(ModelGDriveScanJob).filter_by(j=job_id).first()
    name=job.name
    tokenfile=os.path.join(path_data,'db','gdrive','%s.json'%name)
    if os.path.exists(tokenfile):
@@ -170,41 +170,41 @@ class Logic(K):
     os.remove(dbfile)
    db.session.delete(job)
    db.session.commit()
-   return Y
+   return P
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @p
- def receive_scan_result(A,filename):
+   return A
+ @N
+ def receive_scan_result(j,filename):
   try:
-   if Y:
-    logger.debug('Receive Scan Completed : %s-%s',A,filename)
-    modelfile=db.session.query(ModelGDriveScanFile).filter_by(A=w(A)).with_for_update().first()
-    if modelfile is not U:
+   if P:
+    logger.debug('Receive Scan Completed : %s-%s',j,filename)
+    modelfile=db.session.query(ModelGDriveScanFile).filter_by(j=M(j)).with_for_update().first()
+    if modelfile is not u:
      modelfile.scan_time=datetime.now()
      db.session.commit()
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    logger.debug('ROLLBACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
- @p
+ @N
  def filelist(req):
   try:
    ret={}
    page=1
-   page_size=w(db.session.query(ModelSetting).filter_by(key='web_page_size').first().value)
+   page_size=M(db.session.query(ModelSetting).filter_by(key='web_page_size').first().value)
    job_id=''
    search=''
    if 'page' in req.form:
-    page=w(req.form['page'])
+    page=M(req.form['page'])
    if 'search_word' in req.form:
     search=req.form['search_word']
    query=db.session.query(ModelGDriveScanFile)
    if search!='':
     query=query.filter(ModelGDriveScanFile.name.like('%'+search+'%'))
    count=query.count()
-   query=(query.order_by(desc(ModelGDriveScanFile.A)).limit(page_size).offset((page-1)*page_size))
+   query=(query.order_by(desc(ModelGDriveScanFile.j)).limit(page_size).offset((page-1)*page_size))
    logger.debug('ModelGDriveScanFile count:%s',count)
    lists=query.all()
    ret['list']=[item.as_dict()for item in lists]
@@ -213,35 +213,35 @@ class Logic(K):
   except B as exception:
    logger.debug('Exception:%s',exception)
    logger.debug(traceback.format_exc())
- @p
+ @N
  def reset_db():
   try:
    db.session.query(ModelGDriveScanFile).delete()
    db.session.commit()
-   return Y
+   return P
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
+   return A
  from framework.event import MyEvent
  listener=MyEvent()
- @p
+ @N
  def add_listener(f):
   try:
    Logic.listener+=f
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @p
+   return A
+ @N
  def remove_listener(f):
   try:
    Logic.listener-=f
   except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @p
+   return A
+ @N
  def send_to_listener(type_add_remove,is_file,filepath):
   try:
    args=[]

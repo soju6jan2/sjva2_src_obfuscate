@@ -1,7 +1,7 @@
 import os
-f=object
-v=staticmethod
-V=Exception
+R=object
+m=staticmethod
+f=Exception
 import traceback
 import logging
 import platform
@@ -12,8 +12,8 @@ from framework import path_app_root,path_data
 import framework.common.notify as Notify
 from.plugin import logger,package_name
 from.model import ModelSetting
-class SystemLogicNotify(f):
- @v
+class SystemLogicNotify(R):
+ @m
  def process_ajax(sub,req):
   try:
    if sub=='telegram_test':
@@ -25,7 +25,7 @@ class SystemLogicNotify(f):
    elif sub=='advanced_test':
     ret=Notify.send_advanced_message(req.form['text'],policy=req.form['policy'],message_id=req.form['message_id'])
     return jsonify(ret)
-  except V as exception:
+  except f as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return jsonify('exception')

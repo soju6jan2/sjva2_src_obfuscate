@@ -1,13 +1,13 @@
-class LogicModuleBase(D):
-D=object
-V=None
- name=V
- db_default=V
- P=V
- scheduler_desc=V
- first_menu=V
- socketio_list=V
- def __init__(self,P,first_menu,scheduler_desc=V):
+class LogicModuleBase(P):
+P=object
+O=None
+ name=O
+ db_default=O
+ P=O
+ scheduler_desc=O
+ first_menu=O
+ socketio_list=O
+ def __init__(self,P,first_menu,scheduler_desc=O):
   self.P=P
   self.scheduler_desc=scheduler_desc
   self.first_menu=first_menu
@@ -28,7 +28,7 @@ V=None
  def plugin_unload(self):
   pass
  def get_scheduler_interval(self):
-  if self.P is not V and self.P.ModelSetting is not V and self.name is not V:
+  if self.P is not O and self.P.ModelSetting is not O and self.name is not O:
    return self.P.ModelSetting.get('{module_name}_interval'.format(module_name=self.name))
  def get_scheduler_desc(self):
   return self.scheduler_desc 
@@ -36,7 +36,7 @@ V=None
   return self.first_menu
  def setting_save_after(self):
   pass
- def process_telegram_data(self,data,target=V):
+ def process_telegram_data(self,data,target=O):
   pass
  def migration(self):
   pass
