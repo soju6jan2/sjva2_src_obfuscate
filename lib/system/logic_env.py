@@ -1,68 +1,68 @@
 import os
-L=object
-N=staticmethod
-e=Exception
-j=False
-k=open
-o=True
-l=os.system
-a=os.path
+I=object
+h=staticmethod
+j=Exception
+C=False
+s=open
+i=True
+J=os.system
+u=os.path
 import traceback
-H=traceback.format_exc
+V=traceback.format_exc
 import logging
 import platform
 m=platform.system
 import time
-R=time.sleep
+T=time.sleep
 import threading
-i=threading.Thread
+v=threading.Thread
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify
-from r import TimeoutError,NotRegistered
+from E import TimeoutError,NotRegistered
 from framework.logger import get_logger
 from framework import path_app_root,path_data,celery,app
-X=app.config
-U=celery.task
-r=celery.exceptions
+A=app.config
+N=celery.task
+E=celery.exceptions
 from.plugin import logger,package_name
-G=logger.debug
-J=logger.error
+o=logger.debug
+D=logger.error
 from.model import ModelSetting
-class SystemLogicEnv(L):
- @N
+class SystemLogicEnv(I):
+ @h
  def load_export():
   try:
    from framework.common.util import read_file
-   f=a.join(path_app_root,'export.sh')
-   if a.exists(f):
+   f=u.join(path_app_root,'export.sh')
+   if u.exists(f):
     return read_file(f)
-  except e as e:
-   J('Exception:%s',e)
-   J(H()) 
- @N
+  except j as e:
+   D('Exception:%s',e)
+   D(V()) 
+ @h
  def process_ajax(sub,req):
-  ret=j
+  ret=C
   try:
    if sub=='setting_save':
     data=req.form['export']
     data=data.replace("\r\n","\n").replace("\r","\n")
-    ret=j
+    ret=C
     if m()!='Windows':
-     f=a.join(path_app_root,'export.sh')
-     with k(f,'w')as f:
+     f=u.join(path_app_root,'export.sh')
+     with s(f,'w')as f:
       f.write(data)
-     ret=o
+     ret=i
    elif sub=='ps':
     def func():
      import system
      commands=[['msg',u'잠시만 기다려주세요.'],['ps','-ef'],['top','-n1']]
      system.SystemLogicCommand.start('ps',commands)
-    t=i(target=func,args=())
-    t.setDaemon(o)
+    t=v(target=func,args=())
+    t.setDaemon(i)
     t.start()
    elif sub=='celery_test':
     ret=SystemLogicEnv.celery_test()
    elif sub=='worker_start':
-    l('sh worker_start.sh &')
+    J('sh worker_start.sh &')
     """
                 def func():
                     import system
@@ -73,24 +73,24 @@ class SystemLogicEnv(L):
                 t.setDaemon(True)
                 t.start()
                 """    
-    ret=o
-  except e as e:
-   J('Exception:%s',e)
-   J(H())
+    ret=i
+  except j as e:
+   D('Exception:%s',e)
+   D(V())
   return jsonify(ret)
- @N
+ @h
  def celery_test():
-  if X['config']['use_celery']:
+  if A['config']['use_celery']:
    from celery import Celery
    data={}
    try:
     result=SystemLogicEnv.celery_test2.apply_async()
-    G(result)
+    o(result)
     try:
-     tmp=result.get(timeout=5,propagate=o)
-    except e as e:
-     J('Exception:%s',e)
-     J(H())
+     tmp=result.get(timeout=5,propagate=i)
+    except j as e:
+     D('Exception:%s',e)
+     D(V())
     data['ret']='success'
     data['data']=tmp
    except TimeoutError:
@@ -103,17 +103,17 @@ class SystemLogicEnv(L):
    data['ret']='no_celery'
    data['data']=u'celery 실행환경이 아닙니다.'
   return data
+ @h
  @N
- @U
  def celery_test2():
   try:
-   G('!!!! celery_test2222')
+   o('!!!! celery_test2222')
    import time
-   R(1)
-      R=time.sleep
+   T(1)
+      T=time.sleep
    data=u'정상입니다. 이 메시지는 celery 에서 반환됩니다. '
    return data
-  except e as e:
-   J('Exception:%s',e)
-   J(H())
+  except j as e:
+   D('Exception:%s',e)
+   D(V())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

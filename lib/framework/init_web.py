@@ -1,17 +1,17 @@
 import re
 E=None
-i=False
-OP=re.compile
+Y=False
+tG=re.compile
 from flask_login import current_user
-m=current_user.is_authenticated
+y=current_user.is_authenticated
 def get_menu(full_query):
- match=OP(r'\/(?P<menu>.*?)\/(?P<sub>.*?)\/(?P<sub2>.*?)($|\/|\?)').match(full_query)
+ match=tG(r'\/(?P<menu>.*?)\/(?P<sub>.*?)\/(?P<sub2>.*?)($|\/|\?)').match(full_query)
  if match:
   return match.group('menu'),match.group('sub'),match.group('sub2')
- match=OP(r'\/(?P<menu>.*?)\/(?P<sub>.*?)($|\/|\?)').match(full_query)
+ match=tG(r'\/(?P<menu>.*?)\/(?P<sub>.*?)($|\/|\?)').match(full_query)
  if match:
   return match.group('menu'),match.group('sub'),E
- match=OP(r'\/(?P<menu>.*?)($|\/|\?)').match(full_query)
+ match=tG(r'\/(?P<menu>.*?)($|\/|\?)').match(full_query)
  if match:
   return match.group('menu'),E,E
  return 'home',E,E
@@ -22,8 +22,8 @@ def get_theme():
  return[theme,theme_list[theme]]
 def get_login_status():
  if current_user is E:
-  return i
- return m
+  return Y
+ return y
 def get_web_title():
  try:
   from system.model import ModelSetting as SystemModelSetting

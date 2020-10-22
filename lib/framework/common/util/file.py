@@ -1,34 +1,34 @@
 import io
-A=Exception
-W=open
-y=file
+x=Exception
+P=open
+k=file
 import traceback
-z=traceback.format_exc
+U=traceback.format_exc
 from framework import logger
-O=logger.debug
-N=logger.error
+Y=logger.debug
+b=logger.error
 def read_file(filename):
  try:
   import codecs
-  ifp=codecs.W(filename,'r',encoding='utf8')
+  ifp=codecs.P(filename,'r',encoding='utf8')
   data=ifp.read()
   ifp.close()
   return data
- except A as e:
-  N('Exception:%s',e)
-  N(z())
+ except x as e:
+  b('Exception:%s',e)
+  b(U())
 def download(url,file_name):
  import requests
- with W(file_name,"wb")as y: 
+ with P(file_name,"wb")as k: 
   response=requests.get(url) 
-  y.write(response.text) 
+  k.write(response.text) 
 def write_file(data,filename):
  try:
   import codecs
-  ofp=codecs.W(filename,'w',encoding='utf8')
+  ofp=codecs.P(filename,'w',encoding='utf8')
   ofp.write(data)
   ofp.close()
- except A as e:
-  O('Exception:%s',e)
-  O(z())
+ except x as e:
+  Y('Exception:%s',e)
+  Y(U())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

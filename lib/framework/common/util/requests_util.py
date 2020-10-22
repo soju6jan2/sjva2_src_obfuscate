@@ -1,14 +1,14 @@
 import traceback
-A=Exception
-z=traceback.format_exc
+x=Exception
+U=traceback.format_exc
 import requests
-j=requests.Session
+l=requests.Session
 from framework import logger
-N=logger.error
+b=logger.error
 def get_json_with_auth_session(referer,url,data):
  try:
   headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',}
-  session=j()
+  session=l()
   res=session.get(referer)
   text=res.text
   auth=text.split('$http.defaults.headers.common[\'Authorization\'] = "')[1].strip().split('"')[0]
@@ -17,7 +17,7 @@ def get_json_with_auth_session(referer,url,data):
   headers['Cookie']='ci_session=%s; USERCONTRY=kr; LANGU=kr;'%ci_session
   res=session.post(url,headers=headers,data=data)
   return res.json(),headers
- except A as e:
-  N('Exception:%s',e)
-  N(z())
+ except x as e:
+  b('Exception:%s',e)
+  b(U())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

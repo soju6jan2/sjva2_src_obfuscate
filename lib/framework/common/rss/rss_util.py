@@ -1,31 +1,31 @@
 import os
-U=object
-E=staticmethod
-b=len
-u=Exception
-x=None
+u=object
+P=staticmethod
+T=len
+V=Exception
+L=None
 import traceback
-a=traceback.format_exc
+E=traceback.format_exc
 import logging
 import urllib
 import xml.etree.ElementTree as ET
 from framework import logger,py_urllib2
-t=py_urllib2.urlopen
-V=py_urllib2.Request
-g=logger.error
-y=logger.debug
-class RssUtil(U):
- @E
+O=py_urllib2.urlopen
+j=py_urllib2.Request
+M=logger.error
+c=logger.debug
+class RssUtil(u):
+ @P
  def get_rss(url):
   try:
-   y('get_rss : %s',url)
-   req=V(url)
+   c('get_rss : %s',url)
+   req=j(url)
    req.add_header('user-agent','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.92 Safari/537.36')
-   resp=t(req)
+   resp=O(req)
    tree=ET.ElementTree(file=resp)
    root=tree.getroot()
    item_list=root.find('channel').findall('item')
-   y('xml item count:%s',b(item_list))
+   c('xml item count:%s',T(item_list))
    ret=[]
    for item in item_list:
     try:
@@ -34,20 +34,20 @@ class RssUtil(U):
       try:
        link=link[0:60]
       except:
-       g(e)
-       g(a())
+       M(e)
+       M(E())
        link=item.find('link').text.strip()
      rss=Feed(item.find('title').text.strip(),link)
      ret.append(rss)
-    except u as e:
-     y(e)
-     y(a())
+    except V as e:
+     c(e)
+     c(E())
    return ret
-  except u as e:
-   y(e)
-   y(a())
-   y('url:%s',url)
-   return x
+  except V as e:
+   c(e)
+   c(E())
+   c('url:%s',url)
+   return L
  """
     @staticmethod
     def make_rss(title, rss_list, torrent_mode, ddns, is_bot=False):
@@ -84,13 +84,13 @@ class RssUtil(U):
         xml += '</rss>'
         return xml
     """ 
- @E
+ @P
  def replace_xml(xml):
   tmp=[['&','&amp;'],['<','&lt;'],['>','&gt;'],['‘','&apos;'],['"','&quot;']]
   for t in tmp:
    xml=xml.replace(t[0],t[1])
   return xml
- @E
+ @P
  def make_rss(package_name,rss_list):
   xml='<rss xmlns:showrss=\"http://showrss.info/\" version=\"2.0\">\n'
   xml+='\t<channel>\n'
@@ -107,13 +107,13 @@ class RssUtil(U):
     item_str+='\t\t\t<pubDate>%s</pubDate>\n'%date_str
     item_str+='\t\t</item>\n'
     xml+=item_str
-   except u as e:
-    y('Exception:%s',e)
-    y(a())
+   except V as e:
+    c('Exception:%s',e)
+    c(E())
   xml+='\t</channel>\n'
   xml+='</rss>'
   return xml
-class Feed(U):
+class Feed(u):
  def __init__(self,title,link):
   self.title=title
   self.link=link

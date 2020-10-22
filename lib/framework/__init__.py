@@ -1,30 +1,30 @@
 version='0.2.16.30'
-i=False
-R=True
-x=len
-A=int
-J=Exception
+Y=False
+f=True
+i=len
+R=int
+P=Exception
 import os
-n=os.environ
-z=os.urandom
-k=os.path
+u=os.environ
+F=os.urandom
+b=os.path
 import sys
-C=sys.exit
-e=sys.argv
-u=sys.version_info
-path_app_root=k.dirname(k.dirname(k.dirname(k.abspath(__file__))))
-path_data=k.join(path_app_root,'data')
-flag_system_loading=i
+q=sys.exit
+r=sys.argv
+g=sys.version_info
+path_app_root=b.dirname(b.dirname(b.dirname(b.abspath(__file__))))
+path_data=b.join(path_app_root,'data')
+flag_system_loading=Y
 from datetime import datetime,timedelta
 import json
 import traceback
-O=traceback.format_exc
+t=traceback.format_exc
 from flask import Flask,redirect,render_template,Response,request,jsonify,send_file,send_from_directory,abort,Markup
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO,emit 
 from flask_login import LoginManager
 from flask_login import login_user,logout_user,current_user,login_required
-if u[0]==2:
+if g[0]==2:
  import Queue as py_queue
  import urllib2 as py_urllib2 
  import urllib as py_urllib 
@@ -52,27 +52,27 @@ try:
   api=Api(app)
  except:
   logger.debug('NOT INSTALLED FLASK_RESTFUL')
- app.secret_key=z(24)
+ app.secret_key=F(24)
  app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///data/db/sjva.db?check_same_thread=False'
  app.config['SQLALCHEMY_BINDS']={'sjva':'sqlite:///data/db/sjva.db'}
- app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=i
+ app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=Y
  app.config['config']={}
  logger.debug('======================================')
- logger.debug(e)
- app.config['config']['run_by_real']=R if e[0]=='sjva.py' else i
- app.config['config']['run_by_migration']=R if e[-2]=='db' else i
- app.config['config']['run_by_worker']=R if e[0].find('celery')!=-1 else i
- app.config['config']['run_by_init_db']=R if e[-1]=='init_db' else i
- if u[0]==2:
+ logger.debug(r)
+ app.config['config']['run_by_real']=f if r[0]=='sjva.py' else Y
+ app.config['config']['run_by_migration']=f if r[-2]=='db' else Y
+ app.config['config']['run_by_worker']=f if r[0].find('celery')!=-1 else Y
+ app.config['config']['run_by_init_db']=f if r[-1]=='init_db' else Y
+ if g[0]==2:
   app.config['config']['pip']='pip'
-  app.config['config']['is_py2']=R
-  app.config['config']['is_py3']=i
+  app.config['config']['is_py2']=f
+  app.config['config']['is_py3']=Y
  else:
-  app.config['config']['is_py2']=i
-  app.config['config']['is_py3']=R
+  app.config['config']['is_py2']=Y
+  app.config['config']['is_py3']=f
   app.config['config']['pip']='pip3'
  pip_install()
- db=SQLAlchemy(app,session_options={"autoflush":i})
+ db=SQLAlchemy(app,session_options={"autoflush":Y})
  scheduler=Scheduler()
  socketio=SocketIO(app,cors_allowed_origins="*")
  login_manager=LoginManager()
@@ -82,17 +82,17 @@ try:
  from.log_viewer import*
  from.manual import*
  USERS={"sjva"+version:User("sjva"+version,passwd_hash="sjva"+version),}
- app.config['config']['is_debug']=i
+ app.config['config']['is_debug']=Y
  app.config['config']['repeat']=-1
  if app.config['config']['run_by_real']:
-  if x(e)>2:
-   app.config['config']['repeat']=A(e[2])
- if x(e)>3:
-  app.config['config']['is_debug']=(e[-1]=='debug')
- app.config['config']['use_celery']=R
- for tmp in e:
+  if i(r)>2:
+   app.config['config']['repeat']=R(r[2])
+ if i(r)>3:
+  app.config['config']['is_debug']=(r[-1]=='debug')
+ app.config['config']['use_celery']=f
+ for tmp in r:
   if tmp=='no_celery':
-   app.config['config']['use_celery']=i
+   app.config['config']['use_celery']=Y
    break
  logger.debug('use_celery : %s',app.config['config']['use_celery'])
  logger.debug('======================================')
@@ -102,10 +102,10 @@ try:
  from system.model import ModelSetting as SystemModelSetting
  try:
   db.create_all()
- except J as e:
+ except P as e:
   logger.error('CRITICAL db.create_all()!!!')
   logger.error('Exception:%s',e)
-  logger.error(O())
+  logger.error(t())
  from system.logic_auth import SystemLogicAuth
  tmp=SystemLogicAuth.get_auth_status()
  app.config['config']['auth_status']=tmp['ret']
@@ -113,34 +113,34 @@ try:
  app.config['config']['level']=tmp['level']
  app.config['config']['point']=tmp['point']
  system.plugin_load()
- flag_system_loading=R 
+ flag_system_loading=f 
  if app.config['config']['run_by_init_db']:
   logger.debug('================================================')
   logger.debug('Run by init db.. exit')
-  C()
+  q()
  app.register_blueprint(system.blueprint)
  try:
   if SystemModelSetting.get('ddns').find('sjva-server.soju6jan.com')!=-1:
-   app.config['config']['is_sjva_server']=R
-   app.config['config']['is_server']=R
-   app.config['config']['is_admin']=R
+   app.config['config']['is_sjva_server']=f
+   app.config['config']['is_server']=f
+   app.config['config']['is_admin']=f
   else:
-   app.config['config']['is_sjva_server']=i
-   app.config['config']['is_server']=i
-   app.config['config']['is_admin']=i
+   app.config['config']['is_sjva_server']=Y
+   app.config['config']['is_server']=Y
+   app.config['config']['is_admin']=Y
   app.config['config']['rss_subtitle_webhook']='https://discordapp.com/api/webhooks/689800985887113329/GBTUBpP9L0dOegqL4sH-u1fwpssPKq0gBOGPb50JQjim22gUqskYCtj-wnup6BsY3vvc'
  except:
-  app.config['config']['is_sjva_server']=i
-  app.config['config']['is_server']=i
+  app.config['config']['is_sjva_server']=Y
+  app.config['config']['is_server']=Y
  if app.config['config']['is_sjva_server']or app.config['config']['is_debug']or SystemModelSetting.get('ddns').find('sjva-dev.soju6jan.com')!=-1:
-  app.config['config']['server']=R
-  app.config['config']['is_admin']=R
+  app.config['config']['server']=f
+  app.config['config']['is_admin']=f
  else:
-  app.config['config']['server']=i
-  app.config['config']['is_admin']=i
+  app.config['config']['server']=Y
+  app.config['config']['is_admin']=Y
  app.config['config']['running_type']='native'
- if 'SJVA_RUNNING_TYPE' in n:
-  app.config['config']['running_type']=n['SJVA_RUNNING_TYPE']
+ if 'SJVA_RUNNING_TYPE' in u:
+  app.config['config']['running_type']=u['SJVA_RUNNING_TYPE']
  """
     if app.config['config']['run_by_real']:
         import flaskfilemanager
@@ -170,18 +170,18 @@ try:
  init_menu(plugin_menu)
  system.SystemLogic.apply_menu_link()
  logger.debug('### menu loading completed')
- if e[0]=='sjva.py':
+ if r[0]=='sjva.py':
   try:
    app.config['config']['port']=SystemModelSetting.get_int('port')
-   if app.config['config']['port']==19999 and app.config['config']['running_type']=='docker' and not k.exists('/usr/sbin/nginx'):
+   if app.config['config']['port']==19999 and app.config['config']['running_type']=='docker' and not b.exists('/usr/sbin/nginx'):
     SystemModelSetting.set('port','9999')
     app.config['config']['port']=9999
   except:
    app.config['config']['port']=9999
   logger.debug('PORT:%s',app.config['config']['port'])
  logger.debug('### LAST')
-except J as e:
+except P as e:
  logger.error('Exception:%s',e)
- logger.error(O())
+ logger.error(t())
 from.init_route import*
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

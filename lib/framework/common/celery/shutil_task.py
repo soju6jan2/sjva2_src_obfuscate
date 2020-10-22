@@ -1,150 +1,150 @@
 import os
-D=False
-v=Exception
-B=True
-j=os.remove
-u=os.path
+l=False
+j=Exception
+G=True
+r=os.remove
+D=os.path
 import traceback
-r=traceback.format_exc
+c=traceback.format_exc
 import shutil
-W=shutil.rmtree
-L=shutil.copy
-y=shutil.copytree
-a=shutil.move
+X=shutil.rmtree
+n=shutil.copy
+u=shutil.copytree
+H=shutil.move
 from framework import app,celery,logger
-g=logger.debug
-V=logger.error
-S=celery.task
-k=app.config
-def move(source_path,target_path,run_in_celery=D):
+w=logger.debug
+x=logger.error
+b=celery.task
+p=app.config
+def move(source_path,target_path,run_in_celery=l):
  try:
-  if k['config']['use_celery']and run_in_celery==D:
+  if p['config']['use_celery']and run_in_celery==l:
    result=_move_task.apply_async((source_path,target_path))
    return result.get()
   else:
    return _move_task(source_path,target_path)
- except v as e:
-  V('Exception:%s',e)
-  V(r())
+ except j as e:
+  x('Exception:%s',e)
+  x(c())
   return _move_task(source_path,target_path)
-@S
+@b
 def _move_task(source_path,target_path):
  try:
-  g('_move_task:%s %s',source_path,target_path)
-  a(source_path,target_path)
-  g('_move_task end')
-  return B
- except v as e:
-  V('Exception:%s',e)
-  V(r())
-  return D
-def move_exist_remove(source_path,target_path,run_in_celery=D):
+  w('_move_task:%s %s',source_path,target_path)
+  H(source_path,target_path)
+  w('_move_task end')
+  return G
+ except j as e:
+  x('Exception:%s',e)
+  x(c())
+  return l
+def move_exist_remove(source_path,target_path,run_in_celery=l):
  try:
-  if k['config']['use_celery']and run_in_celery==D:
+  if p['config']['use_celery']and run_in_celery==l:
    result=_move_exist_remove_task.apply_async((source_path,target_path))
    return result.get()
   else:
    return _move_exist_remove_task(source_path,target_path)
- except v as e:
-  V('Exception:%s',e)
-  V(r())
+ except j as e:
+  x('Exception:%s',e)
+  x(c())
   return _move_exist_remove_task(source_path,target_path)
-@S
+@b
 def _move_exist_remove_task(source_path,target_path):
  try:
-  target_file_path=u.join(target_path,u.basename(source_path))
-  if u.exists(target_file_path):
-   j(source_path)
-   return B
-  g('_move_exist_remove:%s %s',source_path,target_path)
-  a(source_path,target_path)
-  g('_move_exist_remove end')
-  return B
- except v as e:
-  V('Exception:%s',e)
-  V(r())
-  return D
+  target_file_path=D.join(target_path,D.basename(source_path))
+  if D.exists(target_file_path):
+   r(source_path)
+   return G
+  w('_move_exist_remove:%s %s',source_path,target_path)
+  H(source_path,target_path)
+  w('_move_exist_remove end')
+  return G
+ except j as e:
+  x('Exception:%s',e)
+  x(c())
+  return l
 def copytree(source_path,target_path):
  try:
-  if k['config']['use_celery']:
+  if p['config']['use_celery']:
    result=_copytree_task.apply_async((source_path,target_path))
    return result.get()
   else:
    return _copytree_task(source_path,target_path)
- except v as e:
-  V('Exception:%s',e)
-  V(r())
+ except j as e:
+  x('Exception:%s',e)
+  x(c())
   return _copytree_task(source_path,target_path)
-@S
+@b
 def _copytree_task(source_path,target_path):
  try:
-  y(source_path,target_path)
-  return B
- except v as e:
-  V('Exception:%s',e)
-  V(r())
-  return D
+  u(source_path,target_path)
+  return G
+ except j as e:
+  x('Exception:%s',e)
+  x(c())
+  return l
 def copy(source_path,target_path):
  try:
-  if k['config']['use_celery']:
+  if p['config']['use_celery']:
    result=_copy_task.apply_async((source_path,target_path))
    return result.get()
   else:
    return _copy_task(source_path,target_path)
- except v as e:
-  V('Exception:%s',e)
-  V(r())
+ except j as e:
+  x('Exception:%s',e)
+  x(c())
   return _copy_task(source_path,target_path)
-@S
+@b
 def _copy_task(source_path,target_path):
  try:
-  L(source_path,target_path)
-  return B
- except v as e:
-  V('Exception:%s',e)
-  V(r())
-  return D
+  n(source_path,target_path)
+  return G
+ except j as e:
+  x('Exception:%s',e)
+  x(c())
+  return l
 def rmtree(source_path):
  try:
-  if k['config']['use_celery']:
+  if p['config']['use_celery']:
    result=_rmtree_task.apply_async((source_path,))
    return result.get()
   else:
    return _rmtree_task(source_path)
- except v as e:
-  V('Exception:%s',e)
-  V(r())
+ except j as e:
+  x('Exception:%s',e)
+  x(c())
   return _rmtree_task(source_path)
-@S
+@b
 def _rmtree_task(source_path):
  try:
-  W(source_path)
-  return B
- except v as e:
-  V('Exception:%s',e)
-  V(r())
-  return D 
+  X(source_path)
+  return G
+ except j as e:
+  x('Exception:%s',e)
+  x(c())
+  return l 
 def remove(remove_path):
  try:
-  g('CELERY os.remove start : %s',remove_path)
-  if k['config']['use_celery']:
+  w('CELERY os.remove start : %s',remove_path)
+  if p['config']['use_celery']:
    result=_remove_task.apply_async((remove_path,))
    return result.get()
   else:
    return _remove_task(remove_path)
- except v as e:
-  V('Exception:%s',e)
-  V(r())
+ except j as e:
+  x('Exception:%s',e)
+  x(c())
   return _remove_task(remove_path)
  finally:
-  g('CELERY os.remove end : %s',remove_path)
-@S
+  w('CELERY os.remove end : %s',remove_path)
+@b
 def _remove_task(remove_path):
  try:
-  j(remove_path)
-  return B
- except v as e:
-  V('Exception:%s',e)
-  V(r())
-  return D 
+  r(remove_path)
+  return G
+ except j as e:
+  x('Exception:%s',e)
+  x(c())
+  return l 
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,15 +1,15 @@
 import os
-y=int
-j=staticmethod
-C=object
-A=None
-f=Exception
-t=True
-H=False
-P=os.path
+O=int
+w=staticmethod
+L=object
+E=None
+q=Exception
+k=True
+z=False
+x=os.path
 from datetime import datetime
 import traceback
-N=traceback.format_exc
+T=traceback.format_exc
 import logging
 import subprocess
 import time
@@ -17,22 +17,22 @@ import re
 import threading
 import json
 import enum
-x=enum.Enum
+m=enum.Enum
 import platform
-S=platform.system
+p=platform.system
 from sqlalchemy import desc
 from sqlalchemy import or_,and_,func,not_
 from framework.logger import get_logger
 from framework import app,db,scheduler,path_app_root,socketio,path_data
-V=socketio.emit
-c=db.session
+S=socketio.emit
+M=db.session
 from framework.job import Job
 from framework.util import Util
 from system.logic import SystemLogic
 from.model import ModelSetting
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Status(x):
+class Status(m):
  READY=0
  WRONG_URL=1
  WRONG_DIRECTORY=2
@@ -50,69 +50,69 @@ class Status(x):
   return self.value
  def __str__(self):
   kor=[r'준비',r'URL에러',r'폴더에러',r'실패(Exception)',r'실패(에러)',r'다운로드중',r'사용자중지',r'완료',r'시간초과',r'PF중지',r'강제중지',r'403에러',r'임시파일이 이미 있음']
-  return kor[y(self)]
+  return kor[O(self)]
  def __repr__(self):
   return self.name
- @j
+ @w
  def get_instance(value):
   tmp=[Status.READY,Status.WRONG_URL,Status.WRONG_DIRECTORY,Status.EXCEPTION,Status.ERROR,Status.DOWNLOADING,Status.USER_STOP,Status.COMPLETED,Status.TIME_OVER,Status.PF_STOP,Status.FORCE_STOP,Status.HTTP_FORBIDDEN,Status.ALREADY_DOWNLOADING]
   return tmp[value]
-class Logic(C):
- db_default={'temp_path':P.join(path_data,'download_tmp'),'save_path':P.join(path_data,'download'),'max_pf_count':'0','if_fail_remove_tmp_file':'True','timeout_minute':'60',}
- path_ffmpeg=A
- @j
+class Logic(L):
+ db_default={'temp_path':x.join(path_data,'download_tmp'),'save_path':x.join(path_data,'download'),'max_pf_count':'0','if_fail_remove_tmp_file':'True','timeout_minute':'60',}
+ path_ffmpeg=E
+ @w
  def db_init():
   try:
    for key,value in Logic.db_default.items():
-    if c.query(ModelSetting).filter_by(key=key).count()==0:
-     c.add(ModelSetting(key,value))
-   c.commit()
-  except f as e:
+    if M.query(ModelSetting).filter_by(key=key).count()==0:
+     M.add(ModelSetting(key,value))
+   M.commit()
+  except q as e:
    logger.error('Exception:%s',e)
-   logger.error(N())
- @j
+   logger.error(T())
+ @w
  def plugin_load():
   try:
    Logic.db_init()
-   Logic.path_ffmpeg=P.join(path_app_root,'bin',S(),'ffmpeg')
-   if S()=='Windows':
+   Logic.path_ffmpeg=x.join(path_app_root,'bin',p(),'ffmpeg')
+   if p()=='Windows':
     Logic.path_ffmpeg+='.exe'
    else:
     Logic.path_ffmpeg='ffmpeg'
-  except f as e:
+  except q as e:
    logger.error('Exception:%s',e)
-   logger.error(N())
- @j
+   logger.error(T())
+ @w
  def plugin_unload():
   try:
    from ffmpeg.interface_program_ffmpeg import Ffmpeg
    Ffmpeg.plugin_unload()
-  except f as e:
+  except q as e:
    logger.error('Exception:%s',e)
-   logger.error(N())
- @j
+   logger.error(T())
+ @w
  def setting_save(req):
   try:
    for key,value in req.form.items():
     logger.debug('Key:%s Value:%s',key,value)
-    entity=c.query(ModelSetting).filter_by(key=key).with_for_update().first()
+    entity=M.query(ModelSetting).filter_by(key=key).with_for_update().first()
     entity.value=value
-   c.commit()
-   return t 
-  except f as e:
+   M.commit()
+   return k 
+  except q as e:
    logger.error('Exception:%s',e)
-   logger.error(N())
-   return H
- @j
+   logger.error(T())
+   return z
+ @w
  def get_setting_value(key):
   try:
-   return c.query(ModelSetting).filter_by(key=key).first().value
-  except f as e:
+   return M.query(ModelSetting).filter_by(key=key).first().value
+  except q as e:
    logger.error('Exception:%s',e)
-   logger.error(N())
- @j
+   logger.error(T())
+ @w
  def ffmpeg_listener(**args):
-  refresh_type=A
+  refresh_type=E
   if args['type']=='status_change':
    if args['status']==Status.DOWNLOADING:
     refresh_type='status_change'
@@ -120,52 +120,52 @@ class Logic(C):
     refresh_type='status_change'
    elif args['status']==Status.READY:
     data={'type':'info','msg':u'다운로드중 Duration(%s)'%args['data']['duration_str']+'<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    V("notify",data,namespace='/framework',broadcast=t)
+    S("notify",data,namespace='/framework',broadcast=k)
     refresh_type='add' 
   elif args['type']=='last':
    if args['status']==Status.WRONG_URL:
     data={'type':'warning','msg':u'잘못된 URL입니다'}
-    V("notify",data,namespace='/framework',broadcast=t)
+    S("notify",data,namespace='/framework',broadcast=k)
     refresh_type='add'
    elif args['status']==Status.WRONG_DIRECTORY:
     data={'type':'warning','msg':u'잘못된 디렉토리입니다.<br>'+args['data']['save_fullpath']}
-    V("notify",data,namespace='/framework',broadcast=t)
+    S("notify",data,namespace='/framework',broadcast=k)
     refresh_type='add'
    elif args['status']==Status.ERROR or args['status']==Status.EXCEPTION:
     data={'type':'warning','msg':u'다운로드 시작 실패.<br>'+args['data']['save_fullpath']}
-    V("notify",data,namespace='/framework',broadcast=t)
+    S("notify",data,namespace='/framework',broadcast=k)
     refresh_type='add'
    elif args['status']==Status.USER_STOP:
     data={'type':'warning','msg':u'다운로드가 중지 되었습니다.<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    V("notify",data,namespace='/framework',broadcast=t) 
+    S("notify",data,namespace='/framework',broadcast=k) 
     refresh_type='last'
    elif args['status']==Status.COMPLETED:
     data={'type':'success','msg':u'다운로드가 완료 되었습니다.<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    V("notify",data,namespace='/framework',broadcast=t) 
+    S("notify",data,namespace='/framework',broadcast=k) 
     refresh_type='last'
    elif args['status']==Status.TIME_OVER:
     data={'type':'warning','msg':u'시간초과로 중단 되었습니다.<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    V("notify",data,namespace='/framework',broadcast=t) 
+    S("notify",data,namespace='/framework',broadcast=k) 
     refresh_type='last'
    elif args['status']==Status.PF_STOP:
     data={'type':'warning','msg':u'PF초과로 중단 되었습니다.<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    V("notify",data,namespace='/framework',broadcast=t) 
+    S("notify",data,namespace='/framework',broadcast=k) 
     refresh_type='last'
    elif args['status']==Status.FORCE_STOP:
     data={'type':'warning','msg':u'강제 중단 되었습니다.<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    V("notify",data,namespace='/framework',broadcast=t) 
+    S("notify",data,namespace='/framework',broadcast=k) 
     refresh_type='last' 
    elif args['status']==Status.HTTP_FORBIDDEN:
     data={'type':'warning','msg':u'403에러로 중단 되었습니다.<br>'+args['data']['save_fullpath'],'url':'/ffmpeg/list'}
-    V("notify",data,namespace='/framework',broadcast=t) 
+    S("notify",data,namespace='/framework',broadcast=k) 
     refresh_type='last' 
    elif args['status']==Status.ALREADY_DOWNLOADING:
     data={'type':'warning','msg':u'임시파일폴더에 파일이 있습니다.<br>'+args['data']['temp_fullpath'],'url':'/ffmpeg/list'}
-    V("notify",data,namespace='/framework',broadcast=t) 
+    S("notify",data,namespace='/framework',broadcast=k) 
     refresh_type='last'
   elif args['type']=='normal':
    if args['status']==Status.DOWNLOADING:
     refresh_type='status'
-  if refresh_type is not A:
-   V(refresh_type,args['data'],namespace='/%s'%package_name,broadcast=t)
+  if refresh_type is not E:
+   S(refresh_type,args['data'],namespace='/%s'%package_name,broadcast=k)
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,7 +1,7 @@
 import os
-g=Exception
+t=Exception
 import traceback
-c=traceback.format_exc
+s=traceback.format_exc
 import time
 from datetime import datetime
 import urllib
@@ -16,10 +16,10 @@ from framework.util import Util,AlchemyEncoder
 from system.logic import SystemLogic
 from.model import ModelSetting
 from.logic import Logic
-Q=Logic.refresh
-W=Logic.db_list
-C=Logic.plugin_unload
-z=Logic.plugin_load
+l=Logic.refresh
+T=Logic.db_list
+v=Logic.plugin_unload
+P=Logic.plugin_load
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 blueprint=Blueprint(package_name,package_name,url_prefix='/%s'%package_name,template_folder='templates')
@@ -27,17 +27,17 @@ menu={'main':[package_name,u'Daum TV'],'sub':[['list',u'목록'],['log',u'로그
 def plugin_load():
  try:
   logger.debug('plugin_load:%s',package_name)
-  z()
- except g as e:
+  P()
+ except t as e:
   logger.error('Exception:%s',e)
-  logger.error(c())
+  logger.error(s())
 def plugin_unload():
  try:
   logger.debug('plugin_unload:%s',package_name)
-  C()
- except g as e:
+  v()
+ except t as e:
   logger.error('Exception:%s',e)
-  logger.error(c())
+  logger.error(s())
 @blueprint.route('/')
 def home():
  return redirect('/%s/list'%package_name)
@@ -56,16 +56,16 @@ def ajax(sub):
  logger.debug('AJAX %s %s',package_name,sub)
  if sub=='db_list':
   try:
-   ret=W(request)
+   ret=T(request)
    return jsonify(ret)
-  except g as e:
+  except t as e:
    logger.error('Exception:%s',e)
-   logger.error(c())
+   logger.error(s())
  elif sub=='refresh':
   try:
-   ret=Q(request)
+   ret=l(request)
    return jsonify(ret)
-  except g as e:
+  except t as e:
    logger.error('Exception:%s',e)
-   logger.error(c())
+   logger.error(s())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

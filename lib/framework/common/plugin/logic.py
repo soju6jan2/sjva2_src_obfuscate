@@ -1,25 +1,25 @@
 import os
-K=object
-Q=None
-U=Exception
-s=False
+B=object
+v=None
+V=Exception
+z=False
 import traceback
-I=traceback.format_exc
+u=traceback.format_exc
 import time
-O=time.sleep
+T=time.sleep
 import threading
-a=threading.Thread
+F=threading.Thread
 import platform
 from framework import db,scheduler
-T=scheduler.execute_job
-J=scheduler.is_running
+o=scheduler.execute_job
+C=scheduler.is_running
 X=scheduler.is_include
-M=scheduler.remove_job
-y=scheduler.add_job_instance
-F=db.session
+G=scheduler.remove_job
+A=scheduler.add_job_instance
+c=db.session
 from framework.job import Job
 from framework.util import Util
-class Logic(K):
+class Logic(B):
  db_default={'recent_menu_plugin':'',}
  def __init__(self,P):
   self.P=P
@@ -31,87 +31,87 @@ class Logic(K):
     module.migration()
    for module in self.P.module_list:
     module.plugin_load()
-   if self.P.ModelSetting is not Q:
+   if self.P.ModelSetting is not v:
     for module in self.P.module_list:
      key='{sub}_auto_start'.format(sub=module.name)
      if self.P.ModelSetting.has_key(key)and self.P.ModelSetting.get_bool(key):
       self.scheduler_start(module.name)
-  except U as e:
+  except V as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(I())
+   self.P.logger.error(u())
  def db_init(self):
   try:
-   if self.P.ModelSetting is Q:
+   if self.P.ModelSetting is v:
     return
    for key,value in Logic.db_default.items():
-    if F.query(self.P.ModelSetting).filter_by(key=key).count()==0:
-     F.add(self.P.ModelSetting(key,value))
+    if c.query(self.P.ModelSetting).filter_by(key=key).count()==0:
+     c.add(self.P.ModelSetting(key,value))
    for module in self.P.module_list:
-    if module.db_default is not Q:
+    if module.db_default is not v:
      for key,value in module.db_default.items():
-      if F.query(self.P.ModelSetting).filter_by(key=key).count()==0:
-       F.add(self.P.ModelSetting(key,value))
-   F.commit()
-  except U as e:
+      if c.query(self.P.ModelSetting).filter_by(key=key).count()==0:
+       c.add(self.P.ModelSetting(key,value))
+   c.commit()
+  except V as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(I())
+   self.P.logger.error(u())
  def plugin_unload(self):
   try:
    self.P.logger.debug('%s plugin_unload',self.P.package_name)
    for module in self.P.module_list:
     module.plugin_unload()
-  except U as e:
+  except V as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(I())
+   self.P.logger.error(u())
  def scheduler_start(self,sub):
   try:
    job_id='%s_%s'%(self.P.package_name,sub)
    module=self.get_module(sub)
-   job=Job(self.P.package_name,job_id,module.get_scheduler_interval(),self.scheduler_function,module.get_scheduler_desc(),s,args=sub)
-   y(job)
-  except U as e:
+   job=Job(self.P.package_name,job_id,module.get_scheduler_interval(),self.scheduler_function,module.get_scheduler_desc(),z,args=sub)
+   A(job)
+  except V as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(I())
+   self.P.logger.error(u())
  def scheduler_stop(self,sub):
   try:
    job_id='%s_%s'%(self.P.package_name,sub)
-   M(job_id)
-  except U as e:
+   G(job_id)
+  except V as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(I())
+   self.P.logger.error(u())
  def scheduler_function(self,sub):
   try:
    module=self.get_module(sub)
    module.scheduler_function()
-  except U as e:
+  except V as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(I())
+   self.P.logger.error(u())
  def reset_db(self,sub):
   try:
    module=self.get_module(sub)
    return module.reset_db()
-  except U as e:
+  except V as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(I())
+   self.P.logger.error(u())
  def one_execute(self,sub):
   self.P.logger.debug('one_execute :%s',sub)
   try:
    job_id='%s_%s'%(self.P.package_name,sub)
    if X(job_id):
-    if J(job_id):
+    if C(job_id):
      ret='is_running'
     else:
-     T(job_id)
+     o(job_id)
      ret='scheduler'
    else:
     def func():
-     O(2)
+     T(2)
      self.scheduler_function(sub)
-    a(target=func,args=()).start()
+    F(target=func,args=()).start()
     ret='thread'
-  except U as e:
+  except V as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(I())
+   self.P.logger.error(u())
    ret='fail'
   return ret
  def get_module(self,sub):
@@ -119,15 +119,15 @@ class Logic(K):
    for module in self.P.module_list:
     if module.name==sub:
      return module
-  except U as e:
+  except V as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(I())
- def process_telegram_data(self,data,target=Q):
+   self.P.logger.error(u())
+ def process_telegram_data(self,data,target=v):
   try:
    for module in self.P.module_list:
-    if target is Q or target.startswith(module.name):
+    if target is v or target.startswith(module.name):
      module.process_telegram_data(data,target=target)
-  except U as e:
+  except V as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(I())
+   self.P.logger.error(u())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

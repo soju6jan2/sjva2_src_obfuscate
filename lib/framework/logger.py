@@ -1,37 +1,37 @@
 import os
-A=int
+R=int
 E=None
-R=True
-k=os.path
+f=True
+b=os.path
 import logging
-Op=logging.StreamHandler
-Of=logging.Formatter
-On=logging.DEBUG
-Ox=logging.getLogger
-Ot=logging.handlers
-import Ot
+tN=logging.StreamHandler
+te=logging.Formatter
+tu=logging.DEBUG
+ti=logging.getLogger
+tL=logging.handlers
+import tL
 from datetime import datetime
-Ow=datetime.utcnow
+tz=datetime.utcnow
 from framework import path_data
 from pytz import timezone,utc
-OD=utc.localize
+tB=utc.localize
 level_unset_logger_list=[]
 logger_list=[]
 def get_logger(name):
- logger=Ox(name)
+ logger=ti(name)
  if not logger.handlers:
   global level_unset_logger_list
   global logger_list
-  level=On
+  level=tu
   from framework import flag_system_loading 
   try:
    if flag_system_loading:
     try:
      from system.model import ModelSetting as SystemModelSetting
      level=SystemModelSetting.get('log_level')
-     level=A(level)
+     level=R(level)
     except:
-     level=On
+     level=tu
     if level_unset_logger_list is not E:
      for item in level_unset_logger_list:
       item.setLevel(level)
@@ -41,16 +41,16 @@ def get_logger(name):
   except:
    pass
   logger.setLevel(level)
-  formatter=Of(u'[%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s] %(message)s')
+  formatter=te(u'[%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s] %(message)s')
   def customTime(*args):
-   utc_dt=OD(Ow())
+   utc_dt=tB(tz())
    my_tz=timezone("Asia/Seoul")
    converted=utc_dt.astimezone(my_tz)
    return converted.timetuple()
   formatter.converter=customTime
   file_max_bytes=1*1024*1024 
-  fileHandler=Ot.RotatingFileHandler(filename=k.join(path_data,'log','%s.log'%name),maxBytes=file_max_bytes,backupCount=5,encoding='utf8',delay=R)
-  streamHandler=Op()
+  fileHandler=tL.RotatingFileHandler(filename=b.join(path_data,'log','%s.log'%name),maxBytes=file_max_bytes,backupCount=5,encoding='utf8',delay=f)
+  streamHandler=tN()
   fileHandler.setFormatter(formatter)
   streamHandler.setFormatter(formatter)
   logger.addHandler(fileHandler)

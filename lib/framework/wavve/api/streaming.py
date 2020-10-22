@@ -1,17 +1,17 @@
 import traceback
-O=range
-V=str
-a=None
-Q=Exception
-d=int
-q=traceback.format_exc
+g=range
+v=str
+p=None
+W=Exception
+C=int
+a=traceback.format_exc
 import json
 from framework.wavve.api import session,logger,get_baseparameter,config
-w=logger.error
-y=logger.debug
-F=session.get
+G=logger.error
+j=logger.debug
+t=session.get
 from framework import py_urllib
-M=py_urllib.urlencode
+f=py_urllib.urlencode
 def get_guid():
  try:
   from system.model import ModelSetting as SystemModelSetting
@@ -31,14 +31,14 @@ def get_guid():
  def GenerateRandomString(num):
   from random import randint
   rstr=""
-  for i in O(0,num):
-   s=V(randint(1,5))
+  for i in g(0,num):
+   s=v(randint(1,5))
    rstr+=s
   return rstr
  uuid=GenerateID("POOQ")
  m.update(uuid)
- return V(m.hexdigest())
-def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',isabr='y',proxy=a):
+ return v(m.hexdigest())
+def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',isabr='y',proxy=p):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -50,7 +50,7 @@ def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',i
  if contenttype=='live':
   ishevc='n'
   isabr='n'
- if credential is a:
+ if credential is p:
   credential='none'
  try:
   param=get_baseparameter()
@@ -69,27 +69,27 @@ def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',i
   param['isabr']=isabr
   param['ishevc']=ishevc
   param['lastplayid']='none'
-  url="%s/streaming?%s"%(config['base_url'],M(param))
-  proxies=a
-  if proxy is not a:
+  url="%s/streaming?%s"%(config['base_url'],f(param))
+  proxies=p
+  if proxy is not p:
    proxies={"https":proxy,'http':proxy}
-  response=F(url,headers=config['headers'],proxies=proxies)
+  response=t(url,headers=config['headers'],proxies=proxies)
   data=response.json()
   if response.status_code==200:
    try:
     if data['playurl'].startswith('https://event.pca.wavve.com'):
-     y('playurl startswith https://event.pca.wavve.com!!!!!')
+     j('playurl startswith https://event.pca.wavve.com!!!!!')
      return streaming_imsi(contenttype,contentid,quality,credential,action=action,ishevc=ishevc,isabr=isabr)
    except:
-    y('https://event.pca.wavve.com error')
+    j('https://event.pca.wavve.com error')
    return data
   else:
    if 'resultcode' in data:
     pass
- except Q as e:
-  w('Exception:%s',e)
-  w(q())
-def streaming_imsi(contenttype,contentid,quality,credential,action='hls',ishevc='y',isabr='y',proxy=a):
+ except W as e:
+  G('Exception:%s',e)
+  G(a())
+def streaming_imsi(contenttype,contentid,quality,credential,action='hls',ishevc='y',isabr='y',proxy=p):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -101,7 +101,7 @@ def streaming_imsi(contenttype,contentid,quality,credential,action='hls',ishevc=
  if contenttype=='live':
   ishevc='n'
   isabr='n'
- if credential is a:
+ if credential is p:
   credential='none'
  try:
   param=get_baseparameter()
@@ -120,36 +120,36 @@ def streaming_imsi(contenttype,contentid,quality,credential,action='hls',ishevc=
   param['ishevc']=ishevc
   param['lastplayid']='none'
   param['device']='smarttv'
-  url="%s/streaming?%s"%(config['base_url'],M(param))
-  response=F(url,headers=config['headers'])
+  url="%s/streaming?%s"%(config['base_url'],f(param))
+  response=t(url,headers=config['headers'])
   data=response.json()
   if response.status_code==200:
-   y(data['playurl'])
+   j(data['playurl'])
    return data
   else:
    if 'resultcode' in data:
     pass
- except Q as e:
-  w('Exception:%s',e)
-  w(q())
+ except W as e:
+  G('Exception:%s',e)
+  G(a())
 def get_prefer_url(url):
  try:
-  response=F(url,headers=config['headers'])
+  response=t(url,headers=config['headers'])
   data=response.text.strip()
-  last_url=a
+  last_url=p
   last_quality=0
   for t in data.split('\n'):
    if t.strip().find('chunklist.m3u8')!=-1:
-    t_quality=d(t.split('/')[0])
+    t_quality=C(t.split('/')[0])
     if t_quality>last_quality:
      last_quality=t_quality
      last_url=t
-  if last_url is not a and last_url!='':
+  if last_url is not p and last_url!='':
    last_url=url.split('chunklist')[0]+last_url
    return last_url
- except Q as e:
-  w('Exception:%s',e)
-  w(q())
+ except W as e:
+  G('Exception:%s',e)
+  G(a())
  return url
 """
  https://vod.cdn.wavve.com/hls/E01/E01_20241954.1/1/chunklist5000.m3u8?authtoken=g8fzFN4NgPAowe29k7tVyhFOUHDFWuIrK3GlEjoGyxweyoGUXtnWk2LFCEZDWKlDfBTXnbWG16PvhdgHjYIiNiA9ypJrs0EuBk3UFDEveWoAA_h_XRoSTVjveRiaBU0Mo25IV4mIEgepfI7712-0KneO-a7tucrHBYJwpcZ4QWCN53z13cdyA1GjdwPkhgCTYOWf2A

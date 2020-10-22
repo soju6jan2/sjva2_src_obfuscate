@@ -1,143 +1,143 @@
 import os
-L=object
-Q=None
-N=staticmethod
-e=Exception
-j=False
-o=True
-p=range
-F=str
-E=int
-S=len
-x=os.remove
-a=os.path
+I=object
+H=None
+h=staticmethod
+j=Exception
+C=False
+i=True
+R=range
+e=str
+g=int
+l=len
+Q=os.remove
+u=os.path
 import traceback
-H=traceback.format_exc
+V=traceback.format_exc
 import logging
 from datetime import datetime
-y=datetime.strptime
-n=datetime.now
+d=datetime.strptime
+P=datetime.now
 import string
-M=string.digits
-Y=string.ascii_uppercase
+c=string.digits
+B=string.ascii_uppercase
 import random
-W=random.choice
+X=random.choice
 import json
-C=json.loads
+t=json.loads
 import requests
-A=requests.get
+Y=requests.get
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify
 from flask_login import login_user,logout_user,current_user,login_required
 from framework.logger import get_logger,set_level
 from framework import app,db,scheduler,version,path_app_root,path_data,USERS
-HW=scheduler.first_run_check_thread_function
-K=scheduler.add_job_instance
-v=scheduler.remove_job
-u=scheduler.is_include
-c=db.session
-X=app.config
+VX=scheduler.first_run_check_thread_function
+U=scheduler.add_job_instance
+b=scheduler.remove_job
+S=scheduler.is_include
+K=db.session
+A=app.config
 from framework.util import Util
-HM=Util.db_list_to_dict
-HY=Util.sizeof_fmt
+Vc=Util.db_list_to_dict
+VB=Util.sizeof_fmt
 from framework import USERS
 from framework.user import User
 from framework import db,scheduler
-HW=scheduler.first_run_check_thread_function
-K=scheduler.add_job_instance
-v=scheduler.remove_job
-u=scheduler.is_include
-c=db.session
+VX=scheduler.first_run_check_thread_function
+U=scheduler.add_job_instance
+b=scheduler.remove_job
+S=scheduler.is_include
+K=db.session
 from framework.job import Job
 from.model import ModelSetting 
-Hz=ModelSetting.query
-I=ModelSetting.get
+Vr=ModelSetting.query
+w=ModelSetting.get
 import system
-Hd=system.restart
+Va=system.restart
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class SystemLogic(L):
+class SystemLogic(I):
  point=0
  db_default={'db_version':'1','port':'9999','ddns':'http://localhost:9999','url_filebrowser':'http://localhost:9998','id':'sjva','pw':'sjva','system_start_time':'','repeat':'','auto_restart_hour':'12','theme':'Default','log_level':'10','use_login':'False','link_json':'[]','plugin_dev_path':'','plugin_tving_level2':'False','web_title':'SJ Video Assistant','my_ip':'','wavve_guid':'','videoportal_adult':'False','trans_type':'0','trans_google_api_key':'','trans_papago_key':'','auth_use_apikey':'False','auth_apikey':'','selenium_remote_url':'','selenium_remote_default_option':'--no-sandbox\n--disable-gpu','selenium_binary_default_option':'','notify_telegram_use':'False','notify_telegram_token':'','notify_telegram_chat_id':'','notify_telegram_disable_notification':'False','notify_discord_use':'False','notify_discord_webhook':'','notify_advaned_use':'False','notify_advaned_policy':u"# 각 플러그인 설정 설명에 명시되어 있는 ID = 형식\n# DEFAULT 부터 주석(#) 제거 후 작성\n\n# DEFAULT = ",'telegram_bot_token':'','telegram_bot_auto_start':'False','telegram_resend':'False','telegram_resend_chat_id':'','sjva_me_user_id':'','auth_status':'','sjva_id':'','site_daum_interval':'0 4 */3 * *','site_daum_auto_start':'False','site_daum_cookie':'TIARA=gaXEIPluo-wWAFlwZN6l8gN3yzhkoo_piP.Kymhuy.6QBt4Q6.cRtxbKDaWpWajcyteRHzrlTVpJRxLjwLoMvyYLVi_7xJ1L','site_daum_test':u'나쁜 녀석들','site_wavve_id':'','site_wavve_pw':'','site_wavve_credential':'','memo':'',}
  db_default2={'use_category_vod':'True','use_category_file_process':'True','use_category_plex':'True','use_category_tool':'True'}
  db_default3={'use_plugin_ffmpeg':'False','use_plugin_ktv':'False','use_plugin_fileprocess_movie':'False','use_plugin_plex':'False','use_plugin_gdrive_scan':'False','use_plugin_rclone':'False','use_plugin_daum_tv':'False'}
- recent_version=Q
- @N
+ recent_version=H
+ @h
  def plugin_load():
   try:
    SystemLogic.db_init()
    SystemLogic.init()
-  except e as e:
+  except j as e:
    logger.error('Exception:%s',e)
-   logger.error(H())
- @N
+   logger.error(V())
+ @h
  def db_init():
   try:
-   logger.debug('setting count : %s',c.query(ModelSetting).filter_by().count())
-   is_first=j
+   logger.debug('setting count : %s',K.query(ModelSetting).filter_by().count())
+   is_first=C
    for key,value in SystemLogic.db_default.items():
-    if c.query(ModelSetting).filter_by(key=key).count()==0:
+    if K.query(ModelSetting).filter_by(key=key).count()==0:
      if key=='port':
-      is_first=o
+      is_first=i
      if key=='sjva_id' or key=='auth_apikey':
-      value=''.join(W(Y+M)for _ in p(10))
-     c.add(ModelSetting(key,value))
-     c.commit()
+      value=''.join(X(B+c)for _ in R(10))
+     K.add(ModelSetting(key,value))
+     K.commit()
    for key,value in SystemLogic.db_default2.items():
-    if c.query(ModelSetting).filter_by(key=key).count()==0:
+    if K.query(ModelSetting).filter_by(key=key).count()==0:
      tmp=value
-     if is_first==j:
+     if is_first==C:
       tmp='True'
-     c.add(ModelSetting(key,tmp))
-     c.commit()
+     K.add(ModelSetting(key,tmp))
+     K.commit()
    for key,value in SystemLogic.db_default3.items():
-    if c.query(ModelSetting).filter_by(key=key).count()==0:
+    if K.query(ModelSetting).filter_by(key=key).count()==0:
      tmp=value
-     if is_first==j:
+     if is_first==C:
       tmp='True'
-     c.add(ModelSetting(key,tmp))
-     c.commit()
-  except e as e:
+     K.add(ModelSetting(key,tmp))
+     K.commit()
+  except j as e:
    logger.error('Exception:%s',e)
-   logger.error(H())
- @N
+   logger.error(V())
+ @h
  def init():
   try:
-   if X['config']['repeat']==0 or SystemLogic.get_setting_value('system_start_time')=='':
-    item=c.query(ModelSetting).filter_by(key='system_start_time').with_for_update().first()
-    item.value=n().strftime('%Y-%m-%d %H:%M:%S')
-    c.commit()
-   item=c.query(ModelSetting).filter_by(key='repeat').with_for_update().first()
-   item.value=F(X['config']['repeat'])
-   c.commit()
-   username=c.query(ModelSetting).filter_by(key='id').first().value
-   passwd=c.query(ModelSetting).filter_by(key='pw').first().value
+   if A['config']['repeat']==0 or SystemLogic.get_setting_value('system_start_time')=='':
+    item=K.query(ModelSetting).filter_by(key='system_start_time').with_for_update().first()
+    item.value=P().strftime('%Y-%m-%d %H:%M:%S')
+    K.commit()
+   item=K.query(ModelSetting).filter_by(key='repeat').with_for_update().first()
+   item.value=e(A['config']['repeat'])
+   K.commit()
+   username=K.query(ModelSetting).filter_by(key='id').first().value
+   passwd=K.query(ModelSetting).filter_by(key='pw').first().value
    USERS[username]=User(username,passwd_hash=passwd)
    SystemLogic.set_restart_scheduler()
    SystemLogic.set_scheduler_check_scheduler()
    SystemLogic.get_recent_version()
-  except e as e:
+  except j as e:
    logger.error('Exception:%s',e)
-   logger.error(H())
- @N
+   logger.error(V())
+ @h
  def get_recent_version():
   try:
    import requests
    url='https://sjva-server.soju6jan.com/version'
-      A=requests.get
-   if I('ddns')=='https://sjva-server.soju6jan.com':
+      Y=requests.get
+   if w('ddns')=='https://sjva-server.soju6jan.com':
     url='https://sjva-dev.soju6jan.com/version'
-   SystemLogic.recent_version=A(url).text
-   return o
-  except e as e:
+   SystemLogic.recent_version=Y(url).text
+   return i
+  except j as e:
    logger.error('Exception:%s',e)
-   logger.error(H())
-  return j
- @N
+   logger.error(V())
+  return C
+ @h
  def restart():
   import system
-   Hd=system.restart
-  Hd()
- @N
+   Va=system.restart
+  Va()
+ @h
  def get_info():
   info={}
   import platform
@@ -148,105 +148,105 @@ class SystemLogic(L):
   info['version']=version
   info['recent_version']=SystemLogic.recent_version
   info['path_app_root']=path_app_root
-  info['running_type']=u'%s.  비동기 작업 : %s'%(X['config']['running_type'],u"사용" if X['config']['use_celery']else "미사용")
+  info['running_type']=u'%s.  비동기 작업 : %s'%(A['config']['running_type'],u"사용" if A['config']['use_celery']else "미사용")
   import system
-   Hd=system.restart
-  info['auth']=X['config']['auth_desc']
+   Va=system.restart
+  info['auth']=A['config']['auth_desc']
   try:
    import psutil
    from framework.util import Util
    info['cpu_percent']='%s %%'%psutil.cpu_percent()
-      HM=Util.db_list_to_dict
-      HY=Util.sizeof_fmt
+      Vc=Util.db_list_to_dict
+      VB=Util.sizeof_fmt
    tmp=psutil.virtual_memory()
-   info['memory']=u'전체 : %s   사용량 : %s   남은량 : %s  (%s%%)'%(HY(tmp[0],suffix='B'),HY(tmp[3],suffix='B'),HY(tmp[1],suffix='B'),tmp[2])
+   info['memory']=u'전체 : %s   사용량 : %s   남은량 : %s  (%s%%)'%(VB(tmp[0],suffix='B'),VB(tmp[3],suffix='B'),VB(tmp[1],suffix='B'),tmp[2])
   except:
    info['cpu_percent']='not supported'
    info['memory']='not supported'
   try:
    import platform
    if platform.system()=='Windows':
-    s=a.splitdrive(path_app_root)
+    s=u.splitdrive(path_app_root)
     root=s[0]
    else:
     root='/'
    tmp=psutil.disk_usage('/')
-   info['disk']=u'전체 : %s   사용량 : %s   남은량 : %s  (%s%%) - 드라이브 (%s)'%(HY(tmp[0],suffix='B'),HY(tmp[1],suffix='B'),HY(tmp[2],suffix='B'),tmp[3],root)
-  except e as e:
+   info['disk']=u'전체 : %s   사용량 : %s   남은량 : %s  (%s%%) - 드라이브 (%s)'%(VB(tmp[0],suffix='B'),VB(tmp[1],suffix='B'),VB(tmp[2],suffix='B'),tmp[3],root)
+  except j as e:
    info['disk']='not supported'
   try:
    tmp=SystemLogic.get_setting_value('system_start_time')
-   tmp_datetime=y(tmp,'%Y-%m-%d %H:%M:%S')
-   timedelta=n()-tmp_datetime
-   info['time']=u'시작 : %s   경과 : %s   재시작 : %s'%(tmp,F(timedelta).split('.')[0],X['config']['repeat'])
-  except e as e:
-   info['time']=F(e)
+   tmp_datetime=d(tmp,'%Y-%m-%d %H:%M:%S')
+   timedelta=P()-tmp_datetime
+   info['time']=u'시작 : %s   경과 : %s   재시작 : %s'%(tmp,e(timedelta).split('.')[0],A['config']['repeat'])
+  except j as e:
+   info['time']=e(e)
   return info
- @N
+ @h
  def setting_save_system(req):
   try:
    for key,value in req.form.items():
     logger.debug('Key:%s Value:%s',key,value)
-    entity=c.query(ModelSetting).filter_by(key=key).with_for_update().first()
+    entity=K.query(ModelSetting).filter_by(key=key).with_for_update().first()
     entity.value=value
-   c.commit()
-   lists=Hz.all()
-   SystemLogic.setting_list=HM(lists)
-   USERS[c.query(ModelSetting).filter_by(key='id').first().value]=User(c.query(ModelSetting).filter_by(key='id').first().value,passwd_hash=c.query(ModelSetting).filter_by(key='pw').first().value)
+   K.commit()
+   lists=Vr.all()
+   SystemLogic.setting_list=Vc(lists)
+   USERS[K.query(ModelSetting).filter_by(key='id').first().value]=User(K.query(ModelSetting).filter_by(key='id').first().value,passwd_hash=K.query(ModelSetting).filter_by(key='pw').first().value)
    SystemLogic.set_restart_scheduler()
-   set_level(E(c.query(ModelSetting).filter_by(key='log_level').first().value))
-   return o 
-  except e as e:
+   set_level(g(K.query(ModelSetting).filter_by(key='log_level').first().value))
+   return i 
+  except j as e:
    logger.error('Exception:%s',e)
-   logger.error(H())
-   return j
- @N
+   logger.error(V())
+   return C
+ @h
  def setting_save_after():
   try:
-   USERS[I('id')]=User(I('id'),passwd_hash=I('pw'))
+   USERS[w('id')]=User(w('id'),passwd_hash=w('pw'))
    SystemLogic.set_restart_scheduler()
-   set_level(E(c.query(ModelSetting).filter_by(key='log_level').first().value))
+   set_level(g(K.query(ModelSetting).filter_by(key='log_level').first().value))
    from.logic_site import SystemLogicSite
-   SystemLogicSite.get_daum_cookies(force=o)
-   return o 
-  except e as e:
+   SystemLogicSite.get_daum_cookies(force=i)
+   return i 
+  except j as e:
    logger.error('Exception:%s',e)
-   logger.error(H())
-   return j
- @N
+   logger.error(V())
+   return C
+ @h
  def change_theme(theme):
   try:
-   source=a.join(path_app_root,'static','css','theme','%s_bootstrap.min.css'%theme)
-   target=a.join(path_app_root,'static','css','bootstrap.min.css')
-   x(target)
-  except e as e:
+   source=u.join(path_app_root,'static','css','theme','%s_bootstrap.min.css'%theme)
+   target=u.join(path_app_root,'static','css','bootstrap.min.css')
+   Q(target)
+  except j as e:
    logger.error('Exception:%s',e)
-   logger.error(H())
-   return j
- @N
+   logger.error(V())
+   return C
+ @h
  def get_setting_value(key):
   try:
-   entity=c.query(ModelSetting).filter_by(key=key).first()
-   if entity is Q:
-    return Q
+   entity=K.query(ModelSetting).filter_by(key=key).first()
+   if entity is H:
+    return H
    else:
     return entity.value
-  except e as e:
+  except j as e:
    logger.error('Exception:%s',e)
-   logger.error(H())
+   logger.error(V())
    logger.error('error key : %s',key)
-   return j
- @N
+   return C
+ @h
  def set_restart_scheduler():
   name='%s_restart'%(package_name)
-  if u(name):
-   v(name)
-  interval=I('auto_restart_hour')
+  if S(name):
+   b(name)
+  interval=w('auto_restart_hour')
   if interval!='0':
-   if S(interval.split(' '))==1:
-    interval='%s'%(E(interval)*60)
-   job_instance=Job(package_name,name,interval,SystemLogic.restart,u"자동 재시작",o)
-   K(job_instance,run=j)
+   if l(interval.split(' '))==1:
+    interval='%s'%(g(interval)*60)
+   job_instance=Job(package_name,name,interval,SystemLogic.restart,u"자동 재시작",i)
+   U(job_instance,run=C)
  """    
     @staticmethod
     def set_statistics_scheduler():
@@ -261,18 +261,18 @@ class SystemLogic(L):
             logger.error(traceback.format_exc())
             return False
     """ 
- @N
+ @h
  def set_scheduler_check_scheduler():
   try:
    name='scheduler_check'
-   if u(name):
-    v(name)
-   job_instance=Job(package_name,name,2,HW,u"Scheduler Check",o)
-   K(job_instance,run=j)
-  except e as e:
+   if S(name):
+    b(name)
+   job_instance=Job(package_name,name,2,VX,u"Scheduler Check",i)
+   U(job_instance,run=C)
+  except j as e:
    logger.error('Exception:%s',e)
-   logger.error(H())
-   return j
+   logger.error(V())
+   return C
  """
     @staticmethod
     def statistics_scheduler_function():
@@ -318,7 +318,7 @@ class SystemLogic(L):
             logger.error(traceback.format_exc())
             return False
     """ 
- @N
+ @h
  def command_run(command_text):
   try:
    ret={}
@@ -328,16 +328,16 @@ class SystemLogic(L):
     ret['log']='Empty..'
     return ret
    if tmp[0]=='set':
-    if S(tmp)==3:
+    if l(tmp)==3:
      if tmp[1]=='token':
       tmp[1]='unique'
-     entity=c.query(ModelSetting).filter_by(key=tmp[1]).with_for_update().first()
-     if entity is Q:
+     entity=K.query(ModelSetting).filter_by(key=tmp[1]).with_for_update().first()
+     if entity is H:
       ret['ret']='fail'
       ret['log']='%s not exist'%tmp[1]
       return ret
      entity.value=tmp[2]if tmp[2]!='EMPTY' else ""
-     c.commit()
+     K.commit()
      ret['ret']='success'
      ret['log']='%s - %s'%(tmp[1],tmp[2])
      return ret
@@ -361,30 +361,30 @@ class SystemLogic(L):
    ret['ret']='fail'
    ret['log']='wrong command'
    return ret
-  except e as e:
+  except j as e:
    logger.error('Exception:%s',e)
-   logger.error(H())
+   logger.error(V())
    ret['ret']='fail'
-   ret['log']=F(e)
+   ret['log']=e(e)
    return ret
- @N
+ @h
  def link_save(link_data_str):
   try:
-   data=C(link_data_str)
-   entity=c.query(ModelSetting).filter_by(key='link_json').with_for_update().first()
+   data=t(link_data_str)
+   entity=K.query(ModelSetting).filter_by(key='link_json').with_for_update().first()
    entity.value=link_data_str
-   c.commit()
+   K.commit()
    SystemLogic.apply_menu_link()
-   return o
-  except e as e:
+   return i
+  except j as e:
    logger.error('Exception:%s',e)
-   logger.error(H())
-   return j
- @N
+   logger.error(V())
+   return C
+ @h
  def apply_menu_link():
   try:
    link_data_str=SystemLogic.get_setting_value('link_json') 
-   data=C(link_data_str)
+   data=t(link_data_str)
    from framework.menu import get_menu_map
    menu_map=get_menu_map()
    for link_category in menu_map:
@@ -398,9 +398,9 @@ class SystemLogic(L):
      entity['name']=item['title']
      entity['link']=item['url']
     link_category['list'].append(entity)
-   return o
-  except e as e:
+   return i
+  except j as e:
    logger.error('Exception:%s',e)
-   logger.error(H())
-   return j
+   logger.error(V())
+   return C
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

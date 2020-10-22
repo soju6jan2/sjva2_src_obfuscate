@@ -1,33 +1,33 @@
 import traceback
-p=object
-t=staticmethod
-J=False
-N=None
-l=True
-w=Exception
-j=traceback.format_exc
+E=object
+n=staticmethod
+V=False
+A=None
+G=True
+o=Exception
+X=traceback.format_exc
 import os
 import json
 import time
 import copy
 import re
-y=re.sub
-R=re.compile
+t=re.sub
+m=re.compile
 from guessit import guessit
 from framework.common.torrent import logger
-L=logger.error
-n=logger.debug
+D=logger.error
+C=logger.debug
 from framework.common.daum import MovieSearch
-H=MovieSearch.search_imdb
-d=MovieSearch.search_movie
+c=MovieSearch.search_imdb
+f=MovieSearch.search_movie
 from system.model import ModelSetting as SystemModelSetting
-class ProcessMovie(p):
- @t
+class ProcessMovie(E):
+ @n
  def get_info_from_rss(f):
   try:
-   n('INFO: [%s]',f)
+   C('INFO: [%s]',f)
    item={}
-   item['flag_move']=J
+   item['flag_move']=V
    item['name']=f
    item['guessit']=guessit(f)
    if 'language' in item['guessit']:
@@ -36,16 +36,16 @@ class ProcessMovie(p):
     item['guessit']['screen_size']='--'
    if 'source' not in item['guessit']:
     item['guessit']['source']='--'
-   item['search_name']=N
-   item['movie']=N
-   match=R(r'^(?P<name>.*?)[\s\.\[\_\(]\d{4}').match(item['name'])
+   item['search_name']=A
+   item['movie']=A
+   match=m(r'^(?P<name>.*?)[\s\.\[\_\(]\d{4}').match(item['name'])
    if match:
     item['search_name']=match.group('name').replace('.',' ').strip()
-    item['search_name']=y(r'\[(.*?)\]','',item['search_name'])
+    item['search_name']=t(r'\[(.*?)\]','',item['search_name'])
    else:
     return
    if 'year' in item['guessit']:
-    item['is_include_kor'],movie=d(item['search_name'],item['guessit']['year'])
+    item['is_include_kor'],movie=f(item['search_name'],item['guessit']['year'])
     if movie and movie[0]['score']==100:
      item['movie']=movie[0]
      if item['movie']['country'].startswith(u'한국'):
@@ -60,20 +60,20 @@ class ProcessMovie(p):
        item['target']='vod'
       else:
        item['target']='sub_x'
-     item['flag_move']=l
+     item['flag_move']=G
     else:
-     n('NO META!!!!!!!!!!')
-     if item['is_include_kor']==J:
-      n('imdb search %s %s ',item['search_name'].lower(),item['guessit']['year'])
-      movie=H(item['search_name'].lower(),item['guessit']['year'])
-      if movie is not N:
-       n('IMDB TITLE:[%s][%s]',movie['title'],movie['year'])
+     C('NO META!!!!!!!!!!')
+     if item['is_include_kor']==V:
+      C('imdb search %s %s ',item['search_name'].lower(),item['guessit']['year'])
+      movie=c(item['search_name'].lower(),item['guessit']['year'])
+      if movie is not A:
+       C('IMDB TITLE:[%s][%s]',movie['title'],movie['year'])
        item['movie']=movie
        item['target']='imdb'
-       item['flag_move']=l
+       item['flag_move']=G
    item['guessit']=''
    return item
-  except w as e:
-   L('Exxception:%s',e)
-   L(j())
+  except o as e:
+   D('Exxception:%s',e)
+   D(X())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
