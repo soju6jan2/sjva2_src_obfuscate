@@ -1,17 +1,17 @@
 import traceback
-U=int
-p=type
-h=Exception
-A=False
+X=int
+W=type
+J=Exception
+m=False
 L=None
-N=len
+R=len
 import json
 from framework.wavve.api import session,get_baseparameter,config,logger
 from framework.util import Util
 from framework import py_urllib
 def vod_newcontents(page=1,limit=20,genre='all'):
  try:
-  page=U(page)if p(page)!=U else page
+  page=X(page)if W(page)!=X else page
   param=get_baseparameter()
   param['genre']='all'
   param['channel']='all'
@@ -28,12 +28,12 @@ def vod_newcontents(page=1,limit=20,genre='all'):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except h as exception:
+ except J as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def vod_contents(page=1,limit=20,content_type='newcontents',genre='all',orderby='new',is_cf=A):
+def vod_contents(page=1,limit=20,content_type='newcontents',genre='all',orderby='new',is_cf=m):
  try:
-  page=U(page)if p(page)!=U else page
+  page=X(page)if W(page)!=X else page
   param=get_baseparameter()
   param['genre']=genre
   param['channel']='all'
@@ -53,12 +53,12 @@ def vod_contents(page=1,limit=20,content_type='newcontents',genre='all',orderby=
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except h as exception:
+ except J as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def vod_allprograms(page=1,limit=20,contenttype='program',genre='all',subgenre=L,orderby='new',is_cf=A):
+def vod_allprograms(page=1,limit=20,contenttype='program',genre='all',subgenre=L,orderby='new',is_cf=m):
  try:
-  page=U(page)if p(page)!=U else page
+  page=X(page)if W(page)!=X else page
   param=get_baseparameter()
   param['genre']=genre
   param['contenttype']=contenttype
@@ -80,7 +80,7 @@ def vod_allprograms(page=1,limit=20,contenttype='program',genre='all',subgenre=L
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except h as exception:
+ except J as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def vod_contents_contentid(contentid):
@@ -94,7 +94,7 @@ def vod_contents_contentid(contentid):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except h as exception:
+ except J as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def vod_programs_programid(programid):
@@ -108,12 +108,12 @@ def vod_programs_programid(programid):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except h as exception:
+ except J as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def vod_program_contents_programid(programid,page=1,limit=20):
  try:
-  page=U(page)if p(page)!=U else page
+  page=X(page)if W(page)!=X else page
   param=get_baseparameter()
   param['offset']=(page-1)*limit
   param['limit']=limit
@@ -126,7 +126,7 @@ def vod_program_contents_programid(programid,page=1,limit=20):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except h as exception:
+ except J as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def get_filename(data,quality):
@@ -140,12 +140,12 @@ def get_filename(data,quality):
    title=Util.change_text_for_use_filename(data['programtitle'])
    tmp=data["episodenumber"]
    episodeno=''
-   if N(tmp):
+   if R(tmp):
     if tmp=='특집':
      episodeno='.특집'
     else:
      tmps=tmp.split('-')
-     episodeno='.E0%s'%tmps[0]if N(tmps[0])==1 else '.E%s'%tmps[0]
+     episodeno='.E0%s'%tmps[0]if R(tmps[0])==1 else '.E%s'%tmps[0]
    airdate=data["releasedate"].replace('-','')[2:]
    release="SW"
    if data['type']=='onair':
@@ -170,8 +170,8 @@ def get_filename(data,quality):
    release="SP"
    if episode_data["result"]["contentType"]=='qvod':
     release='SPQ'
-   if N(episodeno):
-    if N(episodeno)==1:
+   if R(episodeno):
+    if R(episodeno)==1:
      episodeno="0"+episodeno
     if episodeno=="특집":
      ret="%s.%s.%s.%s-%s.mp4"%(title,episodeno,airdate,qualityRes,release)
@@ -180,7 +180,7 @@ def get_filename(data,quality):
    else:
     ret="%s.%s.%s-%s.mp4"%(title,airdate,qualityRes,release)
    return ret
- except h as exception:
+ except J as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def movie_contents_detail(movie_id):
@@ -194,7 +194,7 @@ def movie_contents_detail(movie_id):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except h as exception:
+ except J as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,12 +1,12 @@
 import os
-X=object
-f=staticmethod
-h=Exception
-C=True
-P=False
-O=int
-p=id
-s=None
+L=object
+U=staticmethod
+H=Exception
+Y=True
+R=False
+x=int
+P=id
+b=None
 from datetime import datetime
 import traceback
 import logging
@@ -26,20 +26,20 @@ from.model import ModelSetting,ModelGDriveScanJob,ModelGDriveScanFile
 from.gdrive import GDrive,Auth
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Logic(X):
+class Logic(L):
  db_default={'auto_start':'False','web_page_size':'30'}
  gdrive_instance_list=[]
- @f
+ @U
  def db_init():
   try:
    for key,value in Logic.db_default.items():
     if db.session.query(ModelSetting).filter_by(key=key).count()==0:
      db.session.add(ModelSetting(key,value))
    db.session.commit()
-  except h as exception:
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
+ @U
  def plugin_load():
   try:
    Logic.db_init()
@@ -48,17 +48,17 @@ class Logic(X):
     os.mkdir(json_folder)
    if ModelSetting.query.filter_by(key='auto_start').first().value=='True':
     Logic.scheduler_start()
-  except h as exception:
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
+ @U
  def plugin_unload():
   try:
    Logic.scheduler_stop()
-  except h as exception:
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
+ @U
  def setting_save(req):
   try:
    for key,value in req.form.items():
@@ -66,12 +66,12 @@ class Logic(X):
     entity=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
     entity.value=value
    db.session.commit()
-   return C 
-  except h as exception:
+   return Y 
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return P
- @f
+   return R
+ @U
  def scheduler_start():
   try:
    interval=9999
@@ -80,24 +80,24 @@ class Logic(X):
                 job = Job(package_name, '%s_%s' % (package_name, item.name), interval, Logic.start_gdrive, u"GDrive Scan : %s" % item.name, True, args=item.id)
                 scheduler.add_job_instance(job)
             """   
-   job=Job(package_name,package_name,interval,Logic.scheduler_thread_function,u"GDrive Scan",C)
+   job=Job(package_name,package_name,interval,Logic.scheduler_thread_function,u"GDrive Scan",Y)
    scheduler.add_job_instance(job)
-  except h as exception:
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
+ @U
  def start_gdrive(*args,**kwargs):
   logger.debug('start_gdrive:%s id:%s',args,args[0])
   try:
-   job=db.session.query(ModelGDriveScanJob).filter_by(p=O(args[0])).first()
+   job=db.session.query(ModelGDriveScanJob).filter_by(P=x(args[0])).first()
    match_rule='%s:%s,%s'%(job.name,job.gdrive_path,job.plex_path)
    gdrive=GDrive(match_rule)
    gdrive.start_change_watch()
    gdrive.thread.join()
-  except h as exception:
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
+ @U
  def scheduler_thread_function(*args,**kwargs):
   try:
    lists=db.session.query(ModelGDriveScanJob).filter().all()
@@ -109,19 +109,19 @@ class Logic(X):
     Logic.gdrive_instance_list.append(gdrive)
    for ins in Logic.gdrive_instance_list:
     ins.thread.join()
-  except h as exception:
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
+ @U
  def scheduler_stop():
   try:
    for ins in Logic.gdrive_instance_list:
     ins.stop()
    scheduler.remove_job(package_name)
-  except h as exception:
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
+ @U
  def gdrive_save(req):
   try:
    code=req.form['gdrive_code']
@@ -133,12 +133,12 @@ class Logic(X):
    job.plex_path=req.form['plex_path']
    db.session.add(job)
    db.session.commit()
-   return C
-  except h as exception:
+   return Y
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return P
- @f
+   return R
+ @U
  def gdrive_list():
   try:
    lists=db.session.query(ModelGDriveScanJob).filter().all()
@@ -152,15 +152,15 @@ class Logic(X):
                     ret.append(item.split('.')[0])
             return ret            
             """   
-  except h as exception:
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return P
- @f
+   return R
+ @U
  def gdrive_delete(req):
   try:
-   job_id=O(req.form['id'])
-   job=db.session.query(ModelGDriveScanJob).filter_by(p=job_id).first()
+   job_id=x(req.form['id'])
+   job=db.session.query(ModelGDriveScanJob).filter_by(P=job_id).first()
    name=job.name
    tokenfile=os.path.join(path_data,'db','gdrive','%s.json'%name)
    if os.path.exists(tokenfile):
@@ -170,84 +170,84 @@ class Logic(X):
     os.remove(dbfile)
    db.session.delete(job)
    db.session.commit()
-   return C
-  except h as exception:
+   return Y
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return P
- @f
- def receive_scan_result(p,filename):
+   return R
+ @U
+ def receive_scan_result(P,filename):
   try:
-   if C:
-    logger.debug('Receive Scan Completed : %s-%s',p,filename)
-    modelfile=db.session.query(ModelGDriveScanFile).filter_by(p=O(p)).with_for_update().first()
-    if modelfile is not s:
+   if Y:
+    logger.debug('Receive Scan Completed : %s-%s',P,filename)
+    modelfile=db.session.query(ModelGDriveScanFile).filter_by(P=x(P)).with_for_update().first()
+    if modelfile is not b:
      modelfile.scan_time=datetime.now()
      db.session.commit()
-  except h as exception:
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    logger.debug('ROLLBACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
- @f
+ @U
  def filelist(req):
   try:
    ret={}
    page=1
-   page_size=O(db.session.query(ModelSetting).filter_by(key='web_page_size').first().value)
+   page_size=x(db.session.query(ModelSetting).filter_by(key='web_page_size').first().value)
    job_id=''
    search=''
    if 'page' in req.form:
-    page=O(req.form['page'])
+    page=x(req.form['page'])
    if 'search_word' in req.form:
     search=req.form['search_word']
    query=db.session.query(ModelGDriveScanFile)
    if search!='':
     query=query.filter(ModelGDriveScanFile.name.like('%'+search+'%'))
    count=query.count()
-   query=(query.order_by(desc(ModelGDriveScanFile.p)).limit(page_size).offset((page-1)*page_size))
+   query=(query.order_by(desc(ModelGDriveScanFile.P)).limit(page_size).offset((page-1)*page_size))
    logger.debug('ModelGDriveScanFile count:%s',count)
    lists=query.all()
    ret['list']=[item.as_dict()for item in lists]
    ret['paging']=Util.get_paging_info(count,page,page_size)
    return ret
-  except h as exception:
+  except H as exception:
    logger.debug('Exception:%s',exception)
    logger.debug(traceback.format_exc())
- @f
+ @U
  def reset_db():
   try:
    db.session.query(ModelGDriveScanFile).delete()
    db.session.commit()
-   return C
-  except h as exception:
+   return Y
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return P
+   return R
  from framework.event import MyEvent
  listener=MyEvent()
- @f
+ @U
  def add_listener(f):
   try:
    Logic.listener+=f
-  except h as exception:
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return P
- @f
+   return R
+ @U
  def remove_listener(f):
   try:
    Logic.listener-=f
-  except h as exception:
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return P
- @f
+   return R
+ @U
  def send_to_listener(type_add_remove,is_file,filepath):
   try:
    args=[]
    kargs={'plugin':package_name,'type':type_add_remove.lower(),'filepath':filepath,'is_file':is_file}
    Logic.listener.fire(*args,**kargs)
-  except h as exception:
+  except H as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

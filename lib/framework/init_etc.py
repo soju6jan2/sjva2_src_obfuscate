@@ -1,6 +1,6 @@
 import os
-B=None
-s=Exception
+A=None
+D=Exception
 m=print
 from datetime import datetime,timedelta
 from flask import request,abort
@@ -17,12 +17,12 @@ def check_api(original_function):
      apikey=request.form['apikey']
     else:
      apikey=request.args.get('apikey')
-    if apikey is B or apikey!=SystemModelSetting.get('auth_apikey'):
+    if apikey is A or apikey!=SystemModelSetting.get('auth_apikey'):
      logger.debug('CHECK API : ABORT no match ({})'.format(apikey))
      logger.debug(request.environ.get('HTTP_X_REAL_IP',request.remote_addr))
      abort(403)
      return 
-  except s as exception:
+  except D as exception:
    m('Exception:%s',exception)
    import traceback
    m(traceback.format_exc())
@@ -47,7 +47,7 @@ def make_default_dir(path_data):
    tmp=os.path.join(path_data,item)
    if not os.path.exists(tmp):
     os.mkdir(tmp)
- except s as exception:
+ except D as exception:
   m('Exception:%s',exception)
   import traceback
   m(traceback.format_exc())

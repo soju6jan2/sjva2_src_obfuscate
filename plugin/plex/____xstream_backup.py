@@ -1,7 +1,7 @@
 import os
-P=Exception
+S=Exception
 A=None
-R=True
+N=True
 import traceback
 import time
 from datetime import datetime
@@ -25,14 +25,14 @@ def plugin_load():
  try:
   logger.debug('plugin_load:%s',package_name)
   Logic.plugin_load()
- except P as e:
+ except S as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def plugin_unload():
  try:
   logger.debug('plugin_unload:%s',package_name)
   Logic.plugin_unload()
- except P as e:
+ except S as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 last_data={}
@@ -61,7 +61,7 @@ def detail(sub):
     arg['lc_json']="[]"
    tmp=json.loads(arg['lc_json'])
    arg['lc_json']=json.dumps(tmp,indent=4)
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    arg['lc_json']=Logic.db_default['lc_json']
@@ -76,7 +76,7 @@ def detail(sub):
     arg['tivimate_json']="[]"
    tmp=json.loads(arg['tivimate_json'])
    arg['tivimate_json']=json.dumps(tmp,indent=4)
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    arg['tivimate_json']=Logic.db_default['tivimate_json']
@@ -94,42 +94,42 @@ def ajax(sub):
   try:
    ret=Logic.get_plex_server_list(request)
    return jsonify(ret)
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
  elif sub=='setting_save':
   try:
    ret=Logic.setting_save(request)
    return jsonify(ret)
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
  elif sub=='connect_by_name':
   try:
    ret=Logic.connect_plex_server_by_name(request)
    return jsonify(ret)
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
  elif sub=='connect_by_url':
   try:
    ret=Logic.connect_plex_server_by_url(request)
    return jsonify(ret)
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
  elif sub=='get_sjva_version':
   try:
    ret=Logic.get_sjva_plugin_version(request)
    return jsonify(ret)
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc()) 
  elif sub=='get_sj_daum_version':
   try:
    ret=Logic.get_sj_daum_version(request)
    return jsonify(ret)
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc()) 
  elif sub=='analyze_show':
@@ -137,14 +137,14 @@ def ajax(sub):
    ret=Logic.analyze_show(request)
    last_data['analyze_show']=ret
    return jsonify(ret)
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
  elif sub=='analyze_show_event':
   try:
    key=request.args.get('key')
    return Response(Logic.analyze_show(key),mimetype="text/event-stream")
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
  elif sub=='load_tool':
@@ -153,14 +153,14 @@ def ajax(sub):
    last_data['plex_server_hash']=Logic.get_server_hash()
    last_data['analyze_show']=Logic.analyze_show_data
    return jsonify(last_data)
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
  elif sub=='send_command':
   try:
    ret=Logic.plungin_command(request)
    return jsonify(ret)
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
 @blueprint.route('/api/<sub>',methods=['GET','POST'])
@@ -169,7 +169,7 @@ def api(sub):
   try:
    from.logic_m3u import LogicM3U
    return LogicM3U.make_m3u()[0]
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
  elif sub=='xml' or sub=='xmltv.php':
@@ -177,7 +177,7 @@ def api(sub):
    from.logic_m3u import LogicM3U
    data=LogicM3U.make_m3u()[1]
    return Response(data,mimetype='application/xml')
-  except P as e:
+  except S as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
 @blueprint.route('/get.php')
@@ -211,7 +211,7 @@ def player_api():
   output['user_info']['created_at']=''
   output['user_info']['max_connections']=''
   output['user_info']['allowed_output_formats']=''
-  output={"user_info":{"username":"zqcAXZEvlW","password":"ATiD6d7K3H","message":"","auth":1,"status":"Active","exp_date":"1632734599","is_trial":"0","active_cons":"1","created_at":"1585304571","max_connections":"1","allowed_output_formats":["m3u8"]},"server_info":{"url":"sjva-dev.soju6jan.com","port":"443","https_port":"443","server_protocol":"https","rtmp_port":"443","timezone":"UTC","timestamp_now":1602768143,"time_now":"2020-10-15 13:22:23","process":R}}
+  output={"user_info":{"username":"zqcAXZEvlW","password":"ATiD6d7K3H","message":"","auth":1,"status":"Active","exp_date":"1632734599","is_trial":"0","active_cons":"1","created_at":"1585304571","max_connections":"1","allowed_output_formats":["m3u8"]},"server_info":{"url":"sjva-dev.soju6jan.com","port":"443","https_port":"443","server_protocol":"https","rtmp_port":"443","timezone":"UTC","timestamp_now":1602768143,"time_now":"2020-10-15 13:22:23","process":N}}
   logger.debug(output)
   return jsonify(output)
  elif request.args.get('action')=='get_live_streams':
