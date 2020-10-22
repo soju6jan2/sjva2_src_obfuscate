@@ -163,3 +163,20 @@ NameError: name 'unicode' is not defined
     I=unicode
 NameError: name 'unicode' is not defined
 
+[2020-10-22 22:45:51,102|DEBUG|__init__.py:38] Path app root : /home/coder/project/SJ/git_release/sjva2_src_obfuscate
+[2020-10-22 22:45:51,125|DEBUG|__init__.py:39] Path app data : /home/coder/project/SJ/git_release/sjva2_src_obfuscate/data
+[2020-10-22 22:45:51,126|DEBUG|__init__.py:41] Platform : Linux
+[2020-10-22 22:45:51,128|DEBUG|__init__.py:47] NOT INSTALLED FLASK_RESTFUL
+[2020-10-22 22:45:51,128|DEBUG|__init__.py:53] ======================================
+[2020-10-22 22:45:51,128|DEBUG|__init__.py:54] ['sjva.py', '0', '0']
+[2020-10-22 22:45:51,131|DEBUG|class_scheduler.py:30] SCHEDULER..
+[2020-10-22 22:45:51,195|ERROR|__init__.py:177] Exception:name 'unicode' is not defined
+[2020-10-22 22:45:51,196|ERROR|__init__.py:178] Traceback (most recent call last):
+  File "/home/coder/project/SJ/git_release/sjva2_src_obfuscate/lib/framework/__init__.py", line 76, in <module>
+    from.manual import*
+  File "/home/coder/project/SJ/git_release/sjva2_src_obfuscate/lib/framework/manual.py", line 10, in <module>
+    from framework.job import Job
+  File "/home/coder/project/SJ/git_release/sjva2_src_obfuscate/lib/framework/job.py", line 8, in <module>
+    d=unicode
+NameError: name 'unicode' is not defined
+

@@ -1,7 +1,7 @@
 import traceback
-d=None
-k=Exception
-s=True
+c=None
+r=Exception
+m=True
 import json
 from flask import Blueprint,request,render_template,redirect,jsonify
 from flask_login import login_required
@@ -11,9 +11,9 @@ from framework.util import AlchemyEncoder
 def default_route(P):
  @P.blueprint.route('/')
  def home():
-  if P.ModelSetting is not d:
+  if P.ModelSetting is not c:
    tmp=P.ModelSetting.get('recent_menu_plugin')
-   if tmp is not d and tmp!='':
+   if tmp is not c and tmp!='':
     tmps=tmp.split('|')
     return redirect('/{package_name}/{sub}/{sub2}'.format(package_name=P.package_name,sub=tmps[0],sub2=tmps[1]))
   return redirect('/{package_name}/{home_module}'.format(package_name=P.package_name,home_module=P.home_module))
@@ -27,13 +27,13 @@ def default_route(P):
    if sub=='log':
     return render_template('log.html',package=P.package_name)
    return render_template('sample.html',title='%s - %s'%(P.package_name,sub))
-  except k as e:
+  except r as e:
    P.logger.error('Exception:%s',e)
    P.logger.error(traceback.format_exc())
  @P.blueprint.route('/<sub>/<sub2>',methods=['GET','POST'])
  @login_required
  def second_menu(sub,sub2):
-  if P.ModelSetting is not d:
+  if P.ModelSetting is not c:
    P.ModelSetting.set('recent_menu_plugin','{}|{}'.format(sub,sub2))
   try:
    for module in P.module_list:
@@ -42,7 +42,7 @@ def default_route(P):
    if sub=='log':
     return render_template('log.html',package=P.package_name)
    return render_template('sample.html',title='%s - %s'%(P.package_name,sub))
-  except k as e:
+  except r as e:
    P.logger.error('Exception:%s',e)
    P.logger.error(traceback.format_exc())
  @P.blueprint.route('/ajax/<sub>',methods=['GET','POST'])
@@ -72,7 +72,7 @@ def default_route(P):
     sub=request.form['sub']
     ret=P.logic.one_execute(sub)
     return jsonify(ret)
-  except k as e:
+  except r as e:
    P.logger.error('Exception:%s',e)
    P.logger.error(traceback.format_exc()) 
  @P.blueprint.route('/ajax/<sub>/<sub2>',methods=['GET','POST'])
@@ -82,7 +82,7 @@ def default_route(P):
    for module in P.module_list:
     if sub==module.name:
      return module.process_ajax(sub2,request)
-  except k as e:
+  except r as e:
    P.logger.error('Exception:%s',e)
    P.logger.error(traceback.format_exc())
  @P.blueprint.route('/api/<sub>/<sub2>',methods=['GET','POST'])
@@ -92,7 +92,7 @@ def default_route(P):
    for module in P.module_list:
     if sub==module.name:
      return module.process_api(sub2,request)
-  except k as e:
+  except r as e:
    P.logger.error('Exception:%s',e)
    P.logger.error(traceback.format_exc())
  @P.blueprint.route('/normal/<sub>/<sub2>',methods=['GET','POST'])
@@ -101,7 +101,7 @@ def default_route(P):
    for module in P.module_list:
     if sub==module.name:
      return module.process_normal(sub2,request)
-  except k as e:
+  except r as e:
    P.logger.error('Exception:%s',e)
    P.logger.error(traceback.format_exc())
 def default_route_single_module(P):
@@ -142,7 +142,7 @@ def default_route_single_module(P):
     return jsonify(ret)
    else:
     return P.module_list[0].process_ajax(sub,request)
-  except k as e:
+  except r as e:
    P.logger.error('Exception:%s',e)
    P.logger.error(traceback.format_exc()) 
  @P.blueprint.route('/api/<sub>',methods=['GET','POST'])
@@ -150,18 +150,18 @@ def default_route_single_module(P):
  def api(sub):
   try:
    return P.module_list[0].process_api(sub,request)
-  except k as e:
+  except r as e:
    P.logger.error('Exception:%s',e)
    P.logger.error(traceback.format_exc())
  @P.blueprint.route('/normal/<sub>',methods=['GET','POST'])
  def normal(sub):
   try:
    return P.module_list[0].process_normal(sub,request)
-  except k as e:
+  except r as e:
    P.logger.error('Exception:%s',e)
    P.logger.error(traceback.format_exc()) 
 def default_route_socketio(P,instance):
- if instance.socketio_list is d:
+ if instance.socketio_list is c:
   instance.socketio_list=[]
  @socketio.on('connect',namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name))
  def connect():
@@ -169,7 +169,7 @@ def default_route_socketio(P,instance):
    P.logger.debug('socket_connect : %s - %s',P.package_name,instance.name)
    instance.socketio_list.append(request.sid)
    socketio_callback('start','')
-  except k as e:
+  except r as e:
    P.logger.error('Exception:%s',e)
    P.logger.error(traceback.format_exc())
  @socketio.on('disconnect',namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name))
@@ -177,14 +177,14 @@ def default_route_socketio(P,instance):
   try:
    P.logger.debug('socket_disconnect : %s - %s',P.package_name,instance.name)
    instance.socketio_list.remove(request.sid)
-  except k as e:
+  except r as e:
    P.logger.error('Exception:%s',e)
    P.logger.error(traceback.format_exc())
- def socketio_callback(cmd,data,encoding=s):
+ def socketio_callback(cmd,data,encoding=m):
   if instance.socketio_list:
    if encoding:
     data=json.dumps(data,cls=AlchemyEncoder)
     data=json.loads(data)
-   socketio.emit(cmd,data,namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name),broadcast=s)
+   socketio.emit(cmd,data,namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name),broadcast=m)
  instance.socketio_callback=socketio_callback
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

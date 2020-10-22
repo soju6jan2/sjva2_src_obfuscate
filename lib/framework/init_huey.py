@@ -1,11 +1,11 @@
 import os
-c=None
-S=print
+y=None
+J=print
 import sys
 from framework import logger,path_app_root
 from huey import RedisHuey,SqliteHuey
 huey=RedisHuey()
 @huey.signal()
-def all_signal_handler(signal,task,exc=c):
- S('%s - %s'%(signal,task))
+def all_signal_handler(signal,task,exc=y):
+ J('%s - %s'%(signal,task))
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

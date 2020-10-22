@@ -1,6 +1,6 @@
 import traceback
 A=str
-K=Exception
+M=Exception
 import logging
 import requests
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify
@@ -43,14 +43,14 @@ def ajax(sub):
   try:
    ret=Logic.setting_save(request)
    return jsonify(ret)
-  except K as e:
+  except M as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
  elif sub=='filelist':
   try:
    ret=Logic.filelist(request)
    return jsonify(ret)
-  except K as e:
+  except M as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
  elif sub=='scheduler':
@@ -62,7 +62,7 @@ def ajax(sub):
    else:
     Logic.scheduler_stop()
    return jsonify(go)
-  except K as e:
+  except M as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    return jsonify('fail')
@@ -72,7 +72,7 @@ def ajax(sub):
    ret['ret']=Logic.library_save(request)
    ret['library_list']=[item.as_dict()for item in Logic.library_list()]
    return jsonify(ret)
-  except K as e:
+  except M as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    return jsonify('fail')
@@ -81,7 +81,7 @@ def ajax(sub):
    ret={}
    ret['library_list']=[item.as_dict()for item in Logic.library_list()]
    return jsonify(ret)
-  except K as e:
+  except M as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    return jsonify('fail')
@@ -91,7 +91,7 @@ def ajax(sub):
    ret['ret']=Logic.library_remove(request)
    ret['library_list']=[item.as_dict()for item in Logic.library_list()]
    return jsonify(ret)
-  except K as e:
+  except M as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    return jsonify('fail')
@@ -99,7 +99,7 @@ def ajax(sub):
   try:
    ret=Logic.reset_db()
    return jsonify(ret)
-  except K as e:
+  except M as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
    return jsonify('fail')
@@ -112,7 +112,7 @@ def api(sub):
    logger.debug('SCAN COMPLETED:%s %s',filename,db_id)
    Logic.receive_scan_result(db_id,filename)
    return 'ok'
-  except K as e:
+  except M as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
