@@ -1,11 +1,11 @@
 import os
-q=object
-Q=True
-s=False
+p=object
+G=True
+V=False
 u=None
-y=Exception
-S=str
-L=classmethod
+P=Exception
+r=str
+T=classmethod
 import traceback
 import logging
 import platform
@@ -18,9 +18,9 @@ import json
 from framework.logger import get_logger
 from framework import path_app_root,socketio,logger,py_queue
 package_name=__name__.split('.')[0]
-class SystemLogicCommand2(q):
+class SystemLogicCommand2(p):
  instance_list=[]
- def __init__(self,title,commands,clear=Q,wait=s,show_modal=Q):
+ def __init__(self,title,commands,clear=G,wait=V,show_modal=G):
   self.title=title
   self.commands=commands
   self.clear=clear
@@ -36,54 +36,54 @@ class SystemLogicCommand2(q):
   try:
    if self.show_modal:
     if self.clear:
-     socketio.emit("command_modal_clear",u,namespace='/framework',broadcast=Q)
+     socketio.emit("command_modal_clear",u,namespace='/framework',broadcast=G)
    self.thread=threading.Thread(target=self.execute_thread_function,args=())
-   self.thread.setDaemon(Q)
+   self.thread.setDaemon(G)
    self.thread.start()
    if self.wait:
     time.sleep(1)
     self.thread.join()
     return self.return_log
-  except y as exception:
+  except P as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  def execute_thread_function(self):
   try:
    if self.show_modal:
-    socketio.emit("loading_hide",u,namespace='/framework',broadcast=Q)
+    socketio.emit("loading_hide",u,namespace='/framework',broadcast=G)
    for command in self.commands:
     if command[0]=='msg':
      if self.show_modal:
-      socketio.emit("command_modal_add_text",'%s\n\n'%command[1],namespace='/framework',broadcast=Q)
+      socketio.emit("command_modal_add_text",'%s\n\n'%command[1],namespace='/framework',broadcast=G)
     elif command[0]=='system':
      if self.show_modal:
-      socketio.emit("command_modal_add_text",'$ %s\n\n'%command[1],namespace='/framework',broadcast=Q)
+      socketio.emit("command_modal_add_text",'$ %s\n\n'%command[1],namespace='/framework',broadcast=G)
      os.system(command[1])
     else:
-     show_command=Q
+     show_command=G
      if command[0]=='hide':
-      show_command=s
+      show_command=V
       command=command[1:]
-     self.process=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=Q,bufsize=1)
+     self.process=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=G,bufsize=1)
      self.start_communicate(command,show_command=show_command)
      self.send_queue_start()
      if self.process is not u:
       self.process.wait()
     time.sleep(1)
-  except y as exception:
+  except P as exception:
    if self.show_modal:
-    socketio.emit("command_modal_show",self.title,namespace='/framework',broadcast=Q)
-    socketio.emit("command_modal_add_text",S(exception),namespace='/framework',broadcast=Q)
-    socketio.emit("command_modal_add_text",S(traceback.format_exc()),namespace='/framework',broadcast=Q)
- def start_communicate(self,current_command,show_command=Q):
+    socketio.emit("command_modal_show",self.title,namespace='/framework',broadcast=G)
+    socketio.emit("command_modal_add_text",r(exception),namespace='/framework',broadcast=G)
+    socketio.emit("command_modal_add_text",r(traceback.format_exc()),namespace='/framework',broadcast=G)
+ def start_communicate(self,current_command,show_command=G):
   self.stdout_queue=py_queue.Queue()
   if show_command:
    self.stdout_queue.put('$ %s\n'%' '.join(current_command))
-  sout=io.open(self.process.stdout.fileno(),'rb',closefd=s)
+  sout=io.open(self.process.stdout.fileno(),'rb',closefd=V)
   def Pump(stream):
    queue=py_queue.Queue()
    def rdr():
-    while Q:
+    while G:
      buf=self.process.stdout.read(1)
      if buf:
       queue.put(buf)
@@ -93,16 +93,16 @@ class SystemLogicCommand2(q):
     queue.put(u)
     time.sleep(1)
    def clct():
-    active=Q
+    active=G
     while active:
      r=queue.get()
      if r is u:
       break
      try:
-      while Q:
+      while G:
        r1=queue.get(timeout=0.005)
        if r1 is u:
-        active=s
+        active=V
         break
        else:
         r+=r1
@@ -111,10 +111,10 @@ class SystemLogicCommand2(q):
      if r is not u:
       try:
        r=r.decode('utf-8')
-      except y as exception:
+      except P as exception:
        try:
         r=r.decode('cp949')
-       except y as exception:
+       except P as exception:
         logger.error('Exception:%s',exception)
         logger.error(traceback.format_exc())
         try:
@@ -126,39 +126,39 @@ class SystemLogicCommand2(q):
     self.stdout_queue.put('<END>')
    for tgt in[rdr,clct]:
     th=threading.Thread(target=tgt)
-    th.setDaemon(Q)
+    th.setDaemon(G)
     th.start()
   Pump(sout)
  def send_queue_start(self):
   def send_to_ui_thread_function():
    if self.show_modal:
-    socketio.emit("command_modal_show",self.title,namespace='/framework',broadcast=Q)
+    socketio.emit("command_modal_show",self.title,namespace='/framework',broadcast=G)
    while self.stdout_queue:
     line=self.stdout_queue.get()
     if line=='<END>':
      if self.show_modal:
-      socketio.emit("command_modal_add_text","\n",namespace='/framework',broadcast=Q)
+      socketio.emit("command_modal_add_text","\n",namespace='/framework',broadcast=G)
       break
     else:
      if self.show_modal:
-      socketio.emit("command_modal_add_text",line,namespace='/framework',broadcast=Q)
+      socketio.emit("command_modal_add_text",line,namespace='/framework',broadcast=G)
    self.send_to_ui_thread=u
    self.stdout_queue=u
    self.process=u
   if self.send_to_ui_thread is u:
    self.send_to_ui_thread=threading.Thread(target=send_to_ui_thread_function,args=())
    self.send_to_ui_thread.start()
- @L
+ @T
  def plugin_unload(cls):
   for instance in cls.instance_list:
    try:
     if instance.process is not u and instance.process.poll()is u:
      import psutil
      process=psutil.Process(instance.process.pid)
-     for proc in instance.process.children(recursive=Q):
+     for proc in instance.process.children(recursive=G):
       proc.kill()
      instance.process.kill()
-   except y as exception:
+   except P as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc()) 
    finally:

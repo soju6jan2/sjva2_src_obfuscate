@@ -1,10 +1,10 @@
 import traceback
-Y=object
-P=staticmethod
-I=False
-B=None
-w=True
-p=Exception
+r=object
+o=staticmethod
+M=False
+y=None
+s=True
+w=Exception
 import os
 import json
 import time
@@ -14,13 +14,13 @@ from guessit import guessit
 from framework.common.torrent import logger
 from framework.common.daum import MovieSearch
 from system.model import ModelSetting as SystemModelSetting
-class ProcessMovie(Y):
- @P
+class ProcessMovie(r):
+ @o
  def get_info_from_rss(f):
   try:
    logger.debug('INFO: [%s]',f)
    item={}
-   item['flag_move']=I
+   item['flag_move']=M
    item['name']=f
    item['guessit']=guessit(f)
    if 'language' in item['guessit']:
@@ -29,8 +29,8 @@ class ProcessMovie(Y):
     item['guessit']['screen_size']='--'
    if 'source' not in item['guessit']:
     item['guessit']['source']='--'
-   item['search_name']=B
-   item['movie']=B
+   item['search_name']=y
+   item['movie']=y
    match=re.compile(r'^(?P<name>.*?)[\s\.\[\_\(]\d{4}').match(item['name'])
    if match:
     item['search_name']=match.group('name').replace('.',' ').strip()
@@ -53,20 +53,20 @@ class ProcessMovie(Y):
        item['target']='vod'
       else:
        item['target']='sub_x'
-     item['flag_move']=w
+     item['flag_move']=s
     else:
      logger.debug('NO META!!!!!!!!!!')
-     if item['is_include_kor']==I:
+     if item['is_include_kor']==M:
       logger.debug('imdb search %s %s ',item['search_name'].lower(),item['guessit']['year'])
       movie=MovieSearch.search_imdb(item['search_name'].lower(),item['guessit']['year'])
-      if movie is not B:
+      if movie is not y:
        logger.debug('IMDB TITLE:[%s][%s]',movie['title'],movie['year'])
        item['movie']=movie
        item['target']='imdb'
-       item['flag_move']=w
+       item['flag_move']=s
    item['guessit']=''
    return item
-  except p as exception:
+  except w as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

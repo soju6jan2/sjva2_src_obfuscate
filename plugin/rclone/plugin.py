@@ -1,9 +1,9 @@
 import os
-B=Exception
-h=str
-k=None
-P=False
-z=True
+m=Exception
+W=str
+h=None
+O=False
+V=True
 import traceback
 import time
 from datetime import datetime
@@ -28,7 +28,7 @@ def plugin_load():
  try:
   logger.debug('plugin_load:%s',package_name)
   Logic.plugin_load()
- except B as exception:
+ except m as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def plugin_unload():
@@ -36,7 +36,7 @@ def plugin_unload():
   logger.debug('plugin_unload:%s',package_name)
   Logic.plugin_unload()
   Logic.kill()
- except B as exception:
+ except m as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @blueprint.route('/')
@@ -49,8 +49,8 @@ def detail(sub):
  if sub=='setting':
   setting_list=db.session.query(ModelSetting).all()
   arg=Util.db_list_to_dict(setting_list)
-  arg['scheduler']=h(scheduler.is_include(package_name))
-  arg['is_running']=h(scheduler.is_running(package_name))
+  arg['scheduler']=W(scheduler.is_include(package_name))
+  arg['is_running']=W(scheduler.is_running(package_name))
   arg['path_rclone']=Logic.path_rclone
   arg['default_rclone_setting']=Logic.default_rclone_setting
   return render_template('rclone_setting.html',sub=sub,arg=arg)
@@ -81,7 +81,7 @@ def detail2(sub,path):
  if sub=='static':
   return blueprint.send_static_file('static/'+path)
  else:
-  if path is k:
+  if path is h:
    return blueprint.send_static_file(sub)
   else:
    url='http://127.0.0.1:5572/%s/%s'%(sub,path)
@@ -89,12 +89,12 @@ def detail2(sub,path):
  return render_template('sample.html',title='%s - %s'%(package_name,sub))
 def proxy(request,url):
  try:
-  resp=requests.request(method=request.method,url=url,headers={key:value for(key,value)in request.headers if key!='Host'},data=request.get_data(),cookies=request.cookies,allow_redirects=P)
+  resp=requests.request(method=request.method,url=url,headers={key:value for(key,value)in request.headers if key!='Host'},data=request.get_data(),cookies=request.cookies,allow_redirects=O)
   excluded_headers=['content-encoding','content-length','transfer-encoding','connection']
   headers=[(name,value)for(name,value)in resp.raw.headers.items()if name.lower()not in excluded_headers]
   response=Response(resp.text,resp.status_code,headers)
   return response
- except B as exception:
+ except m as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @blueprint.route('/ajax/<sub>',methods=['GET','POST'])
@@ -105,7 +105,7 @@ def ajax(sub):
   try:
    ret=Logic.rclone_version()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='send_to_command_plugin':
@@ -113,7 +113,7 @@ def ajax(sub):
    c=request.form['command']
    ret='%s --config %s %s'%(Logic.path_rclone,Logic.path_config,c)
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='load_remotes':
@@ -122,7 +122,7 @@ def ajax(sub):
    ret['remotes']=Logic.load_remotes()
    ret['jobs']=Logic.get_jobs()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='remote_ls':
@@ -133,7 +133,7 @@ def ajax(sub):
    import command 
    ret=command.LogicNormal.execute_thread_function(ret)
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='local_ls':
@@ -147,7 +147,7 @@ def ajax(sub):
     if not ret:
      ret='EMPTY'
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='job_save':
@@ -157,7 +157,7 @@ def ajax(sub):
    ret['remotes']=Logic.load_remotes()
    ret['jobs']=Logic.get_jobs()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='setting_save':
@@ -174,21 +174,21 @@ def ajax(sub):
    else:
     Logic.scheduler_stop()
    return jsonify(go)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return jsonify('fail')
  elif sub=='status':
   try:
    pass
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='stop':
   try:
    ret=Logic.kill()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='scheduler_stop':
@@ -200,14 +200,14 @@ def ajax(sub):
    else:
     ret='not_running'
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='execute_job':
   try:
    ret=Logic.execute_job(request)
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='remove_job':
@@ -217,7 +217,7 @@ def ajax(sub):
    ret['remotes']=Logic.load_remotes()
    ret['jobs']=Logic.get_jobs()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='filelist':
@@ -225,20 +225,20 @@ def ajax(sub):
    ret=Logic.filelist(request)
    ret['jobs']=Logic.get_jobs()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='reset_db':
   try:
    ret=Logic.reset_db()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
  elif sub=='get_log':
   try:
    return jsonify(Logic.get_log(request))
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='load_mounts':
@@ -247,7 +247,7 @@ def ajax(sub):
    ret['mounts']=Logic.mount_list()
    ret['remotes']=Logic.load_remotes()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='mount_save':
@@ -257,7 +257,7 @@ def ajax(sub):
    ret['remotes']=Logic.load_remotes()
    ret['mounts']=Logic.mount_list()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='mount_execute':
@@ -268,7 +268,7 @@ def ajax(sub):
    ret['remotes']=Logic.load_remotes()
    ret['mounts']=Logic.mount_list()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='mount_stop':
@@ -278,7 +278,7 @@ def ajax(sub):
    ret['remotes']=Logic.load_remotes()
    ret['mounts']=Logic.mount_list()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='mount_remove':
@@ -290,7 +290,7 @@ def ajax(sub):
    ret['remotes']=Logic.load_remotes()
    ret['mounts']=Logic.mount_list()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='load_serves':
@@ -300,7 +300,7 @@ def ajax(sub):
    ret['serves']=LogicServe.serve_list()
    ret['remotes']=Logic.load_remotes()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='serve_save':
@@ -311,7 +311,7 @@ def ajax(sub):
    ret['remotes']=Logic.load_remotes()
    ret['serves']=LogicServe.serve_list()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='serve_execute':
@@ -323,7 +323,7 @@ def ajax(sub):
    ret['remotes']=Logic.load_remotes()
    ret['serves']=LogicServe.serve_list()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='serve_stop':
@@ -334,7 +334,7 @@ def ajax(sub):
    ret['remotes']=Logic.load_remotes()
    ret['serves']=LogicServe.serve_list()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='serve_remove':
@@ -347,7 +347,7 @@ def ajax(sub):
    ret['remotes']=Logic.load_remotes()
    ret['serves']=LogicServe.serve_list()
    return jsonify(ret)
-  except B as exception:
+  except m as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 sid_list=[]
@@ -356,12 +356,12 @@ def connect():
  try:
   logger.debug('socket_connect')
   sid_list.append(request.sid)
-  tmp=k
-  if Logic.current_data is not k:
+  tmp=h
+  if Logic.current_data is not h:
    tmp=json.dumps(Logic.current_data,cls=AlchemyEncoder)
    tmp=json.loads(tmp)
   emit('on_connect',tmp,namespace='/%s'%package_name)
- except B as exception:
+ except m as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @socketio.on('disconnect',namespace='/%s'%package_name)
@@ -369,14 +369,14 @@ def disconnect():
  try:
   sid_list.remove(request.sid)
   logger.debug('socket_disconnect')
- except B as exception:
+ except m as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def socketio_callback(cmd,data):
  if sid_list:
   tmp=json.dumps(data,cls=AlchemyEncoder)
   tmp=json.loads(tmp)
-  socketio.emit(cmd,tmp,namespace='/%s'%package_name,broadcast=z)
+  socketio.emit(cmd,tmp,namespace='/%s'%package_name,broadcast=V)
 """
 @blueprint.route('/rc/<path:path>',methods=['GET','POST','DELETE'])
 def rc(path):

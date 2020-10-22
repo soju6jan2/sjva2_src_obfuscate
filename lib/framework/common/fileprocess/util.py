@@ -1,27 +1,27 @@
 import os
-U=None
-m=False
-B=True
-T=UnicodeDecodeError
-N=Exception
+t=None
+x=False
+L=True
+u=UnicodeDecodeError
+l=Exception
 import traceback
 import time
 import threading
 import shutil
 from framework.common.fileprocess import logger
-def remove_small_file_and_move_target(path,size,target=U,except_ext=U):
+def remove_small_file_and_move_target(path,size,target=t,except_ext=t):
  try:
-  if target is U:
+  if target is t:
    target=path
-  if except_ext is U:
+  if except_ext is t:
    except_ext=['.smi','.srt','ass']
   lists=os.listdir(path)
   for f in lists:
    try:
     file_path=os.path.join(path,f)
-    except_file=m
+    except_file=x
     if os.path.splitext(file_path.lower())[1]in except_ext:
-     except_file=B
+     except_file=L
     if os.path.isdir(file_path):
      remove_small_file_and_move_target(file_path,size,target=target,except_ext=except_ext)
      if not os.listdir(file_path):
@@ -46,12 +46,12 @@ def remove_small_file_and_move_target(path,size,target=U,except_ext=U):
       except:
        logger.info(u'FILE REMOVE')
       os.remove(file_path)
-   except T:
+   except u:
     pass
-   except N as exception:
+   except l as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
- except N as exception:
+ except l as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def remove_match_ext(path,ext_list):
@@ -66,12 +66,12 @@ def remove_match_ext(path,ext_list):
      if os.path.splitext(file_path.lower())[1][1:]in ext_list:
       logger.info(u'REMOVE : %s',file_path)
       os.remove(file_path)
-   except T:
+   except u:
     pass
-   except N as exception:
+   except l as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
- except N as exception:
+ except l as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
