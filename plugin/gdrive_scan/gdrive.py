@@ -1,17 +1,17 @@
 import os
-w=file
-i=object
-j=None
-I=staticmethod
-k=True
-P=Exception
-K=False
+G=file
+N=object
+v=None
+j=staticmethod
+w=True
+r=Exception
+b=False
 m=range
-L=TypeError
-Q=enumerate
-a=len
-F=type
-u=int
+y=TypeError
+z=enumerate
+W=len
+l=type
+M=int
 import traceback
 import time
 from datetime import datetime
@@ -25,11 +25,11 @@ from flask import Blueprint,request,Response,send_file,render_template,redirect,
 from flask_socketio import SocketIO,emit,send
 import oauth2client
 from apiclient.discovery import build
-from oauth2client.w import Storage
+from oauth2client.G import Storage
 from oauth2client import tools
 from oauth2client.client import flow_from_clientsecrets,OAuth2WebServerFlow
 from httplib2 import Http
-from oauth2client import w,client,tools
+from oauth2client import G,client,tools
 from sqlitedict import SqliteDict
 from framework.logger import get_logger
 from framework import app,db,scheduler,path_data,socketio,path_app_root
@@ -38,9 +38,9 @@ from system.logic import SystemLogic
 from.model import ModelSetting,ModelGDriveScanJob,ModelGDriveScanFile
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Auth(i):
- current_flow=j
- @I
+class Auth(N):
+ current_flow=v
+ @j
  def save_token(code,name):
   try:
    credentials=GDrive.current_flow.step2_exchange(code)
@@ -48,17 +48,17 @@ class Auth(i):
    storage=Storage(filename)
    storage.put(credentials)
    logger.debug('Save token:%s %s',filename,code)
-   return k
-  except P as exception:
+   return w
+  except r as exception:
    logger.debug(exception)
    logger.debug(traceback.format_exc())
-   return K
- @I
+   return b
+ @j
  def make_token_cli(account_type):
   try:
    logger.debug(account_type)
    tmp='client_secret.json'
-   json_file=j
+   json_file=v
    if account_type=="0":
     pass
    if account_type=="1":
@@ -69,26 +69,26 @@ class Auth(i):
     json_file=os.path.join(path_app_root,'data','db',tmp)
     if not os.path.exists(json_file):
      return '99_not_exist'
-   if json_file is j:
+   if json_file is v:
     json_file=os.path.join(path_app_root,'static','file',tmp)
    GDrive.current_flow =oauth2client.client.flow_from_clientsecrets(json_file,'https://www.googleapis.com/auth/drive',redirect_uri='urn:ietf:wg:oauth:2.0:oob')
    return GDrive.current_flow.step1_get_authorize_url()
-  except P as exception:
+  except r as exception:
    logger.debug(exception)
    logger.debug(traceback.format_exc())
-   return K
-class GDrive(i):
+   return b
+class GDrive(N):
  def __init__(self,match_rule):
   self.match_rule=match_rule.split(',')
   self.gdrive_name=self.match_rule[0].split(':')[0]
   self.match_rule=[self.match_rule[0].split(':')[1],self.match_rule[1]]
   self.db=os.path.join(os.path.join(path_data,'db','gdrive','%s.db'%self.gdrive_name))
-  self.cache=SqliteDict(self.db,tablename='cache',encode=json.dumps,decode=json.loads,autocommit=k)
+  self.cache=SqliteDict(self.db,tablename='cache',encode=json.dumps,decode=json.loads,autocommit=w)
   self.change_check_interval=60
   self.api_call_inverval=1
-  self.flag_thread_run=k
-  self.thread=j
-  self.gdrive_service=j
+  self.flag_thread_run=w
+  self.thread=v
+  self.gdrive_service=v
  def start_change_watch(self):
   def get_start_page_token(creds):
    try:
@@ -97,7 +97,7 @@ class GDrive(i):
     page_token=results['startPageToken']
     logger.debug('startPageToken:%s',page_token)
     return page_token
-   except P as exception:
+   except r as exception:
     logger.debug('Exception:%s',exception)
     logger.debug(traceback.format_exc()) 
   def thread_function():
@@ -109,7 +109,7 @@ class GDrive(i):
    while self.flag_thread_run:
     try:
      for _ in m(self.change_check_interval):
-      if self.flag_thread_run==K:
+      if self.flag_thread_run==b:
        return
       time.sleep(1)
      results=self.gdrive_service.changes().list(pageToken=page_token,pageSize=1000,fields="changes(                                     file(                                         id, md5Checksum,mimeType,modifiedTime,name,parents,teamDriveId,trashed                                     ),                                      fileId,removed                                 ),                                 newStartPageToken").execute()
@@ -118,10 +118,10 @@ class GDrive(i):
      items=results.get('changes',[])
      for _ in items:
       logger.debug('1.CHANGE : %s',_)
-      is_add=k
-      is_file=k
-      if _['removed']==k:
-       is_add=K
+      is_add=w
+      is_file=w
+      if _['removed']==w:
+       is_add=b
        fileid=_['fileId']
        if fileid in self.cache:
         file_meta={'name':self.cache[fileid]['name'],'parents':self.cache[fileid]['parents'],}
@@ -141,7 +141,7 @@ class GDrive(i):
        fileid=_['file']['id']
        file_meta=self.gdrive_service.files().get(fileId=fileid,fields="id,mimeType, modifiedTime,name,parents,trashed").execute()
       if file_meta['mimeType']=='application/vnd.google-apps.folder':
-       is_file=K
+       is_file=b
       logger.debug('IS_ADD : %s IS_FILE :%s',is_add,is_file)
       job_list=[]
       if is_add and is_file:
@@ -163,13 +163,13 @@ class GDrive(i):
        is_file=job[2]
        logger.debug('2.FILEMETA:%s %s %s'%(file_meta,type_add_remove,is_file))
        file_paths=self.get_parent(file_meta)
-       if file_paths is j:
+       if file_paths is v:
         logger.debug('get_parent is None')
         continue
        gdrivepath='/'.join(file_paths)
        logger.debug('3.GdrivePath:%s'%gdrivepath)
        mount_abspath=self.get_mount_abspath(file_paths)
-       if mount_abspath is j:
+       if mount_abspath is v:
         logger.debug('NOT MOUNT INFO')
         continue
        logger.debug('4.MountPath:%s'%mount_abspath)
@@ -180,7 +180,7 @@ class GDrive(i):
         if is_add:
          self.cache[fileid]={'name':file_meta['name'],'parents':file_meta['parents'],'mimeType':file_meta['mimeType']}
         else:
-         self.cache[fileid]=j
+         self.cache[fileid]=v
         """
                                 if is_add and not is_file:
                                     try:
@@ -200,27 +200,27 @@ class GDrive(i):
        try:
         from.logic import Logic
         Logic.send_to_listener(type_add_remove,is_file,mount_abspath)
-       except P as exception:
+       except r as exception:
         logger.debug('Exception:%s',exception)
         logger.debug(traceback.format_exc())
        logger.debug('6.File process end.. WAIT :%s',self.api_call_inverval)
        for _ in m(self.api_call_inverval):
-        if self.flag_thread_run==K:
+        if self.flag_thread_run==b:
          return
         time.sleep(1)
        logger.debug('7.AWAKE Continue')
-    except L as exception:
+    except y as exception:
      page_token=get_start_page_token(creds)
      logger.debug('TYPE ERROR !!!!!!!!!!!!!!!!!!!!') 
      logger.debug('Exception:%s',exception)
      logger.debug(traceback.format_exc())
-    except P as exception:
+    except r as exception:
      logger.debug('Exception:%s',exception)
      logger.debug(traceback.format_exc()) 
   self.thread=threading.Thread(target=thread_function,args=())
-  self.thread.daemon=k
+  self.thread.daemon=w
   self.thread.start()
-  return k
+  return w
  def get_mount_abspath(self,gdrive_path):
   try:
    logger.debug(gdrive_path)
@@ -231,22 +231,22 @@ class GDrive(i):
     (drive,p)=os.path.splitdrive(self.match_rule[1])
     replace_mount_path=os.path.split(p)
    else:
-    drive=j
+    drive=v
     replace_mount_path=os.path.split(self.match_rule[1])
-   flag_find=k
-   for idx,val in Q(replace_gdrive_path):
+   flag_find=w
+   for idx,val in z(replace_gdrive_path):
     if gdrive_path[idx]!=val:
-     flag_find=K
+     flag_find=b
    if flag_find:
     ret=u''
     for _ in replace_mount_path:
      ret=os.path.join(ret,_)
     for _ in gdrive_path[idx+1:]:
      ret=os.path.join(ret,_)
-    if drive is not j:
+    if drive is not v:
      ret=os.path.join(drive,os.sep,ret)
    else:
-    ret=j
+    ret=v
     logger.debug('WRONG SETTING PATH!!!!!!!!!!!!!') 
     return ret
    logger.debug('get_mount_abspath1: %s',ret)
@@ -258,43 +258,43 @@ class GDrive(i):
     ret=ret.replace('\\','/')
    logger.debug('get_mount_abspath2: %s',ret)
    return ret
-  except P as exception:
+  except r as exception:
    logger.debug('Exception:%s',exception)
    logger.debug(traceback.format_exc())
  def get_parent(self,file_meta):
   try:
    file_paths=[file_meta['name']]
    parents=file_meta['parents']
-   while parents is not j:
+   while parents is not v:
     parent_id=parents[0]
     logger.debug('parent_id:%s',parent_id)
     if parent_id not in self.cache:
      parent_result=self.gdrive_service.files().get(fileId=parent_id,fields="id,mimeType, modifiedTime, name, parents, trashed").execute()
      logger.debug('parent_result:%s',parent_result)
-     self.cache[parent_id]={'name':parent_result['name'],'parents':parent_result['parents']if 'parents' in parent_result else j,'mimeType':parent_result['mimeType']}
+     self.cache[parent_id]={'name':parent_result['name'],'parents':parent_result['parents']if 'parents' in parent_result else v,'mimeType':parent_result['mimeType']}
     logger.debug('parent_id in cache : %s',(parent_id in self.cache))
     file_paths.insert(0,self.cache[parent_id]['name'])
     logger.debug('    file_paths:%s',file_paths)
     parents=self.cache[parent_id]['parents']
     logger.debug('    parents:%s',parents)
-    if a(file_paths)>30:
-     return j
+    if W(file_paths)>30:
+     return v
    return file_paths
-  except P as exception:
+  except r as exception:
    logger.debug('Exception:%s',exception)
    logger.debug(traceback.format_exc())
  def stop(self):
   logger.debug('Gdrive stop function start..: %s %s ',self.gdrive_name,self.thread.isAlive())
-  self.flag_thread_run=K
+  self.flag_thread_run=b
   self.thread.join()
   logger.debug('Gdrive stop function end..: %s %s',self.gdrive_name,self.thread.isAlive())
  def get_section_id(self,path):
   try:
    import plex
    section_id=plex.Logic.get_section_id_by_file(path)
-   logger.debug('SectionID:%s %s',section_id,F(section_id))
+   logger.debug('SectionID:%s %s',section_id,l(section_id))
    return section_id
-  except P as exception:
+  except r as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return-1
@@ -304,21 +304,21 @@ class GDrive(i):
    ret=plex.Logic.is_exist_in_library(path)
    logger.debug('is_exist_in_library %s %s',path,ret)
    return ret
-  except P as exception:
+  except r as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return k
+   return w
  def send_command(self,s_id,mount_abspath,type_add_remove,is_file):
   callback_id=-1
   try:
-   callback_id=ModelGDriveScanFile.add(self.gdrive_name,mount_abspath,u(s_id)if F(s_id)==F('')else s_id,is_file,(type_add_remove=='ADD'))
-  except P as exception:
+   callback_id=ModelGDriveScanFile.add(self.gdrive_name,mount_abspath,M(s_id)if l(s_id)==l('')else s_id,is_file,(type_add_remove=='ADD'))
+  except r as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
   try:
    import plex
    plex.Logic.send_scan_command2('gdrive_scan',s_id,mount_abspath,callback_id,type_add_remove,"GDRIVE")
-  except P as exception:
+  except r as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

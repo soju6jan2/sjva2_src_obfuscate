@@ -1,12 +1,12 @@
 import os
-W=None
-L=ord
-E=Exception
-z=False
-O=True
-P=len
-c=sorted
-R=ValueError
+G=None
+R=ord
+K=Exception
+n=False
+y=True
+f=len
+x=sorted
+E=ValueError
 import traceback
 import time
 import threading
@@ -67,15 +67,15 @@ def change_filename_censored(filename):
  match=re.compile(regex).match(filename)
  if match:
   ret=filename
-  part=W
-  if match.group('part_no')is not W:
+  part=G
+  if match.group('part_no')is not G:
    part='cd%s'%match.group('part_no')
-  elif match.group('part_char')is not W:
+  elif match.group('part_char')is not G:
    if app.config['config']['is_py2']:
-    part='cd%s'%(L(match.group('part_char').lower())-L('a')+1)
+    part='cd%s'%(R(match.group('part_char').lower())-R('a')+1)
    else:
     part='cd%s'%(match.group('part_char').lower()-'a'+1)
-  if part is W:
+  if part is G:
    ret='%s-%s.%s'%(match.group('name').lower(),match.group('no'),match.group('ext'))
   else:
    ret='%s-%s%s.%s'%(match.group('name').lower(),match.group('no'),part,match.group('ext'))
@@ -111,12 +111,12 @@ def change_filename_censored(filename):
   no=match.group('no').replace('0','').zfill(3)
   ret='%s-%s.%s'%(match.group('name'),no,match.group('ext'))
   return ret.lower()
- return W
-def change_filename_censored_by_save_original(include_original_filename,original_filename,new_filename,option='0',original_filepath=W):
+ return G
+def change_filename_censored_by_save_original(include_original_filename,original_filename,new_filename,option='0',original_filepath=G):
  try:
   if include_original_filename:
    new_name,new_ext=os.path.splitext(new_filename)
-   part=W
+   part=G
    match=re.search(r'(?P<part>cd\d+)$',new_name)
    if match:
     return new_filename
@@ -124,7 +124,7 @@ def change_filename_censored_by_save_original(include_original_filename,original
     new_name=new_name.replace(part,'')
    ori_name,ori_ext=os.path.splitext(original_filename)
    ori_name=ori_name.replace('[','(').replace(']',')').strip()
-   if part is W:
+   if part is G:
     if option=='0':
      return '%s [%s]%s'%(new_name,ori_name,new_ext)
     elif option=='1':
@@ -137,53 +137,53 @@ def change_filename_censored_by_save_original(include_original_filename,original
     return '%s [%s] %s%s'%(new_name,ori_name,part,new_ext)
   else:
    return new_filename
- except E as exception:
+ except K as exception:
   logger.debug('Exception:%s',exception)
   logger.debug(traceback.format_exc())
 _headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36','Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8','Accept-Language':'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7','Cookie':'over18=1',}
 _genre={u'巨尻':u'큰엉덩이',u'ギャル':u'갸루',u'着エロ':u'착에로',u'競泳・スクール水着':u'학교수영복',u'日焼け':u'태닝',u'指マン':u'핑거링',u'潮吹き':u'시오후키',u'ごっくん':u'곳쿤',u'パイズリ':u'파이즈리',u'手コキ':u'수음',u'淫語':u'음란한말',u'姉・妹':u'남매',u'お姉さん':u'누님',u'インストラクター':u'트레이너',u'ぶっかけ':u'붓카케',u'シックスナイン':u'69',u'ボディコン':u'타이트원피스',u'電マ':u'전동마사지',u'イタズラ':u'짖궂음',u'足コキ':u'풋잡',u'原作コラボ':u'원작각색',u'看護婦・ナース':u'간호사',u'コンパニオン':u'접객업',u'家庭教師':u'과외',u'キス・接吻':u'딥키스',u'局部アップ':u'음부확대',u'ポルチオ':u'자궁성감자극',u'セーラー服':u'교복',u'イラマチオ':u'격한페라·딥스로트',u'投稿':u'투고',u'キャンギャル':u'도우미걸',u'女優ベスト・総集編':u'베스트총집편',u'クンニ':u'커닐링구스',u'アナル':u'항문노출',u'超乳':u'폭유',u'復刻':u'리마스터',u'投稿':u'투고',u'義母':u'새어머니',u'おもちゃ':u'노리개',u'くノ一':u'여자닌자',u'羞恥':u'수치심',u'ドラッグ':u'최음제',u'パンチラ':u'판치라',u'巨乳フェチ':u'큰가슴',u'巨乳':u'큰가슴',u'レズキス':u'레즈비언',u'レズ':u'레즈비언',u'スパンキング':u'엉덩이때리기',u'放尿・お漏らし':u'방뇨·오모라시',u'アクメ・オーガズム':u'절정·오르가즘',u'ニューハーフ':u'쉬메일',u'鬼畜':u'색마·양아치',u'辱め':u'능욕',u'フェラ':u'펠라치오'}
 _studio ={u'乱丸':u'란마루',u'大洋図書':u'대양도서',u'ミル':u'미루',u'無垢':u'무쿠',u'サムシング':u'Something',u'本中':u'혼나카',u'ナンパJAPAN':u'난파 재팬',u'溜池ゴロー':u'다메이케고로',u'プラム':u'프라무',u'アップス':u'Apps',u'えむっ娘ラボ':u'엠코 라보',u'クンカ':u'킁카',u'映天':u'에이텐',u'ジャムズ':u'JAMS',u'牛感':u'규칸'}
 _session=requests.Session()
-def search(arg,only_javdb=z,do_trans=O):
+def search(arg,only_javdb=n,do_trans=y):
  try:
-  ret=W
-  if only_javdb==z:
+  ret=G
+  if only_javdb==n:
    ret=dmm_search(arg,do_trans=do_trans)
   if not ret:
    ret=javdb_search(arg,do_trans=do_trans)
   else:
-   wrong_match=O
+   wrong_match=y
    for tmp in ret:
     if tmp['score']>=90:
-     wrong_match=z
+     wrong_match=n
      break
    if wrong_match:
     ret=ret+javdb_search(arg,do_trans=do_trans)
   return ret
- except E as exception:
+ except K as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def update(arg,use_discord_proxy=z):
+def update(arg,use_discord_proxy=n):
  try:
-  if P(arg)<=5:
+  if f(arg)<=5:
    ret=javdb_update(arg)
   else:
    ret=dmm_update(arg,use_discord_proxy=use_discord_proxy)
   return ret
- except E as exception:
+ except K as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def dmm_search(keyword,do_trans=O):
+def dmm_search(keyword,do_trans=y):
  try:
   keyword=keyword.strip().lower()
   if keyword[-3:-1]=='cd':
    keyword=keyword[:-3]
   keyword=keyword.replace('-',' ')
   tmps=keyword.split(' ')
-  if P(tmps)==2:
-   if P(tmps[1])<=5:
+  if f(tmps)==2:
+   if f(tmps[1])<=5:
     title='%s%s'%(tmps[0],tmps[1].zfill(5))
-   elif P(tmps[1])>5:
+   elif f(tmps[1])>5:
     title='%s%s'%(tmps[0],tmps[1])
   else:
    title=keyword
@@ -203,10 +203,10 @@ def dmm_search(keyword,do_trans=O):
     match=re.compile(r'\/cid=(?P<code>.*?)\/').search(href)
     if match:
      entity['id']=match.group('code')
-    already_exist=z
+    already_exist=n
     for exist_item in ret:
      if exist_item['id']==entity['id']:
-      already_exist=O
+      already_exist=y
       break
     if already_exist:
      continue
@@ -218,7 +218,7 @@ def dmm_search(keyword,do_trans=O):
      entity['id_show']='%s%s'%(match.group('real'),match.group('no'))
     else:
      entity['id_show']=entity['id']
-    if P(tmps)==2:
+    if f(tmps)==2:
      if entity['id_show']==title:
       entity['score']=100
      elif entity['id_show'].replace('0','')==title.replace('0',''):
@@ -249,20 +249,20 @@ def dmm_search(keyword,do_trans=O):
      entity['id_show']='%s00'%(entity['id_show'][:-1])
     logger.debug('score :%s %s ',entity['score'],entity['id_show'])
     ret.append(entity)
-   except E as exception:
+   except K as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
-  ret=c(ret,key=lambda k:k['score'],reverse=O)
-  if P(ret)==0 and P(tmps)==2 and P(tmps[1])==5:
+  ret=x(ret,key=lambda k:k['score'],reverse=y)
+  if f(ret)==0 and f(tmps)==2 and f(tmps[1])==5:
    new_title='%s%s'%(tmps[0],tmps[1].zfill(6))
    return dmm_search(new_title)
   else:
    return ret
- except E as exception:
+ except K as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-  return z
-def dmm_update(arg,use_discord_proxy=z):
+  return n
+def dmm_update(arg,use_discord_proxy=n):
  try:
   from system.model import ModelSetting as SystemModelSetting
   from.import Vars
@@ -288,12 +288,12 @@ def dmm_update(arg,use_discord_proxy=z):
     tag=nodes[0].xpath('.//img')[0]
     ret['poster']=tag.attrib['src']
     ret['poster_full']=ret['poster']
-  except E as exception:
+  except K as exception:
    tag=tree.xpath('//*[@id="mu"]/div/table//tr/td[1]/div[1]/div/img')[0]
    ret['poster_full']=tag.attrib['src']
    ret['poster']=tag.attrib['src']
    pass
-  if ret['poster']!='' and Vars.proxies is not W:
+  if ret['poster']!='' and Vars.proxies is not G:
    ret['poster']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster'])
    if SystemModelSetting.get_bool('auth_use_apikey'):
     ret['poster']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
@@ -301,7 +301,7 @@ def dmm_update(arg,use_discord_proxy=z):
    ret['poster']='%s/av_agent/api/discord_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster'])
    if SystemModelSetting.get_bool('auth_use_apikey'):
     ret['poster']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
-  if ret['poster_full']!='' and Vars.proxies is not W:
+  if ret['poster_full']!='' and Vars.proxies is not G:
    from system.model import ModelSetting as SystemModelSetting
    ret['poster_full']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster_full'])
    if SystemModelSetting.get_bool('auth_use_apikey'):
@@ -317,7 +317,7 @@ def dmm_update(arg,use_discord_proxy=z):
    ret['date']=tag[0].text_content().replace('/','').strip()
   except:
    ret['date']=''
-  if P(ret['date'])!=8:
+  if f(ret['date'])!=8:
    try:
     tag=tree.xpath('//*[@id="mu"]/div/table//tr/td[1]/table//tr[3]/td[2]')
     ret['date']=tag[0].text_content().replace('/','').strip()
@@ -382,8 +382,8 @@ def dmm_update(arg,use_discord_proxy=z):
     match=re.compile(r'\/(?P<rating>.*?)\.gif').match(tag[0].attrib['src'])
     if match:
      tmps=match.group('rating').split('/')
-     ret['rating']=tmps[P(tmps)-1].replace('_','.')
-  except E as exception:
+     ret['rating']=tmps[f(tmps)-1].replace('_','.')
+  except K as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
   tag=tree.xpath('//*[@id="mu"]/div/table//tr/td[1]/div[4]')
@@ -396,7 +396,7 @@ def dmm_update(arg,use_discord_proxy=z):
    tag=node.xpath('.//img')
    entity['thumb']=tag[0].attrib['src']
    entity['full']=entity['thumb'].replace(ret['code']+'-',ret['code']+'jp-')
-   if Vars.proxies is not W:
+   if Vars.proxies is not G:
     from system.model import ModelSetting as SystemModelSetting
     entity['full']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['full'])
     entity['thumb']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['thumb'])
@@ -406,10 +406,10 @@ def dmm_update(arg,use_discord_proxy=z):
    ret['sample_image'].append(entity)
   ret['result']='success'
   return ret
- except E as exception:
+ except K as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-  return z
+  return n
 def _set_info(tree,ret,path_str,info):
  ret[info]=''
  ret['%s_ko'%info]=''
@@ -422,11 +422,11 @@ def _set_info(tree,ret,path_str,info):
      ret['studio_ko']=_studio[ret['studio']]
      return ret
    ret['%s_ko'%info]=SystemLogicTrans.trans(ret[info])
- except E as exception:
+ except K as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
  return ret
-def get_actor_info(entity,retry=O):
+def get_actor_info(entity,retry=y):
  try:
   from.import Vars
   url='https://hentaku.co/starsearch.php'
@@ -439,7 +439,7 @@ def get_actor_info(entity,retry=O):
   nodes=tree.xpath('//img')
   if nodes:
    entity['img']=nodes[0].attrib['src'].strip()
-   if Vars.proxies is not W:
+   if Vars.proxies is not G:
     from system.model import ModelSetting as SystemModelSetting
     entity['img']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['img'])
     if SystemModelSetting.get_bool('auth_use_apikey'):
@@ -453,21 +453,21 @@ def get_actor_info(entity,retry=O):
    entity['name_kor']=''
    entity['name_eng']=''
   return entity
- except R:
+ except E:
   if retry:
    logger.debug(u'단시간 많은 요청으로 재요청')
    time.sleep(1)
-   return get_actor_info(entity,retry=z)
+   return get_actor_info(entity,retry=n)
   else:
    logger.debug(u'잠시후 다시 요청')
    entity['img']='xxxx'
    entity['name_kor']=''
    entity['name_eng']=''
    return entity
- except E as exception:
+ except K as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def javdb_search(keyword,do_trans=O,retry=0):
+def javdb_search(keyword,do_trans=y,retry=0):
  try:
   from.import Vars
   keyword=keyword.strip().replace(' ','-')
@@ -480,7 +480,7 @@ def javdb_search(keyword,do_trans=O,retry=0):
   page=_session.get(url,headers=_headers,proxies=Vars.proxies)
   try:
    data=page.json()
-  except R:
+  except E:
    if retry<5:
     logger.debug('ValueError... wait:%s',retry)
     time.sleep(retry+1)
@@ -491,7 +491,7 @@ def javdb_search(keyword,do_trans=O,retry=0):
     return
   ret=[]
   score=60
-  find_correct=z
+  find_correct=n
   for item in data:
    try:
     entity={'meta':'javdb'}
@@ -504,11 +504,11 @@ def javdb_search(keyword,do_trans=O,retry=0):
     if entity['poster'].startswith('//'):
      entity['poster']='https:'+entity['poster']
     logger.debug('javdb search entity[id_show]:[%s] keyword:[%s]',entity['id_show'],keyword)
-    if entity['id_show']is W or keyword is W:
+    if entity['id_show']is G or keyword is G:
      continue
     if entity['id_show'].upper().replace('-',' ').replace('_',' ')==keyword.upper().replace('-',' ').replace('_',' '):
      entity['score']=100
-     find_correct=O
+     find_correct=y
     else:
      if find_correct:
       break
@@ -516,12 +516,12 @@ def javdb_search(keyword,do_trans=O,retry=0):
      score+=-5 
     logger.debug('entity[score] : %s',entity['score'])
     ret.append(entity)
-   except E as exception:
+   except K as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
-  ret=c(ret,key=lambda k:k['score'],reverse=O)
+  ret=x(ret,key=lambda k:k['score'],reverse=y)
   return ret
- except E as exception:
+ except K as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def javdb_update(arg,retry=0):
@@ -549,8 +549,8 @@ def javdb_update(arg,retry=0):
   ret['genre']=[]
   ret['performer']=[]
   tags=tree.xpath('{base}/div'.format(base=base))
-  logger.debug('tags :%s',P(tags))
-  if P(tags)==0:
+  logger.debug('tags :%s',f(tags))
+  if f(tags)==0:
    if retry<5:
     logger.debug('JAVDB UPDATE RETRY : %s',arg)
     return javdb_update(arg,retry+1)
@@ -630,19 +630,19 @@ def javdb_update(arg,retry=0):
   base_full='/html/body/section/div/div[3]/div/div[1]/a/img'
   tag=tree.xpath(base_full)[0]
   ret['poster_full']=tag.attrib['src']
-  if Vars.proxies is not W:
+  if Vars.proxies is not G:
    from system.model import ModelSetting as SystemModelSetting
    ret['poster_full']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster_full'])
    if SystemModelSetting.get_bool('auth_use_apikey'):
     ret['poster_full']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
   search_data=javdb_search(ret['code'])
   logger.debug(search_data)
-  target=W
+  target=G
   for s in search_data:
    if s['score']==100:
     target=s
     break
-  if target is not W:
+  if target is not G:
    ret['poster']=target['poster']
    from system.model import ModelSetting as SystemModelSetting
    ret['poster']='%s/av_agent/api/image?url=%s'%(SystemModelSetting.get('ddns'),ret['poster'])
@@ -661,7 +661,7 @@ def javdb_update(arg,retry=0):
      entity['full']=node.attrib['href']
      tag=node.xpath('.//img')[0]
      entity['thumb']=tag.attrib['src']
-     if Vars.proxies is not W:
+     if Vars.proxies is not G:
       from system.model import ModelSetting as SystemModelSetting
       entity['full']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['full'])
       entity['thumb']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['thumb'])
@@ -683,67 +683,67 @@ def javdb_update(arg,retry=0):
   ret['rating']='0'
   ret['result']='success'
   return ret
- except E as exception:
+ except K as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-  return z 
+  return n 
 def uncensored_filename_analyze(filename):
  try:
   original_filename=filename
   filename=filename.lower()
-  ret=W
+  ret=G
   if filename.find('1pon')!=-1:
    match=re.search('(?P<code1>\d{6}).(?P<code2>\d{3})',filename)
    if match:
     return['1pondo','{code1}_{code2}'.format(code1=match.group('code1'),code2=match.group('code2'))]
-   return['1pondo',W]
+   return['1pondo',G]
   if filename.find('10mu')!=-1:
    match=re.search('(?P<code1>\d{6}).(?P<code2>\d{2})',filename)
    if match:
     return['10mu','{code1}_{code2}'.format(code1=match.group('code1'),code2=match.group('code2'))]
-   return['10mu',W]
+   return['10mu',G]
   if filename.find('caribpr')!=-1:
-   return W
+   return G
   if filename.find('carib')!=-1:
    match=re.search('(?P<code1>\d{6}).(?P<code2>\d{3})',filename)
    if match:
     return['carib','{code1}_{code2}'.format(code1=match.group('code1'),code2=match.group('code2'))]
-   return['carib',W]
+   return['carib',G]
   if filename.find('paco')!=-1:
    match=re.search('(?P<code1>\d{6}).(?P<code2>\d{3})',filename)
    if match:
     return['paco','{code1}_{code2}'.format(code1=match.group('code1'),code2=match.group('code2'))]
-   return['paco',W]
+   return['paco',G]
   if filename.find('heyzo')!=-1:
    match=re.findall('(?P<code2>\d{4})',filename)
    if match:
     return['heyzo','heyzo-{code2}'.format(code2=match[-1])]
-   return['heyzo',W]
+   return['heyzo',G]
   if filename.find('xxx-av')!=-1:
    match=re.search('(?P<code2>\d{5})',filename)
    if match:
     return['xxx-av','xxx-av-{code2}'.format(code2=match.group('code2'))]
-   return['xxx-av',W]
+   return['xxx-av',G]
   if filename.find('fc2')!=-1:
    match=re.search('(?P<code2>\d{6,7})',filename)
    if match:
     return['fc2','fc2-{code2}'.format(code2=match.group('code2'))]
-   return['fc2',W]
+   return['fc2',G]
   if filename.find('ccdv')!=-1:
    match=re.search('(?P<code2>\d{2})',filename)
    if match:
     return['ccdv','ccdv-{code2}'.format(code2=match.group('code2'))]
-   return['ccdv',W]
+   return['ccdv',G]
   if filename.find('mmdv')!=-1:
    match=re.search('(?P<code2>\d{2})',filename)
    if match:
     return['mmdv','mmdv-{code2}'.format(code2=match.group('code2'))]
-   return['mmdv',W]
+   return['mmdv',G]
   if filename.find('ssdv')!=-1:
    match=re.search('(?P<code2>\d{2})',filename)
    if match:
     return['ssdv','ssdv-{code2}'.format(code2=match.group('code2'))]
-   return['ssdv',W]
+   return['ssdv',G]
   match=re.search('(?P<code2>n\d{4})',filename,re.IGNORECASE)
   if match:
    return['tokyo-hot','{code2}'.format(code2=match.group('code2'))]
@@ -780,26 +780,26 @@ def uncensored_filename_analyze(filename):
                 return ['h4610', None ]
         """  
   return
- except E as exception:
+ except K as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def _javdb_prefer_keyword(keyword):
  try:
   tmp= uncensored_filename_analyze(keyword)
-  if tmp is not W:
+  if tmp is not G:
    return tmp[1]
   match=re.match(r'(?P<code>\w+\.\d{2}\.\d{2}.\d{2})\.',keyword,re.IGNORECASE)
   if match:
    return match.group('code')
   return keyword
- except E as exception:
+ except K as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def test_dmm(keyword):
  try:
   ret={}
   ret['search']=dmm_search(keyword)
-  if P(ret['search'])==1:
+  if f(ret['search'])==1:
    ret['update']=dmm_update(ret['search'][0]['id'])
   else:
    for tmp in ret['search']:
@@ -807,14 +807,14 @@ def test_dmm(keyword):
      ret['update']=dmm_update(tmp['id'])
      break
   return ret
- except E as exception:
+ except K as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def test_javdb(keyword):
  try:
   ret={}
   ret['search']=javdb_search(keyword)
-  if P(ret['search'])==1:
+  if f(ret['search'])==1:
    ret['update']=javdb_update(ret['search'][0]['id'])
   else:
    for tmp in ret['search']:
@@ -822,22 +822,22 @@ def test_javdb(keyword):
      ret['update']=javdb_update(tmp['id'])
      break
   return ret
- except E as exception:
+ except K as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def is_uncensored(filename):
  if filename.startswith('nyoshin'):
-  return['nyoshin',W]
+  return['nyoshin',G]
  if filename.startswith('heydouga'):
   match=re.search(r'(?P<code>\d{4}\-\d{3,5})',filename)
   if match:
-   return['heydouga',W]
+   return['heydouga',G]
  if filename.startswith('kb'):
-  return['kb',W]
+  return['kb',G]
  if filename.startswith('c0930'):
-  return['c0930',W]
+  return['c0930',G]
  if filename.startswith('h0930'):
-  return['h0930',W]
+  return['h0930',G]
  if filename.startswith('h4610'):
-  return['h4610',W]
+  return['h4610',G]
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

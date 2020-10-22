@@ -1,13 +1,13 @@
 import os
-D=object
-W=None
-b=int
-N=str
-a=False
-B=len
-S=Exception
-V=True
-k=iter
+W=object
+Y=None
+L=int
+C=str
+g=False
+X=len
+A=Exception
+Q=True
+M=iter
 T=staticmethod
 import traceback
 import threading
@@ -23,48 +23,48 @@ from ffmpeg.logic import Logic,Status
 from ffmpeg.model import ModelSetting 
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Ffmpeg(D):
+class Ffmpeg(W):
  instance_list=[]
  idx=1
- def __init__(self,url,filename,plugin_id=W,listener=W,max_pf_count=W,call_plugin=W,temp_path=W,save_path=W,proxy=W,headers=W):
-  self.thread=W
+ def __init__(self,url,filename,plugin_id=Y,listener=Y,max_pf_count=Y,call_plugin=Y,temp_path=Y,save_path=Y,proxy=Y,headers=Y):
+  self.thread=Y
   self.url=url
   self.filename=filename
   self.plugin_id=plugin_id
   self.listener=listener
-  self.max_pf_count=b(ModelSetting.query.filter_by(key='max_pf_count').first().value if max_pf_count is W else max_pf_count)
+  self.max_pf_count=L(ModelSetting.query.filter_by(key='max_pf_count').first().value if max_pf_count is Y else max_pf_count)
   self.call_plugin=call_plugin
-  self.process=W
-  self.temp_path=ModelSetting.query.filter_by(key='temp_path').first().value if temp_path is W else temp_path
-  self.save_path=ModelSetting.query.filter_by(key='save_path').first().value if save_path is W else save_path
+  self.process=Y
+  self.temp_path=ModelSetting.query.filter_by(key='temp_path').first().value if temp_path is Y else temp_path
+  self.save_path=ModelSetting.query.filter_by(key='save_path').first().value if save_path is Y else save_path
   self.proxy=proxy
   self.temp_fullpath=os.path.join(self.temp_path,filename)
   self.save_fullpath=os.path.join(self.save_path,filename)
-  self.log_thread=W
+  self.log_thread=Y
   self.status=Status.READY
   self.duration=0
   self.duration_str=''
   self.current_duration=0
   self.percent=0
   self.current_pf_count=0
-  self.idx=N(Ffmpeg.idx)
+  self.idx=C(Ffmpeg.idx)
   Ffmpeg.idx+=1
   self.current_bitrate=''
   self.current_speed=''
-  self.start_time=W
-  self.end_time=W
-  self.download_time=W
+  self.start_time=Y
+  self.end_time=Y
+  self.download_time=Y
   self.start_event=threading.Event()
-  self.exist=a
+  self.exist=g
   self.filesize=0
   self.filesize_str=''
   self.download_speed=''
   self.headers=headers
   Ffmpeg.instance_list.append(self)
-  logger.debug('Ffmpeg.instance_list LEN:%s',B(Ffmpeg.instance_list))
-  if B(Ffmpeg.instance_list)>30:
+  logger.debug('Ffmpeg.instance_list LEN:%s',X(Ffmpeg.instance_list))
+  if X(Ffmpeg.instance_list)>30:
    for f in Ffmpeg.instance_list:
-    if f.thread is W and f.status!=Status.READY:
+    if f.thread is Y and f.status!=Status.READY:
      Ffmpeg.instance_list.remove(f)
      break
     else:
@@ -81,32 +81,32 @@ class Ffmpeg(D):
   try:
    self.status=Status.USER_STOP
    self.kill()
-  except S as exception:
+  except A as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  def kill(self):
   try:
-   if self.process is not W and self.process.poll()is W:
+   if self.process is not Y and self.process.poll()is Y:
     import psutil
     process=psutil.Process(self.process.pid)
-    for proc in process.children(recursive=V):
+    for proc in process.children(recursive=Q):
      proc.kill()
     process.kill()
-  except S as exception:
+  except A as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  def thread_fuction(self):
   try:
    import system
-   user=N(system.ModelSetting.get('sjva_me_user_id'))
+   user=C(system.ModelSetting.get('sjva_me_user_id'))
    try:
     from framework.common.util import AESCipher
     user=AESCipher.encrypt(user)
-   except S as exception:
+   except A as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
-   if self.proxy is W:
-    if self.headers is W:
+   if self.proxy is Y:
+    if self.headers is Y:
      command=[Logic.path_ffmpeg,'-y','-i',self.url,'-c','copy','-bsf:a','aac_adtstoasc','-metadata','network=%s'%user]
     else:
      headers_command=[]
@@ -121,7 +121,7 @@ class Ffmpeg(D):
    else:
     command=[Logic.path_ffmpeg,'-y','-http_proxy',self.proxy,'-i',self.url,'-c','copy','-bsf:a','aac_adtstoasc','-metadata','network=%s'%user]
    if platform.system()=='Windows':
-    now=N(datetime.now()).replace(':','').replace('-','').replace(' ','-')
+    now=C(datetime.now()).replace(':','').replace('-','').replace(' ','-')
     filename=('%s'%now)+'.mp4'
     self.temp_fullpath=os.path.join(self.temp_path,filename)
     command.append(self.temp_fullpath)
@@ -137,13 +137,13 @@ class Ffmpeg(D):
        return
    except:
     pass
-   self.process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=V,bufsize=1)
+   self.process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=Q,bufsize=1)
    self.status=Status.READY
    self.log_thread=threading.Thread(target=self.log_thread_fuction,args=())
    self.log_thread.start()
    self.start_event.wait(timeout=60)
    logger.debug('start_event awake.. ')
-   if self.log_thread is W:
+   if self.log_thread is Y:
     logger.debug('log_thread is none')
     if self.status==Status.READY:
      self.status=Status.ERROR
@@ -156,7 +156,7 @@ class Ffmpeg(D):
     logger.debug('normally process wait()')
     process_ret=self.process.wait(timeout=60*ModelSetting.get_int('timeout_minute'))
     logger.debug('process_ret :%s'%process_ret)
-    if process_ret is W:
+    if process_ret is Y:
      if self.status!=Status.COMPLETED and self.status!=Status.USER_STOP and self.status!=Status.PF_STOP:
       self.status=Status.TIME_OVER
       self.kill()
@@ -178,15 +178,15 @@ class Ffmpeg(D):
     else:
      if os.path.exists(self.temp_fullpath):
       os.remove(self.temp_fullpath)
-   except S as exception:
+   except A as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
    arg={'type':'last','status':self.status,'data':self.get_data()}
    self.send_to_listener(**arg)
-   self.process=W
-   self.thread=W
+   self.process=Y
+   self.thread=Y
    logger.debug('ffmpeg thread end')
-  except S as exception:
+  except A as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    try:
@@ -197,7 +197,7 @@ class Ffmpeg(D):
     pass
  def log_thread_fuction(self):
   with self.process.stdout:
-   for line in k(self.process.stdout.readline,b''):
+   for line in M(self.process.stdout.readline,b''):
     try:
      if self.status==Status.READY:
       if line.find('Server returned 404 Not Found')!=-1 or line.find('Unknown error')!=-1:
@@ -212,10 +212,10 @@ class Ffmpeg(D):
        match=re.compile(r'Duration\:\s(\d{2})\:(\d{2})\:(\d{2})\.(\d{2})\,\sstart').search(line)
        if match:
         self.duration_str='%s:%s:%s'%(match.group(1),match.group(2),match.group(3))
-        self.duration=b(match.group(4))
-        self.duration+=b(match.group(3))*100
-        self.duration+=b(match.group(2))*100*60
-        self.duration+=b(match.group(1))*100*60*60
+        self.duration=L(match.group(4))
+        self.duration+=L(match.group(3))*100
+        self.duration+=L(match.group(2))*100*60
+        self.duration+=L(match.group(1))*100*60*60
         logger.debug('Duration : %s',self.duration)
         if match:
          self.status=Status.READY
@@ -244,11 +244,11 @@ class Ffmpeg(D):
        continue
       match=re.compile(r'time\=(\d{2})\:(\d{2})\:(\d{2})\.(\d{2})\sbitrate\=\s*(?P<bitrate>\d+).*?[$|\s](\s?speed\=\s*(?P<speed>.*?)x)?').search(line)
       if match:
-       self.current_duration=b(match.group(4))
-       self.current_duration+=b(match.group(3))*100
-       self.current_duration+=b(match.group(2))*100*60
-       self.current_duration+=b(match.group(1))*100*60*60
-       self.percent=b(self.current_duration*100/self.duration)
+       self.current_duration=L(match.group(4))
+       self.current_duration+=L(match.group(3))*100
+       self.current_duration+=L(match.group(2))*100*60
+       self.current_duration+=L(match.group(1))*100*60*60
+       self.percent=L(self.current_duration*100/self.duration)
        self.current_bitrate=match.group('bitrate')
        self.current_speed=match.group('speed')
        self.download_time=datetime.now()-self.start_time
@@ -264,14 +264,14 @@ class Ffmpeg(D):
        arg={'type':'status_change','status':self.status,'data':self.get_data()}
        self.send_to_listener(**arg)
        continue
-    except S as exception:
+    except A as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc())
   logger.debug('ffmpeg log thread end')
   self.start_event.set()
-  self.log_thread=W
+  self.log_thread=Y
  def get_data(self):
-  data={'url':self.url,'filename':self.filename,'max_pf_count':self.max_pf_count,'call_plugin':self.call_plugin,'temp_path':self.temp_path,'save_path':self.save_path,'temp_fullpath':self.temp_fullpath,'save_fullpath':self.save_fullpath,'status':b(self.status),'status_str':self.status.name,'status_kor':N(self.status),'duration':self.duration,'duration_str':self.duration_str,'current_duration':self.current_duration,'percent':self.percent,'current_pf_count':self.current_pf_count,'idx':self.idx,'current_bitrate':self.current_bitrate,'current_speed':self.current_speed,'start_time':'' if self.start_time is W else N(self.start_time).split('.')[0][5:],'end_time':'' if self.end_time is W else N(self.end_time).split('.')[0][5:],'download_time':'' if self.download_time is W else '%02d:%02d'%(self.download_time.seconds/60,self.download_time.seconds%60),'exist':os.path.exists(self.save_fullpath),} 
+  data={'url':self.url,'filename':self.filename,'max_pf_count':self.max_pf_count,'call_plugin':self.call_plugin,'temp_path':self.temp_path,'save_path':self.save_path,'temp_fullpath':self.temp_fullpath,'save_fullpath':self.save_fullpath,'status':L(self.status),'status_str':self.status.name,'status_kor':C(self.status),'duration':self.duration,'duration_str':self.duration_str,'current_duration':self.current_duration,'percent':self.percent,'current_pf_count':self.current_pf_count,'idx':self.idx,'current_bitrate':self.current_bitrate,'current_speed':self.current_speed,'start_time':'' if self.start_time is Y else C(self.start_time).split('.')[0][5:],'end_time':'' if self.end_time is Y else C(self.end_time).split('.')[0][5:],'download_time':'' if self.download_time is Y else '%02d:%02d'%(self.download_time.seconds/60,self.download_time.seconds%60),'exist':os.path.exists(self.save_fullpath),} 
   if self.status==Status.COMPLETED:
    data['filesize']=self.filesize
    data['filesize_str']=Util.sizeof_fmt(self.filesize)
@@ -279,7 +279,7 @@ class Ffmpeg(D):
   return data
  def send_to_listener(self,**arg):
   Logic.ffmpeg_listener(**arg)
-  if self.listener is not W:
+  if self.listener is not Y:
    arg['plugin_id']=self.plugin_id
    self.listener(**arg) 
  @T
@@ -288,14 +288,14 @@ class Ffmpeg(D):
    command=u'%s -version'%(Logic.path_ffmpeg)
    command=command.split(' ')
    logger.debug(command)
-   process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=V,bufsize=1)
+   process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=Q,bufsize=1)
    ret=[]
    with process.stdout:
-    for line in k(process.stdout.readline,b''):
+    for line in M(process.stdout.readline,b''):
      ret.append(line)
     process.wait()
    return ret
-  except S as exception:
+  except A as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  @T
@@ -305,7 +305,7 @@ class Ffmpeg(D):
     if f.idx==idx:
      f.stop()
      break
-  except S as exception:
+  except A as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  @T
@@ -314,7 +314,7 @@ class Ffmpeg(D):
    for f in Ffmpeg.instance_list:
     if f.idx==idx:
      return f
-  except S as exception:
+  except A as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  @T
@@ -323,7 +323,7 @@ class Ffmpeg(D):
    for f in Ffmpeg.instance_list:
     if f.plugin_id==caller_id and f.call_plugin==caller:
      return f
-  except S as exception:
+  except A as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  @T
@@ -331,7 +331,7 @@ class Ffmpeg(D):
   try:
    for f in Ffmpeg.instance_list:
     f.stop()
-  except S as exception:
+  except A as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
