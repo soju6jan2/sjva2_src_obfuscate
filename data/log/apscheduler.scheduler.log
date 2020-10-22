@@ -1,6 +1,0 @@
-[2020-10-23 00:45:27,302|INFO|base.py:166] Scheduler started
-[2020-10-23 00:45:34,783|DEBUG|base.py:940] Looking for jobs to run
-[2020-10-23 00:45:34,784|DEBUG|base.py:1016] No jobs; waiting until a job is added
-[2020-10-23 00:45:45,463|INFO|base.py:166] Scheduler started
-[2020-10-23 00:45:45,757|DEBUG|base.py:940] Looking for jobs to run
-[2020-10-23 00:45:45,758|DEBUG|base.py:1016] No jobs; waiting until a job is added
