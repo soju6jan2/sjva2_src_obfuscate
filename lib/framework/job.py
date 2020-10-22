@@ -1,14 +1,14 @@
 import traceback
-M=None
-x=object
-R=False
-F=len
-D=True
-X=type
-w=int
-p=isinstance
-T=str
-q=Exception
+N=None
+f=object
+M=False
+B=len
+I=True
+D=type
+h=int
+X=isinstance
+P=str
+S=Exception
 import threading
 from datetime import datetime
 from pytz import timezone
@@ -20,12 +20,12 @@ logger=get_logger(package_name)
 def multiprocessing_target(*a,**b):
  job_id=a[0]
  job=scheduler.get_job_instance(job_id)
- if job.args is M:
+ if job.args is N:
   job.target_function()
  else:
   job.target_function(job.args)
-class Job(x):
- def __init__(self,plugin,job_id,interval,target_function,description,can_remove_by_framework,args=M):
+class Job(f):
+ def __init__(self,plugin,job_id,interval,target_function,description,can_remove_by_framework,args=N):
   self.plugin=plugin
   self.job_id=job_id
   self.interval='%s'%interval
@@ -33,38 +33,38 @@ class Job(x):
   self.target_function=target_function
   self.description=description
   self.can_remove_by_framework=can_remove_by_framework
-  self.is_running=R
-  self.thread=M
-  self.start_time=M
-  self.end_time=M
-  self.running_timedelta=M
-  self.status=M
+  self.is_running=M
+  self.thread=N
+  self.start_time=N
+  self.end_time=N
+  self.running_timedelta=N
+  self.status=N
   self.count=0
   self.make_time=datetime.now(timezone('Asia/Seoul'))
-  if F(self.interval.strip().split(' '))==5:
-   self.is_cron=D
-   self.is_interval=R
+  if B(self.interval.strip().split(' '))==5:
+   self.is_cron=I
+   self.is_interval=M
   else:
-   self.is_cron=R
-   self.is_interval=D
+   self.is_cron=M
+   self.is_interval=I
   if self.is_interval:
    if app.config['config']['is_py2']:
-    if X(self.interval)==X(u'')or X(self.interval)==X(''):
-     self.interval=w(self.interval)
+    if D(self.interval)==D(u'')or D(self.interval)==D(''):
+     self.interval=h(self.interval)
    else:
-    if p(self.interval,T):
-     self.interval=w(self.interval)
+    if X(self.interval,P):
+     self.interval=h(self.interval)
   self.args=args
-  self.run=D
+  self.run=I
  def job_function(self):
   try:
-   self.is_running=D
+   self.is_running=I
    self.start_time=datetime.now(timezone('Asia/Seoul'))
-   if self.args is M:
+   if self.args is N:
     self.thread=threading.Thread(target=self.target_function,args=())
    else:
     self.thread=threading.Thread(target=self.target_function,args=(self.args,))
-   self.thread.daemon=D
+   self.thread.daemon=I
    self.thread.start()
    self.thread.join()
    self.end_time=datetime.now(timezone('Asia/Seoul'))
@@ -73,10 +73,10 @@ class Job(x):
    if not scheduler.is_include(self.job_id):
     scheduler.remove_job_instance(self.job_id)
    self.count+=1
-  except q as exception:
+  except S as exception:
    self.status='exception'
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
   finally:
-   self.is_running=R
+   self.is_running=M
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

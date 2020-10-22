@@ -1,10 +1,10 @@
 import os
-p=object
-N=staticmethod
-B=Exception
-l=None
-c=str
-g=False
+w=object
+y=staticmethod
+i=Exception
+f=None
+p=str
+E=False
 import traceback
 import json
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify
@@ -13,17 +13,17 @@ from framework import path_app_root,py_urllib2
 from framework.util import Util
 from.plugin import package_name,logger
 from.model import ModelSetting
-class SystemLogicTrans(p):
- @N
+class SystemLogicTrans(w):
+ @y
  def process_ajax(sub,req):
   try:
    if sub=='trans_test':
     ret=SystemLogicTrans.trans_test(req)
     return jsonify(ret)
-  except B as exception:
+  except i as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
+ @y
  def process_api(sub,req):
   ret={}
   try:
@@ -31,24 +31,24 @@ class SystemLogicTrans(p):
     text=req.args.get('text')
     source=req.args.get('source')
     target=req.args.get('target')
-    if source is l:
+    if source is f:
      source='ja'
-    if target is l:
+    if target is f:
      target='ko'
     tmp=SystemLogicTrans.trans(text,source=source,target=target)
-    if tmp is not l:
+    if tmp is not f:
      ret['ret']='success'
      ret['data']=tmp
     else:
      ret['ret']='fail'
      ret['data']=''
-  except B as exception:
+  except i as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    ret['ret']='exception'
-   ret['data']=c(exception)
+   ret['data']=p(exception)
   return jsonify(ret)
- @N
+ @y
  def trans_test(req):
   try:
    source=req.form['source']
@@ -59,11 +59,11 @@ class SystemLogicTrans(p):
     return SystemLogicTrans.trans_google(source)
    elif trans_type=='2':
     return SystemLogicTrans.trans_papago(source)
-  except B as exception:
+  except i as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return g
- @N
+   return E
+ @y
  def trans(text,source='ja',target='ko'):
   try:
    trans_type=ModelSetting.get('trans_type')
@@ -73,16 +73,16 @@ class SystemLogicTrans(p):
     return SystemLogicTrans.trans_google(text,source,target)
    elif trans_type=='2':
     return SystemLogicTrans.trans_papago(text,source,target)
-  except B as exception:
+  except i as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
+ @y
  def trans_papago(text,source='ja',target='ko'):
   trans_papago_key=ModelSetting.get_list('trans_papago_key')
   for tmp in trans_papago_key:
    client_id,client_secret=tmp.split(',')
    try:
-    if client_id=='' or client_id is l or client_secret=='' or client_secret is l:
+    if client_id=='' or client_id is f or client_secret=='' or client_secret is f:
      return text
     data="source=%s&target=%s&text=%s"%(source,target,text)
     url="https://openapi.naver.com/v1/papago/n2mt"
@@ -96,15 +96,15 @@ class SystemLogicTrans(p):
      return data['message']['result']['translatedText']
     else:
      continue
-   except B as exception:
+   except i as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc()) 
   return text
- @N
+ @y
  def trans_google(text,source='ja',target='ko'):
   try:
    google_api_key=ModelSetting.get('trans_google_api_key')
-   if google_api_key=='' or google_api_key is l:
+   if google_api_key=='' or google_api_key is f:
     return text
    data="key=%s&source=%s&target=%s&q=%s"%(google_api_key,source,target,text)
    url="https://www.googleapis.com/language/translate/v2"
@@ -117,7 +117,7 @@ class SystemLogicTrans(p):
     return data['data']['translations'][0]['translatedText']
    else:
     return text
-  except B as exception:
+  except i as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return text

@@ -1,11 +1,11 @@
 import os
-l=object
-q=staticmethod
-p=Exception
-U=False
-h=True
-y=int
-t=None
+w=object
+H=staticmethod
+J=Exception
+V=False
+t=True
+X=int
+M=None
 import sys
 import traceback
 import logging
@@ -22,51 +22,51 @@ from.logic_movie import LogicMovie
 import plex
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Logic(l):
+class Logic(w):
  db_default={'interval':'17','auto_start':'False','web_page_size':'20','source_path':'','target_path':'','use_smi_to_srt':'True','folder_rule':'%TITLE% (%YEAR%)'}
- @q
+ @H
  def db_init():
   try:
    for key,value in Logic.db_default.items():
     if db.session.query(ModelSetting).filter_by(key=key).count()==0:
      db.session.add(ModelSetting(key,value))
    db.session.commit()
-  except p as exception:
+  except J as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @H
  def plugin_load():
   try:
    Logic.db_init()
    if ModelSetting.query.filter_by(key='auto_start').first().value=='True':
     Logic.scheduler_start()
-  except p as exception:
+  except J as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @H
  def plugin_unload():
   try:
    pass
-  except p as exception:
+  except J as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @H
  def scheduler_start():
   try:
    interval=ModelSetting.query.filter_by(key='interval').first().value
-   job=Job(package_name,package_name,interval,Logic.scheduler_function,u"영화 파일처리",U)
+   job=Job(package_name,package_name,interval,Logic.scheduler_function,u"영화 파일처리",V)
    scheduler.add_job_instance(job)
-  except p as exception:
+  except J as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @H
  def scheduler_stop():
   try:
    scheduler.remove_job(package_name)
-  except p as exception:
+  except J as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @H
  def setting_save(req):
   try:
    for key,value in req.form.items():
@@ -74,29 +74,29 @@ class Logic(l):
     entity=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
     entity.value=value
    db.session.commit()
-   return h 
-  except p as exception:
+   return t 
+  except J as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return U
- @q
+   return V
+ @H
  def get_setting_value(key):
   try:
    return db.session.query(ModelSetting).filter_by(key=key).first().value
-  except p as exception:
+  except J as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @H
  def reset_db():
   try:
    db.session.query(ModelFileprocessMovieItem).delete()
    db.session.commit()
-   return h
-  except p as exception:
+   return t
+  except J as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return U
- @q
+   return V
+ @H
  def one_execute():
   try:
    if scheduler.is_include(package_name):
@@ -111,12 +111,12 @@ class Logic(l):
      Logic.scheduler_function()
     threading.Thread(target=func,args=()).start()
     ret='thread'
-  except p as exception:
+  except J as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    ret='fail'
   return ret
- @q
+ @H
  def scheduler_function():
   try:
    logger.debug('%s scheduler_function',package_name)
@@ -135,23 +135,23 @@ class Logic(l):
       result.get()
      else:
       smi2srt.Logic.start_by_path(work_path=source_path)
-    except p as exception:
+    except J as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc())
    result_list=LogicMovie.start(source_paths,target_path)
-  except p as exception:
+  except J as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @q
+ @H
  def filelist(req):
   try:
    ret={}
    page=1
-   page_size=y(db.session.query(ModelSetting).filter_by(key='web_page_size').first().value)
+   page_size=X(db.session.query(ModelSetting).filter_by(key='web_page_size').first().value)
    job_id=''
    search=''
    if 'page' in req.form:
-    page=y(req.form['page'])
+    page=X(req.form['page'])
    if 'search_word' in req.form:
     search=req.form['search_word']
    query=db.session.query(ModelFileprocessMovieItem)
@@ -161,9 +161,9 @@ class Logic(l):
    if option=='all':
     pass
    elif option=='movie_o':
-    query=query.filter(ModelFileprocessMovieItem.movie_id!=t)
+    query=query.filter(ModelFileprocessMovieItem.movie_id!=M)
    elif option=='movie_x':
-    query=query.filter(ModelFileprocessMovieItem.movie_id==t)
+    query=query.filter(ModelFileprocessMovieItem.movie_id==M)
    else:
     query=query.filter(ModelFileprocessMovieItem.target==option)
    order=req.form['order']if 'order' in req.form else 'desc'
@@ -179,7 +179,7 @@ class Logic(l):
    ret['paging']=Util.get_paging_info(count,page,page_size)
    ret['plex_server_hash']=plex.Logic.get_server_hash()
    return ret
-  except p as exception:
+  except J as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,27 +1,27 @@
 import os
-c=None
-R=False
-C=True
-D=UnicodeDecodeError
+M=None
+X=False
+f=True
+z=UnicodeDecodeError
 L=Exception
 import traceback
 import time
 import threading
 import shutil
 from framework.common.fileprocess import logger
-def remove_small_file_and_move_target(path,size,target=c,except_ext=c):
+def remove_small_file_and_move_target(path,size,target=M,except_ext=M):
  try:
-  if target is c:
+  if target is M:
    target=path
-  if except_ext is c:
+  if except_ext is M:
    except_ext=['.smi','.srt','ass']
   lists=os.listdir(path)
   for f in lists:
    try:
     file_path=os.path.join(path,f)
-    except_file=R
+    except_file=X
     if os.path.splitext(file_path.lower())[1]in except_ext:
-     except_file=C
+     except_file=f
     if os.path.isdir(file_path):
      remove_small_file_and_move_target(file_path,size,target=target,except_ext=except_ext)
      if not os.listdir(file_path):
@@ -46,7 +46,7 @@ def remove_small_file_and_move_target(path,size,target=c,except_ext=c):
       except:
        logger.info(u'FILE REMOVE')
       os.remove(file_path)
-   except D:
+   except z:
     pass
    except L as exception:
     logger.error('Exception:%s',exception)
@@ -66,7 +66,7 @@ def remove_match_ext(path,ext_list):
      if os.path.splitext(file_path.lower())[1][1:]in ext_list:
       logger.info(u'REMOVE : %s',file_path)
       os.remove(file_path)
-   except D:
+   except z:
     pass
    except L as exception:
     logger.error('Exception:%s',exception)

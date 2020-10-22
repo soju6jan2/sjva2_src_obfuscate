@@ -1,11 +1,11 @@
 import os
-h=True
-k=repr
-M=getattr
-t=None
-q=staticmethod
-p=Exception
-U=False
+t=True
+T=repr
+u=getattr
+M=None
+H=staticmethod
+J=Exception
+V=False
 import traceback
 from datetime import datetime
 import json
@@ -22,7 +22,7 @@ class ModelFileprocessMovieItem(db.Model):
  __tablename__='%s_item'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=h)
+ id=db.Column(db.Integer,primary_key=t)
  created_time=db.Column(db.DateTime)
  filename=db.Column(db.String)
  source_dir=db.Column(db.String)
@@ -39,16 +39,16 @@ class ModelFileprocessMovieItem(db.Model):
  def __init__(self):
   self.created_time=datetime.now()
  def __repr__(self):
-  return k(self.as_dict())
+  return T(self.as_dict())
  def as_dict(self):
-  ret={x.name:M(self,x.name)for x in self.__table__.columns}
+  ret={x.name:u(self,x.name)for x in self.__table__.columns}
   ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')
-  if self.json is not t:
+  if self.json is not M:
    ret['json']=json.loads(ret['json'])
   else:
    ret['json']={}
   return ret
- @q
+ @H
  def save(item):
   try:
    model=ModelFileprocessMovieItem()
@@ -58,7 +58,7 @@ class ModelFileprocessMovieItem(db.Model):
    model.flag_move=item['flag_move']
    model.target=item['target']
    model.dest_folder_name=item['dest_folder_name']
-   if item['movie']is not t:
+   if item['movie']is not M:
     model.movie_title=item['movie']['title']
     model.movie_id=item['movie']['id']
     if 'more' in item['movie']:
@@ -70,12 +70,12 @@ class ModelFileprocessMovieItem(db.Model):
    model.json=json.dumps(item)
    db.session.add(model)
    db.session.commit()
-   return h
-  except p as exception:
+   return t
+  except J as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    logger.debug(item)
    db.session.rollback()
    logger.debug('ROLLBACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-   return U
+   return V
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

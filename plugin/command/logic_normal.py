@@ -1,15 +1,15 @@
 import os
-u=list
-F=Exception
-V=object
-m=None
-r=staticmethod
-D=True
-X=False
-y=id
-A=iter
-f=int
-G=getattr
+i=list
+u=Exception
+k=object
+b=None
+f=staticmethod
+S=True
+h=False
+G=id
+E=iter
+I=int
+z=getattr
 import sys
 from datetime import datetime
 import traceback
@@ -28,7 +28,7 @@ from.plugin import package_name,logger
 from.model import ModelCommand
 from io import BytesIO as StringIO
 import sys
-class Capturing(u):
+class Capturing(i):
  def __enter__(self):
   self._stdout=sys.stdout
   sys.stdout=self._stringio=StringIO()
@@ -42,49 +42,49 @@ class Capturing(u):
    ret=self._stringio.getvalue().splitlines()
    self._stringio.truncate(0)
    return ret
-  except F as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return self
-class LogicNormal(V):
- foreground_process=m
- command_queue=m
- send_queue_thread=m
+class LogicNormal(k):
+ foreground_process=b
+ command_queue=b
+ send_queue_thread=b
  process_list={}
- load_log_list=m
- @r
+ load_log_list=b
+ @f
  def plugin_load():
   def plugin_load_thread():
    try:
     db_list=db.session.query(ModelCommand).filter().all()
     for item in db_list:
      if '%s'%item.schedule_type=='1':
-      th=threading.Thread(target=LogicNormal.execute_thread_function,args=(item.command,item.y))
-      th.setDaemon(D)
+      th=threading.Thread(target=LogicNormal.execute_thread_function,args=(item.command,item.G))
+      th.setDaemon(S)
       th.start()
      elif '%s'%item.schedule_type=='2' and item.schedule_auto_start:
-      LogicNormal.scheduler_switch(item.y,D)
-   except F as exception:
+      LogicNormal.scheduler_switch(item.G,S)
+   except u as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc()) 
   try:
    th=threading.Thread(target=plugin_load_thread)
-   th.setDaemon(D)
+   th.setDaemon(S)
    th.start()
-  except F as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @r
+ @f
  def plugin_unload():
   try:
    LogicNormal.foreground_command_close()
    for key,p in LogicNormal.process_list.items():
     LogicNormal.process_close(p)
-  except F as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @r
- def foreground_command(command,job_id=m):
+ @f
+ def foreground_command(command,job_id=b):
   try:
    command=command.split(' ')
    if command[0]=='LOAD':
@@ -92,7 +92,7 @@ class LogicNormal(V):
      LogicNormal.load_log_list=[]
      with Capturing()as LogicNormal.load_log_list: 
       LogicNormal.start_communicate_load()
-      if job_id is not m:
+      if job_id is not b:
        command_logger=get_logger('%s_%s'%(package_name,job_id))
        LogicNormal.module_load(command,logger=command_logger)
       else:
@@ -101,85 +101,85 @@ class LogicNormal(V):
       LogicNormal.command_queue.put(t+'\n')
      LogicNormal.command_queue.put('<END>')
     th=threading.Thread(target=func,args=())
-    th.setDaemon(D)
+    th.setDaemon(S)
     th.start()
     return 'success'
    else:
-    if LogicNormal.foreground_process is not m:
+    if LogicNormal.foreground_process is not b:
      LogicNormal.foreground_command_close()
      time.sleep(0.5)
-    process=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=D,bufsize=1)
+    process=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=S,bufsize=1)
     LogicNormal.foreground_process=process
     LogicNormal.start_communicate2(process)
    return 'success'
-  except F as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @r
+ @f
  def foreground_command_close():
   LogicNormal.process_close(LogicNormal.foreground_process)
- @r
+ @f
  def process_close(process):
   try:
-   if process is m:
+   if process is b:
     return
    try:
     import psutil
     ps_process=psutil.Process(process.pid)
-    for proc in ps_process.children(recursive=D):
+    for proc in ps_process.children(recursive=S):
      proc.kill()
     ps_process.kill()
-    return D
+    return S
    except:
     pass
-  except F as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return X
- @r
+  return h
+ @f
  def scheduler_switch0(request):
   try:
    switch=request.form['switch']
    job_id=request.form['job_id']
    LogicNormal.scheduler_switch(job_id,(switch=='true'))
    return 'success'
-  except F as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @r
- def scheduler_switch(y,switch):
+ @f
+ def scheduler_switch(G,switch):
   try:
-   job=ModelCommand.get_job_by_id(y)
-   s_id='command_%s'%y
+   job=ModelCommand.get_job_by_id(G)
+   s_id='command_%s'%G
    if switch:
-    job_instance=Job(package_name,s_id,job.schedule_info,LogicNormal.execute_thread_function_by_scheduler,u"%s %s : %s"%(package_name,job.y,job.description),D,args=job.y)
+    job_instance=Job(package_name,s_id,job.schedule_info,LogicNormal.execute_thread_function_by_scheduler,u"%s %s : %s"%(package_name,job.G,job.description),S,args=job.G)
     scheduler.add_job_instance(job_instance)
    else:
     if scheduler.is_include(s_id):
      scheduler.remove_job(s_id)
    return 'success'
-  except F as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @r
+ @f
  def job_background(job_id):
   try:
    th=threading.Thread(target=LogicNormal.execute_thread_function_job,args=(job_id,))
-   th.setDaemon(D)
+   th.setDaemon(S)
    th.start()
-   return D
-  except F as exception:
+   return S
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return X
- @r
+   return h
+ @f
  def execute_thread_function_job(job_id):
   job=ModelCommand.get_job_by_id(job_id)
-  LogicNormal.execute_thread_function(job.command,command_id=job.y)
- @r
+  LogicNormal.execute_thread_function(job.command,command_id=job.G)
+ @f
  def execute_thread_function(command,command_id=-1):
   try:
    logger.debug('COMMAND RUN START : %s %s',command,command_id)
@@ -189,16 +189,16 @@ class LogicNormal(V):
     command=command.encode('cp949')
    command=command.split(' ')
    new_command=[]
-   flag=X
-   tmp=m
+   flag=h
+   tmp=b
    for c in command:
     if c.startswith('"')and c.endswith('"'):
      new_command.append(c[1:-1])
     elif c.startswith('"'):
-     flag=D
+     flag=S
      tmp=c[1:]
     elif flag and c.endswith('"'):
-     flag=X
+     flag=h
      tmp=tmp+' '+c[:-1]
      new_command.append(tmp)
     elif flag:
@@ -210,88 +210,88 @@ class LogicNormal(V):
     command_logger=get_logger('%s_%s'%(package_name,command_id))
     LogicNormal.module_load(command,logger=command_logger)
    else:
-    p=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=D,bufsize=1)
-    command_logger=m
+    p=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=S,bufsize=1)
+    command_logger=b
     logger.debug(LogicNormal.process_list)
     if command_id!=-1:
      command_logger=get_logger('%s_%s'%(package_name,command_id))
-     if command_id in LogicNormal.process_list and LogicNormal.process_list[command_id]is not m:
+     if command_id in LogicNormal.process_list and LogicNormal.process_list[command_id]is not b:
       LogicNormal.process_close(LogicNormal.process_list[command_id])
      LogicNormal.process_list[command_id]=p
     logger.debug(LogicNormal.process_list)
     with p.stdout:
-     for line in A(p.stdout.readline,b''):
+     for line in E(p.stdout.readline,b''):
       try:
        line=line.decode('utf-8')
-      except F as exception:
+      except u as exception:
        try:
         line=line.decode('cp949')
-       except F as exception:
+       except u as exception:
         pass
-      if command_logger is not m:
+      if command_logger is not b:
        command_logger.debug(line.strip())
       ret.append(line.strip())
      p.wait()
     logger.debug('COMMAND RUN END : %s',command)
-    p=m
+    p=b
     if command_id in LogicNormal.process_list:
      del LogicNormal.process_list[command_id]
     return ret
-  except F as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @r
+ @f
  def execute_thread_function_by_scheduler(*args,**kwargs):
   try:
    logger.debug('COMMAND RUN START BY SCHEDULE :%s',args[0])
-   job=db.session.query(ModelCommand).filter_by(y=f(args[0])).first()
-   LogicNormal.execute_thread_function(job.command,command_id=job.y)
+   job=db.session.query(ModelCommand).filter_by(G=I(args[0])).first()
+   LogicNormal.execute_thread_function(job.command,command_id=job.G)
    logger.debug('COMMAND RUN END BY SCHEDULE :%s',args[0])
-  except F as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @r
+ @f
  def start_communicate2(process):
   LogicNormal.command_queue=py_queue.Queue()
-  sout=io.open(process.stdout.fileno(),'rb',closefd=X)
+  sout=io.open(process.stdout.fileno(),'rb',closefd=h)
   def Pump(stream):
    queue=py_queue.Queue()
    def rdr():
     logger.debug('START RDR')
-    while D:
+    while S:
      buf=process.stdout.read(1)
      if buf:
       queue.put(buf)
      else:
-      queue.put(m)
+      queue.put(b)
       break
     logger.debug('END RDR')
-    queue.put(m)
+    queue.put(b)
     time.sleep(1)
    def clct():
-    active=D
+    active=S
     logger.debug('START clct')
     while active:
      r=queue.get()
-     if r is m:
+     if r is b:
       break
      try:
-      while D:
+      while S:
        r1=queue.get(timeout=0.005)
-       if r1 is m:
-        active=X
+       if r1 is b:
+        active=h
         break
        else:
         r+=r1
      except:
       pass
-     if r is not m:
+     if r is not b:
       try:
        r=r.decode('utf-8')
-      except F as exception:
+      except u as exception:
        try:
         r=r.decode('cp949')
-       except F as exception:
+       except u as exception:
         logger.error('Exception:%s',exception)
         logger.error(traceback.format_exc())
         try:
@@ -303,54 +303,54 @@ class LogicNormal(V):
     logger.debug('END clct')
    for tgt in[rdr,clct]:
     th=threading.Thread(target=tgt)
-    th.setDaemon(D)
+    th.setDaemon(S)
     th.start()
   Pump(sout)
- @r
+ @f
  def start_communicate_load():
   LogicNormal.command_queue=py_queue.Queue()
   def func():
    position=0
-   flag=D
-   while LogicNormal.command_queue is not m:
+   flag=S
+   while LogicNormal.command_queue is not b:
     logs=LogicNormal.load_log_list.get_log()
     if logs:
      for log in logs:
       LogicNormal.command_queue.put(log.strip()+'\n')
     time.sleep(1)
   th=threading.Thread(target=func)
-  th.setDaemon(D)
+  th.setDaemon(S)
   th.start()
- @r
+ @f
  def send_queue_start():
   def send_queue_thread_function():
    logger.debug('send_queue_thread_function START')
    while LogicNormal.command_queue:
     line=LogicNormal.command_queue.get()
     if line=='<END>':
-     socketio.emit("end",m,namespace='/%s'%package_name,broadcast=D)
+     socketio.emit("end",b,namespace='/%s'%package_name,broadcast=S)
      break
     else:
-     socketio.emit("add",line,namespace='/%s'%package_name,broadcast=D)
-   LogicNormal.send_queue_thread=m
-   LogicNormal.command_queue=m
-   LogicNormal.foreground_process=m
+     socketio.emit("add",line,namespace='/%s'%package_name,broadcast=S)
+   LogicNormal.send_queue_thread=b
+   LogicNormal.command_queue=b
+   LogicNormal.foreground_process=b
    logger.debug('send_queue_thread_function END')
-  if LogicNormal.send_queue_thread is m:
+  if LogicNormal.send_queue_thread is b:
    LogicNormal.send_queue_thread=threading.Thread(target=send_queue_thread_function,args=())
    LogicNormal.send_queue_thread.start()
- @r
+ @f
  def send_process_command(req):
   try:
    command=req.form['command']
    LogicNormal.foreground_process.stdin.write(b'%s\n'%command)
    LogicNormal.foreground_process.stdin.flush()
-   return D
-  except F as exception:
+   return S
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return X
- @r
+   return h
+ @f
  def command_file_list():
   try:
    command_path=os.path.join(path_data,'command')
@@ -362,10 +362,10 @@ class LogicNormal(V):
      c='python %s'%c
     ret.append({'text':f,'value':c})
    return ret
-  except F as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @r
+ @f
  def module_load(command,**kwargs):
   try:
    python_filename=command[1]
@@ -377,11 +377,11 @@ class LogicNormal(V):
    mod=__import__(module_name,fromlist=[])
    py_reload(mod)
    args=command
-   mod_command_load=G(mod,'main')
+   mod_command_load=z(mod,'main')
    if mod_command_load:
     mod_command_load(*args,**kwargs)
    return 'success'
-  except F as exception:
+  except u as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
