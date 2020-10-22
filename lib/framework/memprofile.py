@@ -1,13 +1,13 @@
 import os
-l=True
-T=False
-z=staticmethod
-J=isinstance
-r=int
-p=long
-B=float
-X=None
-b=str
+q=True
+l=False
+p=staticmethod
+M=isinstance
+Y=int
+x=long
+e=float
+R=None
+a=str
 import traceback
 import logging
 import xml.etree.ElementTree as ET
@@ -18,25 +18,25 @@ class HeapMon:
  def __init__(self):
   try:
    from guppy import hpy
-   self.enabled=l
+   self.enabled=q
   except:
-   self.enabled=T
+   self.enabled=l
   if self.enabled:
    self._h=hpy()
   self.hsize=0L
   self.hdiff=0L
- @z
+ @p
  def getReadableSize(lv):
-  if not J(lv,(r,p)):
+  if not M(lv,(Y,x)):
    return '0'
   if lv>=1024*1024*1024*1024:
-   s="%4.2f TB"%(B(lv)/(1024*1024*1024*1024))
+   s="%4.2f TB"%(e(lv)/(1024*1024*1024*1024))
   elif lv>=1024*1024*1024:
-   s="%4.2f GB"%(B(lv)/(1024*1024*1024))
+   s="%4.2f GB"%(e(lv)/(1024*1024*1024))
   elif lv>=1024*1024:
-   s="%4.2f MB"%(B(lv)/(1024*1024))
+   s="%4.2f MB"%(e(lv)/(1024*1024))
   elif lv>=1024:
-   s="%4.2f KB"%(B(lv)/1024)
+   s="%4.2f KB"%(e(lv)/1024)
   else:
    s="%d B"%lv
   return s
@@ -52,14 +52,14 @@ class HeapMon:
   return s
  def getHeap(self):
   if not self.enabled:
-   return X
-  return b(self._h.heap())
+   return R
+  return a(self._h.heap())
  def check(self,msg=''):
   if not self.enabled:
    return 'Not enabled. guppy module not found!'
   hdr=self.getHeap().split('\n')[0]
-  chsize=p(hdr.split()[-2])
+  chsize=x(hdr.split()[-2])
   self.hdiff=chsize-self.hsize
   self.hsize=chsize
-  return '%s: %s'%(msg,b(self))
+  return '%s: %s'%(msg,a(self))
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

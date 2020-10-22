@@ -1,7 +1,7 @@
 import os
-l=True
-T=False
-d=Exception
+q=True
+l=False
+G=Exception
 import sys
 from datetime import datetime,timedelta
 import json
@@ -21,14 +21,14 @@ def login():
   elif not USERS[username].can_login(password):
    return jsonify('wrong_password')
   else:
-   USERS[username].authenticated=l
+   USERS[username].authenticated=q
    login_user(USERS[username],remember=remember)
    return jsonify('redirect')
  else:
   if db.session.query(system.ModelSetting).filter_by(key='use_login').first().value=='False':
    username=db.session.query(system.ModelSetting).filter_by(key='id').first().value
-   USERS[username].authenticated=l
-   login_user(USERS[username],remember=l)
+   USERS[username].authenticated=q
+   login_user(USERS[username],remember=q)
    return redirect(request.args.get("next"))
   return render_template('login.html',next=request.args.get("next"))
 @app.errorhandler(401)
@@ -41,8 +41,8 @@ def user_loader(user_id):
 @login_required
 def logout():
  user=current_user
- user.authenticated=T
- json_res={'ok':l,'msg':'user <%s> logout'%user.user_id}
+ user.authenticated=l
+ json_res={'ok':q,'msg':'user <%s> logout'%user.user_id}
  logout_user()
  return redirect('/login')
 @app.route("/")
@@ -67,7 +67,7 @@ def file2(path):
 @login_required
 def download_file(path):
  logger.debug('download_file :%s',path)
- return send_from_directory('',path,as_attachment=l)
+ return send_from_directory('',path,as_attachment=q)
 @app.route("/hls")
 def hls_play():
  url=request.args.get('url')
@@ -103,7 +103,7 @@ def upload():
    logger.debug('upload : %s',tmp)
    f.save(os.path.join(path_data,'upload',tmp))
    return jsonify('success')
- except d as exception:
+ except G as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
   return jsonify('fail')
@@ -115,7 +115,7 @@ def rc():
  try:
   logger.debug('XXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
   logger.debug(path)
- except d as exception:
+ except G as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
   return jsonify('fail')
