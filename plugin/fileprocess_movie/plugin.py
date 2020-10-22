@@ -1,6 +1,6 @@
 import os
-J=Exception
-m=str
+B=Exception
+P=str
 import traceback
 import time
 from datetime import datetime
@@ -25,14 +25,14 @@ def plugin_load():
  try:
   logger.debug('plugin_load:%s',package_name)
   Logic.plugin_load()
- except J as exception:
+ except B as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def plugin_unload():
  try:
   logger.debug('plugin_unload:%s',package_name)
   Logic.plugin_unload()
- except J as exception:
+ except B as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @blueprint.route('/')
@@ -45,8 +45,8 @@ def detail(sub):
  if sub=='setting':
   setting_list=db.session.query(ModelSetting).all()
   arg=Util.db_list_to_dict(setting_list)
-  arg['scheduler']=m(scheduler.is_include(package_name))
-  arg['is_running']=m(scheduler.is_running(package_name))
+  arg['scheduler']=P(scheduler.is_include(package_name))
+  arg['is_running']=P(scheduler.is_running(package_name))
   return render_template('%s_%s.html'%(package_name,sub),arg=arg)
  elif sub=='list':
   arg={}
@@ -62,7 +62,7 @@ def ajax(sub):
   try:
    ret=Logic.setting_save(request)
    return jsonify(ret)
-  except J as exception:
+  except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='scheduler':
@@ -74,7 +74,7 @@ def ajax(sub):
    else:
     Logic.scheduler_stop()
    return jsonify(go)
-  except J as exception:
+  except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return jsonify('fail')
@@ -82,14 +82,14 @@ def ajax(sub):
   try:
    ret=Logic.filelist(request)
    return jsonify(ret)
-  except J as exception:
+  except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='one_execute':
   try:
    ret=Logic.one_execute()
    return jsonify(ret)
-  except J as exception:
+  except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return jsonify('fail')
@@ -97,7 +97,7 @@ def ajax(sub):
   try:
    ret=Logic.reset_db()
    return jsonify(ret)
-  except J as exception:
+  except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

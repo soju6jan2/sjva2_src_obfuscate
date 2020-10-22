@@ -1,7 +1,7 @@
 import os
-u=object
+d=object
 F=None
-class LogicModuleBase(u):
+class LogicModuleBase(d):
  name=F
  db_default=F
  P=F

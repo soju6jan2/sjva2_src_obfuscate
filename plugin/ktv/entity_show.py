@@ -1,12 +1,12 @@
 import os
-X=object
-D=None
-B=True
-z=False
+n=object
+Q=None
+a=True
+E=False
 v=enumerate
-f=int
-j=len
-J=classmethod
+M=int
+F=len
+I=classmethod
 O=Exception
 import re
 import datetime
@@ -18,7 +18,7 @@ import daum_tv
 from framework.logger import get_logger
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class EntityLibraryPathRoot(X):
+class EntityLibraryPathRoot(n):
  class DriveType(Enum):
   LOCAL=0 
   RCLONE=1
@@ -30,8 +30,8 @@ class EntityLibraryPathRoot(X):
  rclone_path='' 
  sync_path=''
  depth=-1
- replace_for_plex=D
- def __init__(self,drive_type,mount_path,depth,rclone_path=D,sync_path=D,replace_for_plex=D):
+ replace_for_plex=Q
+ def __init__(self,drive_type,mount_path,depth,rclone_path=Q,sync_path=Q,replace_for_plex=Q):
   self.drive_type=drive_type
   self.mount_path=mount_path
   self.rclone_path=rclone_path
@@ -46,9 +46,9 @@ class EntityLibraryPathRoot(X):
   return self.drive_type==EntityLibraryPathRoot.DriveType.RCLONE
  def get_genre_list(self):
   return os.listdir(self.mount_path)
-class EntityLibraryPath(X):
+class EntityLibraryPath(n):
  RENAME_REGEX=r'[\s\.\,\-\[\]\?\:\!\_\=\+]'
- entity_library_root=D
+ entity_library_root=Q
  basename='' 
  abspath='' 
  compare_name='' 
@@ -59,7 +59,7 @@ class EntityLibraryPath(X):
   self.compare_name=re.sub(self.RENAME_REGEX,'',basename)
  def __str__(self):
   return "RootType: {0}\tBasename: {1}\tAbspath: {2}\tCompareName: {3} ".format(self.entity_library_root.drive_type,self.basename.encode('cp949'),self.abspath.encode('cp949'),self.compare_name.encode('cp949'))
-class EntityShow(X):
+class EntityShow(n):
  idx=-1
  class VideoType(Enum):
   KOREA_TV=0
@@ -88,9 +88,9 @@ class EntityShow(X):
  nd_compare_name='' 
  nd_download_path='' 
  nd_download_abspath='' 
- nd_find_library_path=D 
+ nd_find_library_path=Q 
  nd_plex_show=''
- modelfile=D
+ modelfile=Q
  log=''
  class ScanStatus(Enum):
   DEFAULT=-1
@@ -109,15 +109,15 @@ class EntityShow(X):
  filename_quality=''
  filename_release=''
  filename_more=''
- daum_info=D
- def __init__(self,filename,by=0,nd_download_path=D,daum_info=D,except_genre_remove_epi_number=D):
+ daum_info=Q
+ def __init__(self,filename,by=0,nd_download_path=Q,daum_info=Q,except_genre_remove_epi_number=Q):
   self.original_filename=filename
   self.filename=filename
   self.analyze_filename()
   self.except_genre_remove_epi_number=except_genre_remove_epi_number
   if by==0:
    if self.video_type==-1:
-    return D 
+    return Q 
    self.nd_download_path=nd_download_path
    self.nd_download_abspath=os.path.join(nd_download_path,filename)
    self.download_time=datetime.datetime.now()
@@ -132,7 +132,7 @@ class EntityShow(X):
    else:
     logger.debug(' - 파일명으로 매칭된 Daum 정보 없음\n')
     self.log+='Daum 정보 없음\n'
-   if B and self.daum_info is not D:
+   if a and self.daum_info is not Q:
     self.change_filename_by_rule()
    logger.debug('<Info>')
    logger.debug(' - 방송명: %s',self.filename_name)
@@ -147,19 +147,19 @@ class EntityShow(X):
   elif by==1:
    pass
   elif by==2:
-   self.change_filename_continous_episode(move=z)
+   self.change_filename_continous_episode(move=E)
    self.daum_info=daum_info
-   self.change_filename_by_rule(move=z)
+   self.change_filename_by_rule(move=E)
   elif by=='only_filename':
    if self.video_type==-1:
-    return D
-   self.change_filename_continous_episode(move=z)
+    return Q
+   self.change_filename_continous_episode(move=E)
    if self.video_type==EntityShow.VideoType.KOREA_TV:
     self.daum_info=daum_tv.Logic.get_daum_tv_info(self.filename_name)
-    if self.daum_info is not D:
-     self.change_filename_by_rule(move=z)
+    if self.daum_info is not Q:
+     self.change_filename_by_rule(move=E)
    else:
-    self.daum_info=D
+    self.daum_info=Q
  def analyze_filename(self):
   for idx,regex in v(self._REGEX_FILENAME):
    match=re.compile(regex).match(self.filename)
@@ -173,14 +173,14 @@ class EntityShow(X):
     self.filename_quality=match.group('quality')
     self.filename_release=match.group('release')if 'release' in match.groupdict()else ''
     self.filename_more=match.group('more')if 'more' in match.groupdict()else ''
-    if self.filename_no is not D and self.filename_no!='':
-     self.filename_no=f(self.filename_no)
+    if self.filename_no is not Q and self.filename_no!='':
+     self.filename_no=M(self.filename_no)
     else:
      self.filename_no=-1
     if idx==1:
      self.filename=EntityShow.make_filename(self)
     break
- def change_filename_continous_episode(self,move=B):
+ def change_filename_continous_episode(self,move=a):
   if self.filename_name.find('합')==-1:
    return
   match=re.compile(self._REGEX_FILENAME_RENAME).match(self.filename_name)
@@ -188,7 +188,7 @@ class EntityShow(X):
    logger.debug('<합본 처리>')
    self.log+='<합본 파일 처리>\n'
    self.filename_name=match.group('title').strip()
-   self.filename_no=f(match.group('no'))
+   self.filename_no=M(match.group('no'))
    self.filename=EntityShow.make_filename(self)
    if move:
     _=os.path.join(self.nd_download_path,self.filename)
@@ -196,22 +196,22 @@ class EntityShow(X):
     self.nd_download_abspath=_
     logger.debug(' - 파일명 변경:%s -> %s',self.original_filename,self.filename)
     self.log+=' - 파일명변경\nFrom : %s\nTo : %s\n'%(self.original_filename,self.filename)
- def change_filename_by_rule(self,move=B):
+ def change_filename_by_rule(self,move=a):
   logger.debug('<Daum 정보 기반으로 파일명 변경>')
-  flag_need_rename=z
+  flag_need_rename=E
   if self.daum_info.has_episode_info():
    self.log+='1-1. Daum 에피소드 정보 있음\n'
    key='20'+self.filename_date
    if key in self.daum_info.episode_list:
     self.log+='2-1. 파일명 방송일과 일치하는 Daum 에피소드 정보 있음\n'
-    flag=z
+    flag=E
     logger.debug(' - 파일정보 Episode Date:%s No:%s',self.filename_date,self.filename_no)
     self.log+=' - 파일명 정보. 방송일:%s 회차:%s\n'%(self.filename_date,self.filename_no)
     if self.filename_no!=-1:
      self.log+='3-1. 파일명에 회차 정보 있음 : %s\n'%self.filename_no
      for _ in self.daum_info.episode_list[key]:
-      if f(_)==self.filename_no:
-       flag=B
+      if M(_)==self.filename_no:
+       flag=a
        break
      if flag:
       logger.debug(' - Daum 정보와 일치')
@@ -219,37 +219,37 @@ class EntityShow(X):
      else:
       logger.debug(' - Daum 정보와 불일치')
       self.log+='4-2. 회차 정보 Daum과 불일치\n'
-      logger.debug(' - Daum 정보 Date:%s Count:%s No:%s',key,j(self.daum_info.episode_list[key]),self.daum_info.episode_list[key][0])
-      self.log+=' - Daum 정보. 방송일:%s 회차:%s Count:%s\n'%(key,self.daum_info.episode_list[key][0],j(self.daum_info.episode_list[key]))
+      logger.debug(' - Daum 정보 Date:%s Count:%s No:%s',key,F(self.daum_info.episode_list[key]),self.daum_info.episode_list[key][0])
+      self.log+=' - Daum 정보. 방송일:%s 회차:%s Count:%s\n'%(key,self.daum_info.episode_list[key][0],F(self.daum_info.episode_list[key]))
       logger.debug(' - episode_count_one_day : %s',self.daum_info.episode_count_one_day)
       if self.daum_info.episode_count_one_day==4:
-       if self.filename_no*2 ==f(self.daum_info.episode_list[key][1]):
-        self.filename_no=f(self.daum_info.episode_list[key][0])
-       elif self.filename_no*2 ==f(self.daum_info.episode_list[key][3]):
-        self.filename_no=f(self.daum_info.episode_list[key][2])
-       flag_need_rename=B
+       if self.filename_no*2 ==M(self.daum_info.episode_list[key][1]):
+        self.filename_no=M(self.daum_info.episode_list[key][0])
+       elif self.filename_no*2 ==M(self.daum_info.episode_list[key][3]):
+        self.filename_no=M(self.daum_info.episode_list[key][2])
+       flag_need_rename=a
       else:
-       self.filename_no=f(self.daum_info.episode_list[key][0])
-       flag_need_rename=B
+       self.filename_no=M(self.daum_info.episode_list[key][0])
+       flag_need_rename=a
     else:
      self.log+='3-2. 파일명에 회차 정보 없음\n'
-     self.log+=' - 파일명에 회차정보 삽입. Daum 정보. 방송일:%s 회차:%s Count:%s\n'%(key,self.daum_info.episode_list[key][0],j(self.daum_info.episode_list[key]))
+     self.log+=' - 파일명에 회차정보 삽입. Daum 정보. 방송일:%s 회차:%s Count:%s\n'%(key,self.daum_info.episode_list[key][0],F(self.daum_info.episode_list[key]))
      logger.debug(' - 파일정보 Epi no : %s date: %s',self.filename_no,self.filename_date)
-     logger.debug(' - 파일명에 회차정보 삽입. Daum 정보 - date:%s count:%s %s',key,j(self.daum_info.episode_list[key]),self.daum_info.episode_list[key][0])
-     self.filename_no=f(self.daum_info.episode_list[key][0])
-     flag_need_rename=B
+     logger.debug(' - 파일명에 회차정보 삽입. Daum 정보 - date:%s count:%s %s',key,F(self.daum_info.episode_list[key]),self.daum_info.episode_list[key][0])
+     self.filename_no=M(self.daum_info.episode_list[key][0])
+     flag_need_rename=a
    else:
     self.log+='2-2. 파일명 방송일과 일치하는 Daum 에피소드 정보 없음\n'
   else:
    self.log+='1-2. Daum에 에피소드 정보 없음\n'
    logger.debug(' - 다음 회차 정보 없음')
-   if B and self.filename_no!=-1:
-    if self.except_genre_remove_epi_number is not D and('all' in self.except_genre_remove_epi_number or self.daum_info.genre in self.except_genre_remove_epi_number):
+   if a and self.filename_no!=-1:
+    if self.except_genre_remove_epi_number is not Q and('all' in self.except_genre_remove_epi_number or self.daum_info.genre in self.except_genre_remove_epi_number):
      self.log+=' 1-2-1. 파일명에 회차는 있지만 Daum에 정보가 없어서 회차정보 삭제. 삭제 제외 장르\n'
     else:
      self.log+=' 1-2-1. 파일명에 회차는 있지만 Daum에 정보가 없어서 회차정보 삭제\n'
      self.filename_no=-1 
-     flag_need_rename=B
+     flag_need_rename=a
    else:
     self.log+='1-2-2. 파일명과 Daum 모두 회차 정보 없음\n'
   if flag_need_rename:
@@ -264,7 +264,7 @@ class EntityShow(X):
     _=os.path.join(self.nd_download_path,self.filename)
     shutil.move(self.nd_download_abspath,_)
     self.nd_download_abspath=_
- @J
+ @I
  def make_filename(cls,_entity):
   ext=os.path.splitext(_entity.filename)[1]
   ret=_entity.filename_name
@@ -278,7 +278,7 @@ class EntityShow(X):
    ret='%s.%s'%(ret,_entity.filename_etc)
   if _entity.filename_quality:
    ret='%s.%sp'%(ret,_entity.filename_quality)
-  if _entity.filename_release!='' and _entity.filename_release is not D:
+  if _entity.filename_release!='' and _entity.filename_release is not Q:
    ret='%s-%s'%(ret,_entity.filename_release)
   ret='%s%s%s'%(ret,_entity.filename_more,ext) 
   return ret
@@ -286,7 +286,7 @@ class EntityShow(X):
   self.nd_find_library_path=nd_find_library_path
   if nd_find_library_path.entity_library_root.drive_type==EntityLibraryPathRoot.DriveType.LOCAL:
    self.move_abspath_local=os.path.join(self.nd_find_library_path.abspath,self.filename)
-   if nd_find_library_path.entity_library_root.replace_for_plex is not D:
+   if nd_find_library_path.entity_library_root.replace_for_plex is not Q:
     self.plex_abspath=self.move_abspath_local.replace(nd_find_library_path.entity_library_root.replace_for_plex[0],nd_find_library_path.entity_library_root.replace_for_plex[1])
     if nd_find_library_path.entity_library_root.replace_for_plex[1][0]=='/':
      self.plex_abspath=self.plex_abspath.replace('\\','/')
@@ -296,7 +296,7 @@ class EntityShow(X):
     self.plex_abspath=self.move_abspath_local
   elif nd_find_library_path.entity_library_root.drive_type==EntityLibraryPathRoot.DriveType.RCLONE:
    self.move_abspath_cloud=os.path.join(self.nd_find_library_path.abspath,self.filename)
-   if nd_find_library_path.entity_library_root.replace_for_plex is not D:
+   if nd_find_library_path.entity_library_root.replace_for_plex is not Q:
     self.plex_abspath=self.move_abspath_cloud.replace(nd_find_library_path.entity_library_root.replace_for_plex[0],nd_find_library_path.entity_library_root.replace_for_plex[1])
     if nd_find_library_path.entity_library_root.replace_for_plex[1][0]=='/':
      self.plex_abspath=self.plex_abspath.replace('\\','/')
@@ -322,7 +322,7 @@ class EntityShow(X):
    self._move_file_for_cloud()
  def _move_file_local(self):
   try:
-   flag_move_file=B
+   flag_move_file=a
    logger.debug('_move_file_local move_abspath_local :%s',self.move_abspath_local)
    if os.path.exists(self.move_abspath_local):
     self.log+='- 로컬 같은 파일 있음\n'
@@ -331,7 +331,7 @@ class EntityShow(X):
      logger.debug('사이즈가 같아 그냥 삭제')
      self.log+='- 사이즈가 같아 삭제\n'
      os.remove(self.nd_download_abspath)
-     flag_move_file=z
+     flag_move_file=E
      self.set_scan_status(EntityShow.ScanStatus.DELETE_FILE)
     else:
      logger.debug('사이즈가 달라 기존 파일 삭제')
@@ -347,7 +347,7 @@ class EntityShow(X):
    logger.error(traceback.format_exc())
  def _move_file_for_cloud(self):
   try:
-   flag_move_file=B
+   flag_move_file=a
    if os.path.exists(self.move_abspath_cloud):
     logger.debug('같은 파일 있음')
     self.log+='- 원격폴더 같은 파일 있음\n'
@@ -355,7 +355,7 @@ class EntityShow(X):
      logger.debug('사이즈가 같아 그냥 삭제')
      self.log+='- 사이즈가 같아 삭제\n'
      os.remove(self.nd_download_abspath)
-     flag_move_file=z
+     flag_move_file=E
     else:
      logger.debug('사이즈가 달라 기존 파일 삭제')
      self.log+='- 사이즈가 달라 기존 파일 삭제\n'
@@ -400,8 +400,8 @@ class EntityShow(X):
    return self.move_abspath_local
   else:
    return self.move_abspath_cloud 
- def _path_split(self,p,l=D):
-  if l is D:
+ def _path_split(self,p,l=Q):
+  if l is Q:
    l=[]
   if p==os.path.dirname(p):
    l.insert(0,os.path.dirname(p)) 

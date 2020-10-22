@@ -1,5 +1,5 @@
 import traceback
-U=str
+K=str
 O=Exception
 import logging
 import requests
@@ -27,8 +27,8 @@ def detail(sub):
  if sub=='setting':
   setting_list=db.session.query(ModelSetting).all()
   arg=Util.db_list_to_dict(setting_list)
-  arg['is_include']=U(scheduler.is_include('ktv_process'))
-  arg['is_running']=U(scheduler.is_running('ktv_process'))
+  arg['is_include']=K(scheduler.is_include('ktv_process'))
+  arg['is_running']=K(scheduler.is_running('ktv_process'))
   return render_template('ktv_setting.html',sub=sub,arg=arg)
  elif sub=='list':
   return render_template('ktv_list.html')

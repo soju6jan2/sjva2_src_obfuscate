@@ -1,14 +1,14 @@
 import os
-N=staticmethod
-h=True
-K=Exception
-q=False
+m=staticmethod
+A=True
+g=Exception
+j=False
 import io
 import traceback
 from framework import app,logger,path_data
 git_name='sjva_support'
 class SJVASupportControl:
- @N
+ @m
  def epg_upload():
   try:
    logger.debug('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv')
@@ -18,12 +18,12 @@ class SJVASupportControl:
    Util.save_from_dict_to_json(data,os.path.join(path_data,'sjva_support','epg_updated.json'))
    epg_sh=os.path.join(path_data,'sjva_support','epg_commit.sh')
    os.system(epg_sh)
-   return h
-  except K as exception:
+   return A
+  except g as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return q
- @N
+  return j
+ @m
  def epg_refresh():
   try:
    logger.debug('epg_refresh.....')
@@ -51,7 +51,7 @@ class SJVASupportControl:
     shutil.move(tmp,epg_db_filepath)
     logger.debug('Download epg.db.....')
    return 'refresh'
-  except K as exception:
+  except g as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
