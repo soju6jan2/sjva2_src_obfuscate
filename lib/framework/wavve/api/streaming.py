@@ -1,9 +1,9 @@
 import traceback
-t=range
-f=str
-g=None
-F=Exception
-X=int
+d=range
+e=str
+n=None
+L=Exception
+z=int
 import json
 from framework.wavve.api import session,logger,get_baseparameter,config
 from framework import py_urllib
@@ -26,14 +26,14 @@ def get_guid():
  def GenerateRandomString(num):
   from random import randint
   rstr=""
-  for i in t(0,num):
-   s=f(randint(1,5))
+  for i in d(0,num):
+   s=e(randint(1,5))
    rstr+=s
   return rstr
  uuid=GenerateID("POOQ")
  m.update(uuid)
- return f(m.hexdigest())
-def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',isabr='y',proxy=g):
+ return e(m.hexdigest())
+def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',isabr='y',proxy=n):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -45,7 +45,7 @@ def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',i
  if contenttype=='live':
   ishevc='n'
   isabr='n'
- if credential is g:
+ if credential is n:
   credential='none'
  try:
   param=get_baseparameter()
@@ -65,8 +65,8 @@ def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',i
   param['ishevc']=ishevc
   param['lastplayid']='none'
   url="%s/streaming?%s"%(config['base_url'],py_urllib.urlencode(param))
-  proxies=g
-  if proxy is not g:
+  proxies=n
+  if proxy is not n:
    proxies={"https":proxy,'http':proxy}
   response=session.get(url,headers=config['headers'],proxies=proxies)
   data=response.json()
@@ -81,10 +81,10 @@ def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',i
   else:
    if 'resultcode' in data:
     pass
- except F as e:
+ except L as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
-def streaming_imsi(contenttype,contentid,quality,credential,action='hls',ishevc='y',isabr='y',proxy=g):
+def streaming_imsi(contenttype,contentid,quality,credential,action='hls',ishevc='y',isabr='y',proxy=n):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -96,7 +96,7 @@ def streaming_imsi(contenttype,contentid,quality,credential,action='hls',ishevc=
  if contenttype=='live':
   ishevc='n'
   isabr='n'
- if credential is g:
+ if credential is n:
   credential='none'
  try:
   param=get_baseparameter()
@@ -124,25 +124,25 @@ def streaming_imsi(contenttype,contentid,quality,credential,action='hls',ishevc=
   else:
    if 'resultcode' in data:
     pass
- except F as e:
+ except L as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def get_prefer_url(url):
  try:
   response=session.get(url,headers=config['headers'])
   data=response.text.strip()
-  last_url=g
+  last_url=n
   last_quality=0
   for t in data.split('\n'):
    if t.strip().find('chunklist.m3u8')!=-1:
-    t_quality=X(t.split('/')[0])
+    t_quality=z(t.split('/')[0])
     if t_quality>last_quality:
      last_quality=t_quality
      last_url=t
-  if last_url is not g and last_url!='':
+  if last_url is not n and last_url!='':
    last_url=url.split('chunklist')[0]+last_url
    return last_url
- except F as e:
+ except L as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
  return url

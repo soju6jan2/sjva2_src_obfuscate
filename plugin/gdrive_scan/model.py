@@ -1,9 +1,9 @@
 import os
-T=True
-w=repr
-g=getattr
-U=None
-t=staticmethod
+k=True
+Y=repr
+q=getattr
+u=None
+j=staticmethod
 from datetime import datetime
 from framework import db,app,path_data
 from.plugin import logger,package_name
@@ -14,19 +14,19 @@ class ModelGDriveScanJob(db.Model):
  __tablename__='%s_job'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=T)
+ id=db.Column(db.Integer,primary_key=k)
  name=db.Column(db.String)
  gdrive_path=db.Column(db.String)
  plex_path=db.Column(db.String)
  def __repr__(self):
-  return w(self.as_dict())
+  return Y(self.as_dict())
  def as_dict(self):
-  return{x.name:g(self,x.name)for x in self.__table__.columns}
+  return{x.name:q(self,x.name)for x in self.__table__.columns}
 class ModelGDriveScanFile(db.Model):
  __tablename__='%s_file'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=T)
+ id=db.Column(db.Integer,primary_key=k)
  gdrive_name=db.Column(db.String)
  name=db.Column(db.String)
  section_id=db.Column(db.Integer)
@@ -42,13 +42,13 @@ class ModelGDriveScanFile(db.Model):
   self.is_add=is_add
   self.created_time=datetime.now()
  def __repr__(self):
-  return w(self.as_dict())
+  return Y(self.as_dict())
  def as_dict(self):
-  ret={x.name:g(self,x.name)for x in self.__table__.columns}
-  ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')if self.created_time is not U else ''
-  ret['scan_time']=self.scan_time.strftime('%m-%d %H:%M:%S')if self.scan_time is not U else ''
+  ret={x.name:q(self,x.name)for x in self.__table__.columns}
+  ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')if self.created_time is not u else ''
+  ret['scan_time']=self.scan_time.strftime('%m-%d %H:%M:%S')if self.scan_time is not u else ''
   return ret
- @t
+ @j
  def add(gdrive_name,name,section_id,is_file,is_add):
   item=ModelGDriveScanFile(gdrive_name,name,section_id,is_file,is_add)
   db.session.add(item)
