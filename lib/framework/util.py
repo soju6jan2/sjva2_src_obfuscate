@@ -1,81 +1,71 @@
 import os
-T=object
-tC=staticmethod
-tQ=abs
-f=True
-Y=False
-R=int
-P=Exception
-tp=iter
-E=None
-tV=str
-i=len
-td=classmethod
-tP=isinstance
-tK=dir
-tW=TypeError
-j=os.listdir
-b=os.path
+V=object
+z=staticmethod
+P=abs
+X=True
+i=False
+C=int
+w=Exception
+H=iter
+q=None
+S=str
+m=len
+v=classmethod
+n=isinstance
+s=dir
+W=TypeError
 import json
-tF=json.JSONEncoder
-tl=json.dumps
 import traceback
-t=traceback.format_exc
 import platform
-tg=platform.system
 import subprocess
-tR=subprocess.STDOUT
-tq=subprocess.PIPE
-tr=subprocess.Popen
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from framework.logger import get_logger
 from framework import app
-e=app.config
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Util(T):
- @tC
+class Util(V):
+ @z
  def sizeof_fmt(num,suffix='Bytes'):
   for unit in['','K','M','G','T','P','E','Z']:
-   if tQ(num)<1024.0:
+   if P(num)<1024.0:
     return "%3.1f%s%s"%(num,unit,suffix)
    num/=1024.0
   return "%.1f%s%s"%(num,'Y',suffix)
- @tC
+ @z
  def db_list_to_dict(db_list):
   ret={}
   for item in db_list:
    ret[item.key]=item.value
   return ret
- @tC
+ @z
  def db_to_dict(db_list):
   ret=[]
   for item in db_list:
    ret.append(item.as_dict())
   return ret
- @tC
+ @z
  def get_paging_info(count,current_page,page_size):
   try:
    paging={}
-   paging['prev_page']=f
-   paging['next_page']=f
+   paging['prev_page']=X
+   paging['next_page']=X
    if current_page<=10:
-    paging['prev_page']=Y
-   paging['total_page']=R(count/page_size)+1
+    paging['prev_page']=i
+   paging['total_page']=C(count/page_size)+1
    if count%page_size==0:
     paging['total_page']-=1
-   paging['start_page']=R((current_page-1)/10)*10+1
+   paging['start_page']=C((current_page-1)/10)*10+1
    paging['last_page']=paging['total_page']if paging['start_page']+9>paging['total_page']else paging['start_page']+9
    if paging['last_page']==paging['total_page']:
-    paging['next_page']=Y
+    paging['next_page']=i
    paging['current_page']=current_page
    paging['count']=count
    logger.debug('paging : c:%s %s %s %s %s %s',count,paging['total_page'],paging['prev_page'],paging['next_page'],paging['start_page'],paging['last_page'])
    return paging
-  except P as e:
+  except w as e:
    logger.debug('Exception:%s',e)
-   logger.debug(t())
- @tC
+   logger.debug(traceback.format_exc())
+ @z
  def get_list_except_empty(source):
   tmp=[]
   for _ in source:
@@ -84,121 +74,121 @@ class Util(T):
    if _.strip()!='':
     tmp.append(_.strip())
   return tmp
- @tC
+ @z
  def save_from_dict_to_json(d,filename):
   try:
    import codecs
-   s=tl(d)
+   s=json.dumps(d)
    ofp=codecs.open(filename,'w',encoding='utf8')
    ofp.write(s)
    ofp.close()
-  except P as e:
+  except w as e:
    logger.debug('Exception:%s',e)
-   logger.debug(t())
- @tC
+   logger.debug(traceback.format_exc())
+ @z
  def execute_command(command):
   try:
    logger.debug('COMMAND RUN START : %s',command)
-   if tg()=='Windows':
+   if platform.system()=='Windows':
     new_command=[]
     for c in command:
      new_command.append(c.encode('cp949'))
     command=new_command
    ret=[]
-   if e['config']['is_py2']:
-    p=tr(command,stdin=tq,stdout=tq,stderr=tR,universal_newlines=f,bufsize=1)
+   if app.config['config']['is_py2']:
+    p=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=X,bufsize=1)
     with p.stdout:
-     for line in tp(p.stdout.readline,b''):
+     for line in H(p.stdout.readline,b''):
       try:
        line=line.decode('utf-8')
-      except P as e:
+      except w as e:
        try:
         line=line.decode('cp949')
-       except P as e:
+       except w as e:
         pass
       ret.append(line.strip())
      p.wait()
    else:
-    p=tr(command,stdin=tq,stdout=tq,stderr=tR,universal_newlines=f)
+    p=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=X)
     with p.stdout:
-     for line in tp(p.stdout.readline,''):
+     for line in H(p.stdout.readline,''):
       ret.append(line.strip())
      p.wait()
    logger.debug('COMMAND RUN END : %s',command)
    return ret
-  except P as e:
+  except w as e:
    logger.error('Exception:%s',e)
-   logger.error(t()) 
- @tC
+   logger.error(traceback.format_exc()) 
+ @z
  def change_text_for_use_filename(text):
   try:
    import re
    return re.sub('[\\/:*?\"<>|]','',text).strip()
-  except P as e:
+  except w as e:
    logger.error('Exception:%s',e)
-   logger.error(t()) 
- @tC
+   logger.error(traceback.format_exc()) 
+ @z
  def get_max_size_fileinfo(torrent_info):
   try:
    ret={}
    max_size=-1
-   max_filename=E
+   max_filename=q
    for t in torrent_info['files']:
     if t['size']>max_size:
      max_size=t['size']
-     max_filename=tV(t['path'])
+     max_filename=S(t['path'])
    t=max_filename.split('/')
    ret['filename']=t[-1]
-   if i(t)==1:
+   if m(t)==1:
     ret['dirname']=''
-   elif i(t)==2:
+   elif m(t)==2:
     ret['dirname']=t[0]
    else:
     ret['dirname']=max_filename.replace('/%s'%ret['filename'],'')
    ret['max_size']=max_size
    return ret
-  except P as e:
+  except w as e:
    logger.error('Exception:%s',e)
-   logger.error(t())
- @tC
+   logger.error(traceback.format_exc())
+ @z
  def makezip(zip_path):
   import zipfile
   try:
-   if b.isdir(zip_path):
-    zipfilename=b.join(b.dirname(zip_path),'%s.zip'%b.basename(zip_path))
+   if os.path.isdir(zip_path):
+    zipfilename=os.path.join(os.path.dirname(zip_path),'%s.zip'%os.path.basename(zip_path))
     fantasy_zip=zipfile.ZipFile(zipfilename,'w')
-    for f in j(zip_path):
-     src=b.join(zip_path,f)
-     fantasy_zip.write(src,b.basename(src),compress_type=zipfile.ZIP_DEFLATED)
+    for f in os.listdir(zip_path):
+     src=os.path.join(zip_path,f)
+     fantasy_zip.write(src,os.path.basename(src),compress_type=zipfile.ZIP_DEFLATED)
     fantasy_zip.close()
    import shutil
    shutil.rmtree(zip_path)
-   return f
-  except P as e:
+   return X
+  except w as e:
    logger.error('Exception:%s',e)
-   logger.error(t())
-  return Y
-class SingletonClass(T):
- __instance=E
- @td
+   logger.error(traceback.format_exc())
+  return i
+class SingletonClass(V):
+ __instance=q
+ @v
  def __getInstance(cls):
   return cls.__instance
- @td
+ @v
  def instance(cls,*args,**kargs):
   cls.__instance=cls(*args,**kargs)
   cls.instance=cls.__getInstance
   return cls.__instance
-class AlchemyEncoder(tF):
+class AlchemyEncoder(json.JSONEncoder):
  def default(self,obj):
-  if tP(obj.__class__,DeclarativeMeta):
+  if n(obj.__class__,DeclarativeMeta):
    fields={}
-   for field in[x for x in tK(obj)if not x.startswith('_')and x!='metadata']:
+   for field in[x for x in s(obj)if not x.startswith('_')and x!='metadata']:
     data=obj.__getattribute__(field)
     try:
-     tl(data)
+     json.dumps(data)
      fields[field]=data
-    except tW:
-     fields[field]=E
+    except W:
+     fields[field]=q
    return fields
-  return tF.default(self,obj)
+  return json.JSONEncoder.default(self,obj)
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

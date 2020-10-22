@@ -1,26 +1,19 @@
 import traceback
-v=None
-V=Exception
-I=True
-u=traceback.format_exc
+j=None
+e=Exception
+y=True
 import json
-y=json.loads
-a=json.dumps
 from flask import Blueprint,request,render_template,redirect,jsonify
-J=request.sid
-j=request.form
 from flask_login import login_required
 from flask_socketio import SocketIO,emit,send
 from framework import socketio,check_api
-S=socketio.emit
-r=socketio.on
 from framework.util import AlchemyEncoder
 def default_route(P):
  @P.blueprint.route('/')
  def home():
-  if P.ModelSetting is not v:
+  if P.ModelSetting is not j:
    tmp=P.ModelSetting.get('recent_menu_plugin')
-   if tmp is not v and tmp!='':
+   if tmp is not j and tmp!='':
     tmps=tmp.split('|')
     return redirect('/{package_name}/{sub}/{sub2}'.format(package_name=P.package_name,sub=tmps[0],sub2=tmps[1]))
   return redirect('/{package_name}/{home_module}'.format(package_name=P.package_name,home_module=P.home_module))
@@ -34,13 +27,13 @@ def default_route(P):
    if sub=='log':
     return render_template('log.html',package=P.package_name)
    return render_template('sample.html',title='%s - %s'%(P.package_name,sub))
-  except V as e:
+  except e as e:
    P.logger.error('Exception:%s',e)
-   P.logger.error(u())
+   P.logger.error(traceback.format_exc())
  @P.blueprint.route('/<sub>/<sub2>',methods=['GET','POST'])
  @login_required
  def second_menu(sub,sub2):
-  if P.ModelSetting is not v:
+  if P.ModelSetting is not j:
    P.ModelSetting.set('recent_menu_plugin','{}|{}'.format(sub,sub2))
   try:
    for module in P.module_list:
@@ -49,9 +42,9 @@ def default_route(P):
    if sub=='log':
     return render_template('log.html',package=P.package_name)
    return render_template('sample.html',title='%s - %s'%(P.package_name,sub))
-  except V as e:
+  except e as e:
    P.logger.error('Exception:%s',e)
-   P.logger.error(u())
+   P.logger.error(traceback.format_exc())
  @P.blueprint.route('/ajax/<sub>',methods=['GET','POST'])
  @login_required
  def ajax(sub):
@@ -63,8 +56,8 @@ def default_route(P):
      module.setting_save_after()
     return jsonify(ret)
    elif sub=='scheduler':
-    sub=j['sub']
-    go=j['scheduler']
+    sub=request.form['sub']
+    go=request.form['scheduler']
     P.logger.debug('scheduler :%s',go)
     if go=='true':
      P.logic.scheduler_start(sub)
@@ -72,16 +65,16 @@ def default_route(P):
      P.logic.scheduler_stop(sub)
     return jsonify(go)
    elif sub=='reset_db':
-    sub=j['sub']
+    sub=request.form['sub']
     ret=P.logic.reset_db(sub)
     return jsonify(ret)
    elif sub=='one_execute':
-    sub=j['sub']
+    sub=request.form['sub']
     ret=P.logic.one_execute(sub)
     return jsonify(ret)
-  except V as e:
+  except e as e:
    P.logger.error('Exception:%s',e)
-   P.logger.error(u()) 
+   P.logger.error(traceback.format_exc()) 
  @P.blueprint.route('/ajax/<sub>/<sub2>',methods=['GET','POST'])
  @login_required
  def second_ajax(sub,sub2):
@@ -89,9 +82,9 @@ def default_route(P):
    for module in P.module_list:
     if sub==module.name:
      return module.process_ajax(sub2,request)
-  except V as e:
+  except e as e:
    P.logger.error('Exception:%s',e)
-   P.logger.error(u())
+   P.logger.error(traceback.format_exc())
  @P.blueprint.route('/api/<sub>/<sub2>',methods=['GET','POST'])
  @check_api
  def api(sub,sub2):
@@ -99,18 +92,18 @@ def default_route(P):
    for module in P.module_list:
     if sub==module.name:
      return module.process_api(sub2,request)
-  except V as e:
+  except e as e:
    P.logger.error('Exception:%s',e)
-   P.logger.error(u())
+   P.logger.error(traceback.format_exc())
  @P.blueprint.route('/normal/<sub>/<sub2>',methods=['GET','POST'])
  def normal(sub,sub2):
   try:
    for module in P.module_list:
     if sub==module.name:
      return module.process_normal(sub2,request)
-  except V as e:
+  except e as e:
    P.logger.error('Exception:%s',e)
-   P.logger.error(u())
+   P.logger.error(traceback.format_exc())
 def default_route_single_module(P):
  @P.blueprint.route('/')
  def home():
@@ -131,8 +124,8 @@ def default_route_single_module(P):
     P.module_list[0].setting_save_after()
     return jsonify(ret)
    elif sub=='scheduler':
-    sub=j['sub']
-    go=j['scheduler']
+    sub=request.form['sub']
+    go=request.form['scheduler']
     P.logger.debug('scheduler :%s',go)
     if go=='true':
      P.logic.scheduler_start(sub)
@@ -140,58 +133,58 @@ def default_route_single_module(P):
      P.logic.scheduler_stop(sub)
     return jsonify(go)
    elif sub=='reset_db':
-    sub=j['sub']
+    sub=request.form['sub']
     ret=P.logic.reset_db(sub)
     return jsonify(ret)
    elif sub=='one_execute':
-    sub=j['sub']
+    sub=request.form['sub']
     ret=P.logic.one_execute(sub)
     return jsonify(ret)
    else:
     return P.module_list[0].process_ajax(sub,request)
-  except V as e:
+  except e as e:
    P.logger.error('Exception:%s',e)
-   P.logger.error(u()) 
+   P.logger.error(traceback.format_exc()) 
  @P.blueprint.route('/api/<sub>',methods=['GET','POST'])
  @check_api
  def api(sub):
   try:
    return P.module_list[0].process_api(sub,request)
-  except V as e:
+  except e as e:
    P.logger.error('Exception:%s',e)
-   P.logger.error(u())
+   P.logger.error(traceback.format_exc())
  @P.blueprint.route('/normal/<sub>',methods=['GET','POST'])
  def normal(sub):
   try:
    return P.module_list[0].process_normal(sub,request)
-  except V as e:
+  except e as e:
    P.logger.error('Exception:%s',e)
-   P.logger.error(u()) 
+   P.logger.error(traceback.format_exc()) 
 def default_route_socketio(P,instance):
- if instance.socketio_list is v:
+ if instance.socketio_list is j:
   instance.socketio_list=[]
- @r('connect',namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name))
+ @socketio.on('connect',namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name))
  def connect():
   try:
    P.logger.debug('socket_connect : %s - %s',P.package_name,instance.name)
-   instance.socketio_list.append(J)
+   instance.socketio_list.append(request.sid)
    socketio_callback('start','')
-  except V as e:
+  except e as e:
    P.logger.error('Exception:%s',e)
-   P.logger.error(u())
- @r('disconnect',namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name))
+   P.logger.error(traceback.format_exc())
+ @socketio.on('disconnect',namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name))
  def disconnect():
   try:
    P.logger.debug('socket_disconnect : %s - %s',P.package_name,instance.name)
-   instance.socketio_list.remove(J)
-  except V as e:
+   instance.socketio_list.remove(request.sid)
+  except e as e:
    P.logger.error('Exception:%s',e)
-   P.logger.error(u())
- def socketio_callback(cmd,data,encoding=I):
+   P.logger.error(traceback.format_exc())
+ def socketio_callback(cmd,data,encoding=y):
   if instance.socketio_list:
    if encoding:
-    data=a(data,cls=AlchemyEncoder)
-    data=y(data)
-   S(cmd,data,namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name),broadcast=I)
+    data=json.dumps(data,cls=AlchemyEncoder)
+    data=json.loads(data)
+   socketio.emit(cmd,data,namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name),broadcast=y)
  instance.socketio_callback=socketio_callback
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

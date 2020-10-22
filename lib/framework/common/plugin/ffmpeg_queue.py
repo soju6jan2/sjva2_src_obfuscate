@@ -1,26 +1,17 @@
 import os,sys,traceback
-B=object
-v=None
-z=False
-D=classmethod
-I=True
-V=Exception
-h=int
-n=str
-u=traceback.format_exc
-K=os.makedirs
-m=os.path
+m=object
+j=None
+M=False
+T=classmethod
+y=True
+e=Exception
+D=int
+r=str
 import threading,time
-T=time.sleep
-F=threading.Thread
 from datetime import datetime
-f=datetime.now
 import abc
-N=abc.abstractmethod
-b=abc.ABCMeta
 from framework import py_queue
-O=py_queue.Queue
-class FfmpegQueueEntity(b('ABC',(B,),{'__slots__':()})):
+class FfmpegQueueEntity(abc.ABCMeta('ABC',(m,),{'__slots__':()})):
  static_index=1
  entity_list=[]
  def __init__(self,P,module_logic,info):
@@ -28,34 +19,34 @@ class FfmpegQueueEntity(b('ABC',(B,),{'__slots__':()})):
   self.module_logic=module_logic
   self.entity_id=FfmpegQueueEntity.static_index
   self.info=info
-  self.url=v
+  self.url=j
   self.ffmpeg_status=-1
   self.ffmpeg_status_kor=u'대기중'
   self.ffmpeg_percent=0
-  self.ffmpeg_arg=v
-  self.cancel=z
-  self.created_time=f().strftime('%m-%d %H:%M:%S')
-  self.savepath=v
-  self.filename=v
-  self.filepath=v
-  self.quality=v
-  self.headers=v
+  self.ffmpeg_arg=j
+  self.cancel=M
+  self.created_time=datetime.now().strftime('%m-%d %H:%M:%S')
+  self.savepath=j
+  self.filename=j
+  self.filepath=j
+  self.quality=j
+  self.headers=j
   FfmpegQueueEntity.static_index+=1
   FfmpegQueueEntity.entity_list.append(self)
- @D
+ @T
  def get_entity_by_entity_id(cls,entity_id):
   for _ in cls.entity_list:
    if _.entity_id==entity_id:
     return _
-  return v
+  return j
  def get_video_url(self):
   return self.url
  def get_video_filepath(self):
   return self.filepath
- @N
+ @abc.abstractmethod
  def refresh_status(self):
   pass
- @N
+ @abc.abstractmethod
  def info_dict(self,tmp):
   pass
  def donwload_completed(self):
@@ -76,69 +67,69 @@ class FfmpegQueueEntity(b('ABC',(B,),{'__slots__':()})):
   tmp['quality']=self.quality
   tmp=self.info_dict(tmp)
   return tmp
- @D
+ @T
  def get_entity_list(cls):
   ret=[]
   for x in cls.entity_list:
    tmp=x.as_dict()
    ret.append(tmp)
   return ret
-class FfmpegQueue(B):
- download_queue=v
- download_thread=v
+class FfmpegQueue(m):
+ download_queue=j
+ download_thread=j
  current_ffmpeg_count=0
  max_ffmpeg_count=1
- P=v
+ P=j
  def __init__(self,P,max_ffmpeg_count):
   self.P=P
   self.max_ffmpeg_count=max_ffmpeg_count
  def queue_start(self):
   try:
-   if self.download_queue is v:
-    self.download_queue=O()
-   if self.download_thread is v:
-    self.download_thread=F(target=self.download_thread_function,args=())
-    self.download_thread.daemon=I 
+   if self.download_queue is j:
+    self.download_queue=py_queue.Queue()
+   if self.download_thread is j:
+    self.download_thread=threading.Thread(target=self.download_thread_function,args=())
+    self.download_thread.daemon=y 
     self.download_thread.start()
-  except V as e:
+  except e as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(u())
+   self.P.logger.error(traceback.format_exc())
  def download_thread_function(self):
-  while I:
+  while y:
    try:
-    while I:
+    while y:
      if self.current_ffmpeg_count<self.max_ffmpeg_count:
       break
-     T(5)
+     time.sleep(5)
     entity=self.download_queue.get()
     if entity.cancel:
      continue
     video_url=entity.get_video_url()
-    if video_url is v:
+    if video_url is j:
      entity.ffmpeg_status_kor='URL실패'
      entity.refresh_status()
      continue
     import ffmpeg
     filepath=entity.get_video_filepath()
-    if m.exists(filepath):
+    if os.path.exists(filepath):
      entity.ffmpeg_status_kor='파일 있음'
      entity.ffmpeg_percent=100
      entity.refresh_status()
      continue
-    dirname=m.dirname(filepath)
-    if not m.exists(dirname):
-     K(dirname)
-    f=ffmpeg.Ffmpeg(video_url,m.basename(filepath),plugin_id=entity.entity_id,listener=self.ffmpeg_listener,call_plugin=self.P.package_name,save_path=dirname,headers=entity.headers)
+    dirname=os.path.dirname(filepath)
+    if not os.path.exists(dirname):
+     os.makedirs(dirname)
+    f=ffmpeg.Ffmpeg(video_url,os.path.basename(filepath),plugin_id=entity.entity_id,listener=self.ffmpeg_listener,call_plugin=self.P.package_name,save_path=dirname,headers=entity.headers)
     f.start()
     self.current_ffmpeg_count+=1
     self.download_queue.task_done() 
-   except V as e:
+   except e as e:
     self.P.logger.error('Exception:%s',e)
-    self.P.logger.error(u())
+    self.P.logger.error(traceback.format_exc())
  def ffmpeg_listener(self,**arg):
   import ffmpeg
   entity=FfmpegQueueEntity.get_entity_by_entity_id(arg['plugin_id'])
-  if entity is v:
+  if entity is j:
    return
   if arg['type']=='status_change':
    if arg['status']==ffmpeg.Status.DOWNLOADING:
@@ -154,19 +145,19 @@ class FfmpegQueue(B):
   elif arg['type']=='normal':
    pass
   entity.ffmpeg_arg=arg
-  entity.ffmpeg_status=h(arg['status'])
-  entity.ffmpeg_status_kor=n(arg['status'])
+  entity.ffmpeg_status=D(arg['status'])
+  entity.ffmpeg_status_kor=r(arg['status'])
   entity.ffmpeg_percent=arg['data']['percent']
-  entity.ffmpeg_arg['status']= n(arg['status'])
+  entity.ffmpeg_arg['status']= r(arg['status'])
   entity.refresh_status()
  def add_queue(self,entity):
   try:
    self.download_queue.put(entity)
-   return I
-  except V as e:
+   return y
+  except e as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(u())
-  return z
+   self.P.logger.error(traceback.format_exc())
+  return M
  def set_max_ffmpeg_count(self,max_ffmpeg_count):
   self.max_ffmpeg_count=max_ffmpeg_count
  def get_max_ffmpeg_count(self):
@@ -178,9 +169,9 @@ class FfmpegQueue(B):
    if cmd=='cancel':
     self.P.logger.debug('command :%s %s',cmd,entity_id)
     entity=FfmpegQueueEntity.get_entity_by_entity_id(entity_id)
-    if entity is not v:
+    if entity is not j:
      if entity.ffmpeg_status==-1:
-      entity.cancel=I
+      entity.cancel=y
       entity.ffmpeg_status_kor="취소"
       ret['ret']='refresh'
      elif entity.ffmpeg_status!=5:
@@ -193,7 +184,7 @@ class FfmpegQueue(B):
       entity.refresh_status()
       ret['ret']='refresh'
    elif cmd=='reset':
-    if self.download_queue is not v:
+    if self.download_queue is not j:
      with self.download_queue.mutex:
       self.download_queue.queue.clear()
      for _ in FfmpegQueueEntity.entity_list:
@@ -213,7 +204,7 @@ class FfmpegQueue(B):
     FfmpegQueueEntity.entity_list=new_list
     ret['ret']='refresh'
    return ret
-  except V as e:
+  except e as e:
    self.P.logger.error('Exception:%s',e)
-   self.P.logger.error(u())
+   self.P.logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

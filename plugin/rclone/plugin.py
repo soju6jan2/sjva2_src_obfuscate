@@ -1,91 +1,44 @@
 import os
-Y=Exception
-J=str
-X=None
-R=False
-W=True
-z=os.listdir
-c=os.path
+p=Exception
+P=str
+z=None
+i=False
+e=True
 import traceback
-b=traceback.format_exc
 import time
 from datetime import datetime
 import urllib
 import json
-cH=json.loads
-T=json.dumps
 import platform
 import requests
-cb=requests.request
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify,session,send_from_directory 
-cF=session.query
-cQ=request.sid
-ca=request.form
-ch=request.cookies
-cm=request.get_data
-cD=request.headers
-ce=request.method
 from flask_socketio import SocketIO,emit,send
 from flask_login import login_user,logout_user,current_user,login_required
 from framework.logger import get_logger
 from framework import app,db,scheduler,path_data,socketio
-cn=socketio.emit
-cO=socketio.on
-cy=scheduler.is_running
-v=scheduler.is_include
-y=db.session
 from framework.util import Util,AlchemyEncoder
-cv=Util.db_list_to_dict
 from system.model import ModelSetting as SystemModelSetting
-M=ModelSetting.get
-cI=ModelSetting.setting_save
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 from.model import ModelSetting
-M=ModelSetting.get
-cI=ModelSetting.setting_save
 from.logic import Logic
-cN=Logic.current_data
-cj=Logic.mount_remove
-cV=Logic.mount_kill
-cR=Logic.mount_stop
-ct=Logic.mount_execute
-ck=Logic.mount_save
-cW=Logic.mount_list
-cJ=Logic.get_log
-cY=Logic.reset_db
-cu=Logic.filelist
-cX=Logic.remove_job
-cK=Logic.execute_job
-cE=Logic.scheduler_stop
-cg=Logic.scheduler_start
-cq=Logic.job_save
-cL=Logic.get_jobs
-cU=Logic.load_remotes
-d=Logic.path_config
-cl=Logic.rclone_version
-cG=Logic.default_rclone_setting
-x=Logic.path_rclone
-cC=Logic.kill
-ci=Logic.plugin_unload
-cM=Logic.plugin_load
-blueprint=Blueprint(package_name,package_name,url_prefix='/%s'%package_name,template_folder=c.join(c.dirname(__file__),'templates'),static_folder=c.join(c.dirname(__file__),'build'),static_url_path='build')
+blueprint=Blueprint(package_name,package_name,url_prefix='/%s'%package_name,template_folder=os.path.join(os.path.dirname(__file__),'templates'),static_folder=os.path.join(os.path.dirname(__file__),'build'),static_url_path='build')
 menu={'main':[package_name,u'RClone'],'sub':[['setting',u'설정'],['status',u'상태'],['list',u'목록'],['mount',u'Mount'],['serve_setting',u'Serve'],['log',u'로그']]}
 def plugin_load():
  try:
   logger.debug('plugin_load:%s',package_name)
-  cM()
- except Y as e:
+  Logic.plugin_load()
+ except p as e:
   logger.error('Exception:%s',e)
-  logger.error(b())
+  logger.error(traceback.format_exc())
 def plugin_unload():
  try:
   logger.debug('plugin_unload:%s',package_name)
-  ci()
-  cC()
- except Y as e:
+  Logic.plugin_unload()
+  Logic.kill()
+ except p as e:
   logger.error('Exception:%s',e)
-  logger.error(b())
+  logger.error(traceback.format_exc())
 @blueprint.route('/')
 def home():
  return redirect('/%s/list'%package_name)
@@ -94,12 +47,12 @@ def home():
 def detail(sub):
  logger.debug('DETAIL %s %s',package_name,sub)
  if sub=='setting':
-  setting_list=db.cF(ModelSetting).all()
-  arg=cv(setting_list)
-  arg['scheduler']=J(v(package_name))
-  arg['is_running']=J(cy(package_name))
-  arg['path_rclone']=x
-  arg['default_rclone_setting']=cG
+  setting_list=db.session.query(ModelSetting).all()
+  arg=Util.db_list_to_dict(setting_list)
+  arg['scheduler']=P(scheduler.is_include(package_name))
+  arg['is_running']=P(scheduler.is_running(package_name))
+  arg['path_rclone']=Logic.path_rclone
+  arg['default_rclone_setting']=Logic.default_rclone_setting
   return render_template('rclone_setting.html',sub=sub,arg=arg)
  elif sub=='status':
   return render_template('rclone_status.html')
@@ -128,7 +81,7 @@ def detail2(sub,path):
  if sub=='static':
   return blueprint.send_static_file('static/'+path)
  else:
-  if path is X:
+  if path is z:
    return blueprint.send_static_file(sub)
   else:
    url='http://127.0.0.1:5572/%s/%s'%(sub,path)
@@ -136,294 +89,294 @@ def detail2(sub,path):
  return render_template('sample.html',title='%s - %s'%(package_name,sub))
 def proxy(request,url):
  try:
-  resp=cb(method=ce,url=url,headers={key:value for(key,value)in cD if key!='Host'},data=cm(),cookies=ch,allow_redirects=R)
+  resp=requests.request(method=request.method,url=url,headers={key:value for(key,value)in request.headers if key!='Host'},data=request.get_data(),cookies=request.cookies,allow_redirects=i)
   excluded_headers=['content-encoding','content-length','transfer-encoding','connection']
   headers=[(name,value)for(name,value)in resp.raw.headers.items()if name.lower()not in excluded_headers]
   response=Response(resp.text,resp.status_code,headers)
   return response
- except Y as e:
+ except p as e:
   logger.error('Exception:%s',e)
-  logger.error(b())
+  logger.error(traceback.format_exc())
 @blueprint.route('/ajax/<sub>',methods=['GET','POST'])
 @login_required
 def ajax(sub):
  logger.debug('AJAX %s %s',package_name,sub)
  if sub=='rclone_version':
   try:
-   ret=cl()
+   ret=Logic.rclone_version()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='send_to_command_plugin':
   try:
-   c=ca['command']
-   ret='%s --config %s %s'%(x,d,c)
+   c=request.form['command']
+   ret='%s --config %s %s'%(Logic.path_rclone,Logic.path_config,c)
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='load_remotes':
   try:
    ret={}
-   ret['remotes']=cU()
-   ret['jobs']=cL()
+   ret['remotes']=Logic.load_remotes()
+   ret['jobs']=Logic.get_jobs()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='remote_ls':
   try:
-   remote=ca['remote']
-   remote_path=ca['remote_path']
-   ret='%s --config %s lsf "%s:%s" --max-depth 1'%(x,d,remote,remote_path)
+   remote=request.form['remote']
+   remote_path=request.form['remote_path']
+   ret='%s --config %s lsf "%s:%s" --max-depth 1'%(Logic.path_rclone,Logic.path_config,remote,remote_path)
    import command 
    ret=command.LogicNormal.execute_thread_function(ret)
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='local_ls':
   try:
-   local_path=ca['local_path']
+   local_path=request.form['local_path']
    logger.debug('local_path:%s',local_path)
-   if not c.exists(local_path):
+   if not os.path.exists(local_path):
     ret='NOT EXIST'
    else:
-    ret=z(local_path)
+    ret=os.listdir(local_path)
     if not ret:
      ret='EMPTY'
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='job_save':
   try:
    ret={}
-   ret['ret']=cq(request)
-   ret['remotes']=cU()
-   ret['jobs']=cL()
+   ret['ret']=Logic.job_save(request)
+   ret['remotes']=Logic.load_remotes()
+   ret['jobs']=Logic.get_jobs()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='setting_save':
-  ret=cI(request)
-  x=M('rclone_bin_path')
-  d=M('rclone_config_path')
+  ret=ModelSetting.setting_save(request)
+  Logic.path_rclone=ModelSetting.get('rclone_bin_path')
+  Logic.path_config=ModelSetting.get('rclone_config_path')
   return jsonify(ret)
  elif sub=='scheduler':
   try:
-   go=ca['scheduler']
+   go=request.form['scheduler']
    logger.debug('scheduler :%s',go)
    if go=='true':
-    cg()
+    Logic.scheduler_start()
    else:
-    cE()
+    Logic.scheduler_stop()
    return jsonify(go)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
    return jsonify('fail')
  elif sub=='status':
   try:
    pass
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='stop':
   try:
-   ret=cC()
+   ret=Logic.kill()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='scheduler_stop':
   try:
-   ret=cC()
-   if v(package_name):
-    cE()
+   ret=Logic.kill()
+   if scheduler.is_include(package_name):
+    Logic.scheduler_stop()
     ret='success'
    else:
     ret='not_running'
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='execute_job':
   try:
-   ret=cK(request)
+   ret=Logic.execute_job(request)
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='remove_job':
   try:
    ret={}
-   ret['ret']=cX(request)
-   ret['remotes']=cU()
-   ret['jobs']=cL()
+   ret['ret']=Logic.remove_job(request)
+   ret['remotes']=Logic.load_remotes()
+   ret['jobs']=Logic.get_jobs()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='filelist':
   try:
-   ret=cu(request)
-   ret['jobs']=cL()
+   ret=Logic.filelist(request)
+   ret['jobs']=Logic.get_jobs()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='reset_db':
   try:
-   ret=cY()
+   ret=Logic.reset_db()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b()) 
+   logger.error(traceback.format_exc()) 
  elif sub=='get_log':
   try:
-   return jsonify(cJ(request))
-  except Y as e:
+   return jsonify(Logic.get_log(request))
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='load_mounts':
   try:
    ret={}
-   ret['mounts']=cW()
-   ret['remotes']=cU()
+   ret['mounts']=Logic.mount_list()
+   ret['remotes']=Logic.load_remotes()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='mount_save':
   try:
    ret={}
-   ret['ret']=ck(request)
-   ret['remotes']=cU()
-   ret['mounts']=cW()
+   ret['ret']=Logic.mount_save(request)
+   ret['remotes']=Logic.load_remotes()
+   ret['mounts']=Logic.mount_list()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='mount_execute':
   try:
    ret={}
-   mount_id=ca['id']
-   ret['ret']=ct(mount_id)
-   ret['remotes']=cU()
-   ret['mounts']=cW()
+   mount_id=request.form['id']
+   ret['ret']=Logic.mount_execute(mount_id)
+   ret['remotes']=Logic.load_remotes()
+   ret['mounts']=Logic.mount_list()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='mount_stop':
   try:
    ret={}
-   ret['ret']=cR(request)
-   ret['remotes']=cU()
-   ret['mounts']=cW()
+   ret['ret']=Logic.mount_stop(request)
+   ret['remotes']=Logic.load_remotes()
+   ret['mounts']=Logic.mount_list()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='mount_remove':
   try:
    ret={}
-   mount_id=ca['id']
-   cV(mount_id)
-   ret['ret']=cj(mount_id)
-   ret['remotes']=cU()
-   ret['mounts']=cW()
+   mount_id=request.form['id']
+   Logic.mount_kill(mount_id)
+   ret['ret']=Logic.mount_remove(mount_id)
+   ret['remotes']=Logic.load_remotes()
+   ret['mounts']=Logic.mount_list()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='load_serves':
   try:
    from.logic_serve import LogicServe
    ret={}
    ret['serves']=LogicServe.serve_list()
-   ret['remotes']=cU()
+   ret['remotes']=Logic.load_remotes()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='serve_save':
   try:
    from.logic_serve import LogicServe
    ret={}
    ret['ret']=LogicServe.serve_save(request)
-   ret['remotes']=cU()
+   ret['remotes']=Logic.load_remotes()
    ret['serves']=LogicServe.serve_list()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='serve_execute':
   try:
    from.logic_serve import LogicServe
    ret={}
-   serve_id=ca['id']
+   serve_id=request.form['id']
    ret['ret']=LogicServe.serve_execute(serve_id)
-   ret['remotes']=cU()
+   ret['remotes']=Logic.load_remotes()
    ret['serves']=LogicServe.serve_list()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='serve_stop':
   try:
    from.logic_serve import LogicServe
    ret={}
    ret['ret']=LogicServe.serve_stop(request)
-   ret['remotes']=cU()
+   ret['remotes']=Logic.load_remotes()
    ret['serves']=LogicServe.serve_list()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
  elif sub=='serve_remove':
   try:
    from.logic_serve import LogicServe
    ret={}
-   serve_id=ca['id']
+   serve_id=request.form['id']
    LogicServe.serve_kill(serve_id)
    ret['ret']=LogicServe.serve_remove(serve_id)
-   ret['remotes']=cU()
+   ret['remotes']=Logic.load_remotes()
    ret['serves']=LogicServe.serve_list()
    return jsonify(ret)
-  except Y as e:
+  except p as e:
    logger.error('Exception:%s',e)
-   logger.error(b())
+   logger.error(traceback.format_exc())
 sid_list=[]
-@cO('connect',namespace='/%s'%package_name)
+@socketio.on('connect',namespace='/%s'%package_name)
 def connect():
  try:
   logger.debug('socket_connect')
-  sid_list.append(cQ)
-  tmp=X
-  if cN is not X:
-   tmp=T(cN,cls=AlchemyEncoder)
-   tmp=cH(tmp)
+  sid_list.append(request.sid)
+  tmp=z
+  if Logic.current_data is not z:
+   tmp=json.dumps(Logic.current_data,cls=AlchemyEncoder)
+   tmp=json.loads(tmp)
   emit('on_connect',tmp,namespace='/%s'%package_name)
- except Y as e:
+ except p as e:
   logger.error('Exception:%s',e)
-  logger.error(b())
-@cO('disconnect',namespace='/%s'%package_name)
+  logger.error(traceback.format_exc())
+@socketio.on('disconnect',namespace='/%s'%package_name)
 def disconnect():
  try:
-  sid_list.remove(cQ)
+  sid_list.remove(request.sid)
   logger.debug('socket_disconnect')
- except Y as e:
+ except p as e:
   logger.error('Exception:%s',e)
-  logger.error(b())
+  logger.error(traceback.format_exc())
 def socketio_callback(cmd,data):
  if sid_list:
-  tmp=T(data,cls=AlchemyEncoder)
-  tmp=cH(tmp)
-  cn(cmd,tmp,namespace='/%s'%package_name,broadcast=W)
+  tmp=json.dumps(data,cls=AlchemyEncoder)
+  tmp=json.loads(tmp)
+  socketio.emit(cmd,tmp,namespace='/%s'%package_name,broadcast=e)
 """
 @blueprint.route('/rc/<path:path>',methods=['GET','POST','DELETE'])
 def rc(path):

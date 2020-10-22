@@ -1,67 +1,57 @@
 import os
-q=True
-H=repr
-a=getattr
-g=None
-f=staticmethod
-W=os.path
+o=True
+w=repr
+u=getattr
+m=None
+y=staticmethod
 from datetime import datetime
-v=datetime.now
 from framework import db,app,path_data
-z=app.config
-G=db.session
-S=db.DateTime
-I=db.Boolean
-A=db.String
-r=db.Integer
-K=db.Column
-V=db.Model
 from.plugin import logger,package_name
-z['SQLALCHEMY_BINDS'][package_name]='sqlite:///%s'%(W.join(path_data,'db','%s.db'%package_name))
+app.config['SQLALCHEMY_BINDS'][package_name]='sqlite:///%s'%(os.path.join(path_data,'db','%s.db'%package_name))
 from framework.common.plugin import get_model_setting
 ModelSetting=get_model_setting(package_name,logger)
-class ModelGDriveScanJob(V):
+class ModelGDriveScanJob(db.Model):
  __tablename__='%s_job'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=K(r,primary_key=q)
- name=K(A)
- gdrive_path=K(A)
- plex_path=K(A)
+ id=db.Column(db.Integer,primary_key=o)
+ name=db.Column(db.String)
+ gdrive_path=db.Column(db.String)
+ plex_path=db.Column(db.String)
  def __repr__(self):
-  return H(self.as_dict())
+  return w(self.as_dict())
  def as_dict(self):
-  return{x.name:a(self,x.name)for x in self.__table__.columns}
-class ModelGDriveScanFile(V):
+  return{x.name:u(self,x.name)for x in self.__table__.columns}
+class ModelGDriveScanFile(db.Model):
  __tablename__='%s_file'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=K(r,primary_key=q)
- gdrive_name=K(A)
- name=K(A)
- section_id=K(r)
- is_file=K(I)
- is_add=K(I)
- created_time=K(S)
- scan_time=K(S)
+ id=db.Column(db.Integer,primary_key=o)
+ gdrive_name=db.Column(db.String)
+ name=db.Column(db.String)
+ section_id=db.Column(db.Integer)
+ is_file=db.Column(db.Boolean)
+ is_add=db.Column(db.Boolean)
+ created_time=db.Column(db.DateTime)
+ scan_time=db.Column(db.DateTime)
  def __init__(self,gdrive_name,name,section_id,is_file,is_add):
   self.gdrive_name=gdrive_name
   self.name=name
   self.section_id=section_id
   self.is_file=is_file
   self.is_add=is_add
-  self.created_time=v()
+  self.created_time=datetime.now()
  def __repr__(self):
-  return H(self.as_dict())
+  return w(self.as_dict())
  def as_dict(self):
-  ret={x.name:a(self,x.name)for x in self.__table__.columns}
-  ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')if self.created_time is not g else ''
-  ret['scan_time']=self.scan_time.strftime('%m-%d %H:%M:%S')if self.scan_time is not g else ''
+  ret={x.name:u(self,x.name)for x in self.__table__.columns}
+  ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')if self.created_time is not m else ''
+  ret['scan_time']=self.scan_time.strftime('%m-%d %H:%M:%S')if self.scan_time is not m else ''
   return ret
- @f
+ @y
  def add(gdrive_name,name,section_id,is_file,is_add):
   item=ModelGDriveScanFile(gdrive_name,name,section_id,is_file,is_add)
-  G.add(item)
-  G.commit()
+  db.session.add(item)
+  db.session.commit()
   return item.id
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

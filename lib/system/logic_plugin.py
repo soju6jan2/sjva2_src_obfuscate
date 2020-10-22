@@ -1,49 +1,39 @@
 import os
-I=object
-C=False
-h=staticmethod
-F=getattr
-j=Exception
-H=None
-i=True
-e=str
-Q=os.remove
-J=os.system
-p=os.listdir
-u=os.path
+c=object
+l=False
+V=staticmethod
+u=getattr
+H=Exception
+C=None
+F=True
+M=str
 import traceback
-V=traceback.format_exc
 import logging
 import json
 import zipfile
 import time
-T=time.sleep
 import platform
-m=platform.system
 import requests
-Y=requests.get
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify
 from flask_login import login_user,logout_user,current_user,login_required
 from framework.logger import get_logger,set_level
 from framework import app,db,scheduler,version,path_app_root,path_data,USERS
-A=app.config
 from framework.util import Util
-q=Util.execute_command
 from.model import ModelSetting
 import system
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class LogicPlugin(I):
- plugin_loading=C
+class LogicPlugin(c):
+ plugin_loading=l
  """
     custom_plugin_list = [{'name' : 'torrent_info', 'plugin_name' : 'torrent_info_sjva', 'json_url' : 'https://raw.githubusercontent.com/wiserain/torrent_info_sjva/master/info.json', 'git' : 'https://github.com/wiserain/torrent_info_sjva.git', }, {'name' : 'hdhomerun', 'plugin_name' : 'hdhomerun_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/hdhomerun_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/hdhomerun_sjva.git', }, {'name' : 'nsearch', 'plugin_name' : 'nsearch_sjva', 'json_url' : 'https://raw.githubusercontent.com/starbuck15/nsearch_sjva/master/info.json', 'git' : 'https://github.com/starbuck15/nsearch_sjva.git', }, {'name' : 'tving', 'plugin_name' : 'tving_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/tving_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/tving_sjva.git', }, {'name' : 'wavve', 'plugin_name' : 'wavve_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/wavve_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/wavve_sjva.git', }, {'name' : 'ani24', 'plugin_name' : 'ani24_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/ani24_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/ani24_sjva.git', }, {'name' : 'telegram_receiver', 'plugin_name' : 'telegram_receiver_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/telegram_receiver_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/telegram_receiver_sjva.git', }, {'name' : 'launcher_guacamole', 'plugin_name' : 'launcher_guacamole_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_guacamole_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_guacamole_sjva.git', 'running_type' : ['docker'] }, {'name' : 'launcher_greentunnel', 'plugin_name' : 'launcher_greentunnel_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_greentunnel_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_greentunnel_sjva.git', 'running_type' : ['docker'] }, {'name' : 'launcher_torrssen2', 'plugin_name' : 'launcher_torrssen2_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_torrssen2_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_torrssen2_sjva.git', }, {'name' : 'launcher_gateone', 'plugin_name' : 'launcher_gateone_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_gateone_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_gateone_sjva.git', 'platform' : ['Linux', 'Darwin'] }, {'name' : 'launcher_tautulli', 'plugin_name' : 'launcher_tautulli_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_tautulli_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_tautulli_sjva.git' }, {'name' : 'launcher_calibre_web', 'plugin_name' : 'launcher_calibre_web_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_calibre_web_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_calibre_web_sjva.git' }, {'name' : 'launcher_xteve', 'plugin_name' : 'launcher_xteve_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/launcher_xteve_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/launcher_xteve_sjva.git' }, {'name' : 'manamoa', 'plugin_name' : 'manamoa_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/manamoa_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/manamoa_sjva.git' }, {'name' : 'vnStat', 'plugin_name' : 'vnStat_sjva', 'json_url' : 'https://raw.githubusercontent.com/wiserain/vnStat_sjva/master/info.json', 'git' : 'https://github.com/wiserain/vnStat_sjva.git' }, {'name' : 'Synoindex', 'plugin_name' : 'synoindex_sjva', 'json_url' : 'https://raw.githubusercontent.com/soju6jan/synoindex_sjva/master/info.json', 'git' : 'https://github.com/soju6jan/synoindex_sjva.git' } ]
     """ 
  custom_plugin_list=[]
- @h
+ @V
  def loading():
   try:
-   custom_path=u.join(path_data,'custom')
-   plugin_list=p(custom_path)
+   custom_path=os.path.join(path_data,'custom')
+   plugin_list=os.listdir(custom_path)
    logger.debug(plugin_list)
    for name in plugin_list:
     try:
@@ -51,13 +41,13 @@ class LogicPlugin(I):
      p['name']=name
      p['plugin_name']=name
      mod=__import__('%s'%(p['plugin_name']),fromlist=[])
-     p['local_info']=F(mod,'plugin_info')
+     p['local_info']=u(mod,'plugin_info')
      p['status']='latest'
      LogicPlugin.custom_plugin_list.append(p)
-    except j as e:
+    except H as e:
      logger.error('NO Exception:%s',e)
      logger.debug('plunin not import : %s',p['plugin_name'])
-     p['local_info']=H
+     p['local_info']=C
      p['status']='no' 
    """
             for p in LogicPlugin.custom_plugin_list:
@@ -80,81 +70,81 @@ class LogicPlugin(I):
                     p['status'] = 'no'
             #logger.debug(LogicPlugin.custom_plugin_list)
             """   
-  except j as e:
+  except H as e:
    logger.error('Exception:%s',e)
-   logger.error(V())
- @h
+   logger.error(traceback.format_exc())
+ @V
  def get_plugin_list():
   try:
    if not LogicPlugin.plugin_loading:
     LogicPlugin.loading()
-    LogicPlugin.plugin_loading=i
+    LogicPlugin.plugin_loading=F
    return LogicPlugin.custom_plugin_list
-  except j as e:
+  except H as e:
    logger.error('Exception:%s',e)
-   logger.error(V())
- @h
+   logger.error(traceback.format_exc())
+ @V
  def get_plugin_info(plugin_name):
   try:
    lists=LogicPlugin.get_plugin_list()
    for l in lists:
     if l['plugin_name']==plugin_name:
      return l
-  except j as e:
+  except H as e:
    logger.error('Exception:%s',e)
-   logger.error(V())
- @h
+   logger.error(traceback.format_exc())
+ @V
  def plugin_install(plugin_name):
   logger.debug('plugin_name : %s',plugin_name)
   try:
    plugin_info=LogicPlugin.get_plugin_info(plugin_name)
-   custom_path=u.join(path_data,'custom')
+   custom_path=os.path.join(path_data,'custom')
    if 'platform' in plugin_info:
-    if m()not in plugin_info['platform']:
+    if platform.system()not in plugin_info['platform']:
      return 'not_support_os'
    if 'running_type' in plugin_info:
-    if A['config']['running_type']not in plugin_info['running_type']:
+    if app.config['config']['running_type']not in plugin_info['running_type']:
      return 'not_support_running_type'
-   git_clone_flag=i
+   git_clone_flag=F
    if git_clone_flag:
     command=['git','-C',custom_path,'clone',plugin_info['git'],'--depth','1']
-    ret=q(command)
+    ret=Util.execute_command(command)
    return 'success'
-  except j as e:
+  except H as e:
    logger.error('Exception:%s',e)
-   logger.error(V())
- @h
+   logger.error(traceback.format_exc())
+ @V
  def plugin_uninstall(plugin_name):
   logger.debug('plugin_name : %s',plugin_name)
   try:
    mod=__import__('%s'%(plugin_name),fromlist=[])
-   mod_plugin_unload=F(mod,'plugin_unload')
+   mod_plugin_unload=u(mod,'plugin_unload')
    mod_plugin_unload()
-   T(1)
-  except j as e:
+   time.sleep(1)
+  except H as e:
    logger.error('Exception:%s',e)
-   logger.error(V())
+   logger.error(traceback.format_exc())
   try:
-   custom_path=u.join(path_data,'custom')
-   plugin_path=u.join(custom_path,plugin_name)
-   if u.exists(plugin_path):
+   custom_path=os.path.join(path_data,'custom')
+   plugin_path=os.path.join(custom_path,plugin_name)
+   if os.path.exists(plugin_path):
     try:
      import framework.common.celery as celery_task
      celery_task.rmtree(plugin_path)
-    except j as e:
+    except H as e:
      try:
       logger.debug('plugin_uninstall')
-      J('rmdir /S /Q "%s"'%plugin_path)
+      os.system('rmdir /S /Q "%s"'%plugin_path)
      except:
       logger.error('Exception:%s',e)
-      logger.error(V())
-   if u.exists(plugin_path):
+      logger.error(traceback.format_exc())
+   if os.path.exists(plugin_path):
     return 'fail'
    else:
     return 'success'
-  except j as e:
+  except H as e:
    logger.error('Exception:%s',e)
-   logger.error(V())
+   logger.error(traceback.format_exc())
  """
     @staticmethod
     def auto_update():
@@ -173,70 +163,70 @@ class LogicPlugin(I):
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
     """ 
- @h
+ @V
  def custom_plugin_update():
   try:
-   custom_path=u.join(path_data,'custom')
-   tmps=p(custom_path)
+   custom_path=os.path.join(path_data,'custom')
+   tmps=os.listdir(custom_path)
    for t in tmps:
-    plugin_path=u.join(custom_path,t)
+    plugin_path=os.path.join(custom_path,t)
     try:
      if t=='torrent_info':
-      Q(u.join(plugin_path,'info.json'))
+      os.remove(os.path.join(plugin_path,'info.json'))
     except:
      pass
     command=['git','-C',plugin_path,'reset','--hard','HEAD']
-    ret=q(command)
+    ret=Util.execute_command(command)
     command=['git','-C',plugin_path,'pull']
-    ret=q(command)
+    ret=Util.execute_command(command)
     logger.debug("%s\n%s",plugin_path,ret)
-  except j as e:
+  except H as e:
    logger.error('Exception:%s',e)
-   logger.error(V())
- @h
+   logger.error(traceback.format_exc())
+ @V
  def plugin_install_by_api(plugin_git):
   logger.debug('plugin_name : %s',plugin_git)
   ret={}
   try:
    name=plugin_git.split('/')[-1]
-   custom_path=u.join(path_data,'custom')
-   plugin_path=u.join(custom_path,name)
+   custom_path=os.path.join(path_data,'custom')
+   plugin_path=os.path.join(custom_path,name)
    logger.debug(plugin_path)
-   if u.exists(plugin_path):
+   if os.path.exists(plugin_path):
     ret['ret']='already_exist'
     ret['log']='이미 설치되어 있습니다.'
    else:
     for tag in['master','main']:
      try:
       info_url=plugin_git.replace('github.com','raw.githubusercontent.com')+'/%s/info.json'%tag
-      plugin_info=Y(info_url).json()
-      if plugin_info is not H:
+      plugin_info=requests.get(info_url).json()
+      if plugin_info is not C:
        break
      except:
       pass
     logger.debug(plugin_info)
-    flag=i
+    flag=F
     if 'platform' in plugin_info:
-     if m()not in plugin_info['platform']:
+     if platform.system()not in plugin_info['platform']:
       ret['ret']='not_support_os'
       ret['log']='설치 가능한 OS가 아닙니다.'
-      flag=C
+      flag=l
     elif 'running_type' in plugin_info:
-     if A['config']['running_type']not in plugin_info['running_type']:
+     if app.config['config']['running_type']not in plugin_info['running_type']:
       ret['ret']='not_support_running_type'
       ret['log']='설치 가능한 실행타입이 아닙니다.'
-      flag=C
+      flag=l
     if flag:
      command=['git','-C',custom_path,'clone',plugin_git+'.git','--depth','1']
-     log=q(command)
+     log=Util.execute_command(command)
      ret['ret']='success'
      ret['log']=[u'정상적으로 설치하였습니다. 재시작시 적용됩니다.']
      ret['log']+=log
      ret['log']='<br>'.join(ret['log'])
-  except j as e:
+  except H as e:
    logger.error('Exception:%s',e)
-   logger.error(V())
+   logger.error(traceback.format_exc())
    ret['ret']='exception'
-   ret['log']=e(e)
+   ret['log']=M(e)
   return ret
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

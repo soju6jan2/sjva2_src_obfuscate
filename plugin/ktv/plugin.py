@@ -1,37 +1,21 @@
 import traceback
-nU=str
-D=Exception
-y=traceback.format_exc
+L=str
+I=Exception
 import logging
 import requests
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify
-ng=request.form
 from flask_login import login_user,logout_user,current_user,login_required
 from framework.logger import get_logger
 from framework import app,db,scheduler
-M=scheduler.is_running
-nv=scheduler.is_include
-C=db.session
 from framework.util import Util
-h=Util.db_list_to_dict
 from.logic import Logic
-nF=Logic.receive_scan_result
-nf=Logic.reset_db
-no=Logic.library_remove
-nw=Logic.library_list
-nP=Logic.library_save
-nV=Logic.scheduler_stop
-nQ=Logic.scheduler_start
-nT=Logic.filelist
-nR=Logic.setting_save
-nS=Logic.plugin_load
 from.model import ModelSetting
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 blueprint=Blueprint(package_name,package_name,url_prefix='/%s'%package_name,template_folder='templates')
 menu={'main':[package_name,u'국내TV'],'sub':[['setting',u'설정'],['list',u'목록'],['log',u'로그']]}
 def plugin_load():
- nS()
+ Logic.plugin_load()
 def plugin_unload():
  pass
 @blueprint.route('/')
@@ -41,10 +25,10 @@ def home():
 @login_required
 def detail(sub):
  if sub=='setting':
-  setting_list=C.query(ModelSetting).all()
-  arg=h(setting_list)
-  arg['is_include']=nU(nv('ktv_process'))
-  arg['is_running']=nU(M('ktv_process'))
+  setting_list=db.session.query(ModelSetting).all()
+  arg=Util.db_list_to_dict(setting_list)
+  arg['is_include']=L(scheduler.is_include('ktv_process'))
+  arg['is_running']=L(scheduler.is_running('ktv_process'))
   return render_template('ktv_setting.html',sub=sub,arg=arg)
  elif sub=='list':
   return render_template('ktv_list.html')
@@ -57,78 +41,78 @@ def ajax(sub):
  logger.debug('AJAX %s %s',package_name,sub)
  if sub=='setting_save':
   try:
-   ret=nR(request)
+   ret=Logic.setting_save(request)
    return jsonify(ret)
-  except D as e:
+  except I as e:
    logger.error('Exception:%s',e)
-   logger.error(y())
+   logger.error(traceback.format_exc())
  elif sub=='filelist':
   try:
-   ret=nT(request)
+   ret=Logic.filelist(request)
    return jsonify(ret)
-  except D as e:
+  except I as e:
    logger.error('Exception:%s',e)
-   logger.error(y())
+   logger.error(traceback.format_exc())
  elif sub=='scheduler':
   try:
-   go=ng['scheduler']
+   go=request.form['scheduler']
    logger.debug('scheduler :%s',go)
    if go=='true':
-    nQ()
+    Logic.scheduler_start()
    else:
-    nV()
+    Logic.scheduler_stop()
    return jsonify(go)
-  except D as e:
+  except I as e:
    logger.error('Exception:%s',e)
-   logger.error(y())
+   logger.error(traceback.format_exc())
    return jsonify('fail')
  elif sub=='library_save':
   try:
    ret={}
-   ret['ret']=nP(request)
-   ret['library_list']=[item.as_dict()for item in nw()]
+   ret['ret']=Logic.library_save(request)
+   ret['library_list']=[item.as_dict()for item in Logic.library_list()]
    return jsonify(ret)
-  except D as e:
+  except I as e:
    logger.error('Exception:%s',e)
-   logger.error(y())
+   logger.error(traceback.format_exc())
    return jsonify('fail')
  elif sub=='library_list':
   try:
    ret={}
-   ret['library_list']=[item.as_dict()for item in nw()]
+   ret['library_list']=[item.as_dict()for item in Logic.library_list()]
    return jsonify(ret)
-  except D as e:
+  except I as e:
    logger.error('Exception:%s',e)
-   logger.error(y())
+   logger.error(traceback.format_exc())
    return jsonify('fail')
  elif sub=='library_remove':
   try:
    ret={}
-   ret['ret']=no(request)
-   ret['library_list']=[item.as_dict()for item in nw()]
+   ret['ret']=Logic.library_remove(request)
+   ret['library_list']=[item.as_dict()for item in Logic.library_list()]
    return jsonify(ret)
-  except D as e:
+  except I as e:
    logger.error('Exception:%s',e)
-   logger.error(y())
+   logger.error(traceback.format_exc())
    return jsonify('fail')
  elif sub=='reset_db':
   try:
-   ret=nf()
+   ret=Logic.reset_db()
    return jsonify(ret)
-  except D as e:
+  except I as e:
    logger.error('Exception:%s',e)
-   logger.error(y())
+   logger.error(traceback.format_exc())
    return jsonify('fail')
 @blueprint.route('/api/<sub>',methods=['GET','POST'])
 def api(sub):
  if sub=='scan_completed':
   try:
-   filename=ng['filename']
-   db_id=ng['id']
+   filename=request.form['filename']
+   db_id=request.form['id']
    logger.debug('SCAN COMPLETED:%s %s',filename,db_id)
-   nF(db_id,filename)
+   Logic.receive_scan_result(db_id,filename)
    return 'ok'
-  except D as e:
+  except I as e:
    logger.error('Exception:%s',e)
-   logger.error(y())
+   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,29 +1,27 @@
 import re
-E=None
-Y=False
-tG=re.compile
+q=None
+i=False
 from flask_login import current_user
-y=current_user.is_authenticated
 def get_menu(full_query):
- match=tG(r'\/(?P<menu>.*?)\/(?P<sub>.*?)\/(?P<sub2>.*?)($|\/|\?)').match(full_query)
+ match=re.compile(r'\/(?P<menu>.*?)\/(?P<sub>.*?)\/(?P<sub2>.*?)($|\/|\?)').match(full_query)
  if match:
   return match.group('menu'),match.group('sub'),match.group('sub2')
- match=tG(r'\/(?P<menu>.*?)\/(?P<sub>.*?)($|\/|\?)').match(full_query)
+ match=re.compile(r'\/(?P<menu>.*?)\/(?P<sub>.*?)($|\/|\?)').match(full_query)
  if match:
-  return match.group('menu'),match.group('sub'),E
- match=tG(r'\/(?P<menu>.*?)($|\/|\?)').match(full_query)
+  return match.group('menu'),match.group('sub'),q
+ match=re.compile(r'\/(?P<menu>.*?)($|\/|\?)').match(full_query)
  if match:
-  return match.group('menu'),E,E
- return 'home',E,E
+  return match.group('menu'),q,q
+ return 'home',q,q
 def get_theme():
  theme_list={'Default':56,'Cerulean':56,'Cosmo':54,'Cyborg':54,'Darkly':70,'Flatly':70,'Journal':56,'Litera':57,'Lumen':56,'Lux':88,'Materia':80,'Minty':56,'Pulse':75,'Sandstone':53,'Simplex':67,'Sketchy':56,'Slate':53,'Solar':56,'Spacelab':58,'Superhero':48,'United':56,'Yeti':54,}
  from system.model import ModelSetting as SystemModelSetting
  theme=SystemModelSetting.get('theme')
  return[theme,theme_list[theme]]
 def get_login_status():
- if current_user is E:
-  return Y
- return y
+ if current_user is q:
+  return i
+ return current_user.is_authenticated
 def get_web_title():
  try:
   from system.model import ModelSetting as SystemModelSetting

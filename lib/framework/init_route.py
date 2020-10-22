@@ -1,150 +1,129 @@
 import os
-f=True
-Y=False
-P=Exception
-b=os.path
+X=True
+i=False
+w=Exception
 import sys
 from datetime import datetime,timedelta
 import json
 import traceback
-t=traceback.format_exc
 from flask import redirect,render_template,Response,request,jsonify,send_from_directory
-v=request.remote_addr
-W=request.headers
-K=request.files
-p=request.path
-Q=request.base_url
-J=request.args
-U=request.form
-O=request.method
 from flask_login import login_user,logout_user,current_user,login_required
-y=current_user.is_authenticated
 from framework import app,db,version,USERS,login_manager,logger,path_data,check_api
-o=logger.error
-M=logger.debug
-c=login_manager.user_loader
-w=db.session
-e=app.config
-A=app.errorhandler
-a=app.route
 import system
-n=system.SystemLogic
-tS=system.logic
-H=system.ModelSetting
-@a('/login',methods=['GET','POST'])
+@app.route('/login',methods=['GET','POST'])
 def login():
- if O=='POST':
-  username=U['username']
-  password=U['password']
-  remember=(U['remember']=='True')
+ if request.method=='POST':
+  username=request.form['username']
+  password=request.form['password']
+  remember=(request.form['remember']=='True')
   if username not in USERS:
    return jsonify('no_id')
   elif not USERS[username].can_login(password):
    return jsonify('wrong_password')
   else:
-   USERS[username].authenticated=f
+   USERS[username].authenticated=X
    login_user(USERS[username],remember=remember)
    return jsonify('redirect')
  else:
-  if w.query(H).filter_by(key='use_login').first().value=='False':
-   username=w.query(H).filter_by(key='id').first().value
-   USERS[username].authenticated=f
-   login_user(USERS[username],remember=f)
-   return redirect(J.get("next"))
-  return render_template('login.html',next=J.get("next"))
-@A(401)
+  if db.session.query(system.ModelSetting).filter_by(key='use_login').first().value=='False':
+   username=db.session.query(system.ModelSetting).filter_by(key='id').first().value
+   USERS[username].authenticated=X
+   login_user(USERS[username],remember=X)
+   return redirect(request.args.get("next"))
+  return render_template('login.html',next=request.args.get("next"))
+@app.errorhandler(401)
 def custom_401(error):
  return 'login_required'
-@c
+@login_manager.user_loader
 def user_loader(user_id):
  return USERS[user_id]
-@a('/logout',methods=['GET','POST'])
+@app.route('/logout',methods=['GET','POST'])
 @login_required
 def logout():
  user=current_user
- user.authenticated=Y
- json_res={'ok':f,'msg':'user <%s> logout'%user.user_id}
+ user.authenticated=i
+ json_res={'ok':X,'msg':'user <%s> logout'%user.user_id}
  logout_user()
  return redirect('/login')
-@a("/")
-@a("/None")
-@a("/home")
+@app.route("/")
+@app.route("/None")
+@app.route("/home")
 def home():
  return redirect('/system/home')
-@a("/version")
+@app.route("/version")
 def get_version():
  return version
-@a("/open_file/<path:path>")
+@app.route("/open_file/<path:path>")
 @login_required
 def open_file(path):
- M('open_file :%s',path)
+ logger.debug('open_file :%s',path)
  return send_from_directory('',path)
-@a("/file/<path:path>")
+@app.route("/file/<path:path>")
 @check_api
 def file2(path):
- M('file2 :%s',path)
+ logger.debug('file2 :%s',path)
  return send_from_directory('',path)
-@a("/download_file/<path:path>")
+@app.route("/download_file/<path:path>")
 @login_required
 def download_file(path):
- M('download_file :%s',path)
- return send_from_directory('',path,as_attachment=f)
-@a("/hls")
+ logger.debug('download_file :%s',path)
+ return send_from_directory('',path,as_attachment=X)
+@app.route("/hls")
 def hls_play():
- url=J.get('url')
- M('hls url : %s',url)
+ url=request.args.get('url')
+ logger.debug('hls url : %s',url)
  return render_template('hls_player3.html',url=url)
-@a("/iframe/<sub>")
+@app.route("/iframe/<sub>")
 @login_required
 def iframe(sub):
  if sub=='forum':
   return render_template('iframe.html',site='https://soju6jan.com/sjva')
  elif sub=='file_manager':
-  if e['config']['is_debug']or y:
-   M(Q)
-   M(p)
-   from tS import SystemLogic
+  if app.config['config']['is_debug']or current_user.is_authenticated:
+   logger.debug(request.base_url)
+   logger.debug(request.path)
+   from system.logic import SystemLogic
    site=SystemLogic.get_setting_value('ddns')+'/flaskfilemanager'
-   M(site)
+   logger.debug(site)
    return render_template('iframe.html',site=site)
   else:
-   return redirect('/login?next='+p)
+   return redirect('/login?next='+request.path)
  elif sub=='file_manager2':
-  if y:
+  if current_user.is_authenticated:
    return redirect('/flaskfilemanager')
   else:
-   return redirect('/login?next=/flaskfilemanager'+p)
-@a("/upload",methods=['GET','POST'])
+   return redirect('/login?next=/flaskfilemanager'+request.path)
+@app.route("/upload",methods=['GET','POST'])
 def upload():
  try:
-  if O=='POST':
-   f=K['file']
+  if request.method=='POST':
+   f=request.files['file']
    from werkzeug import secure_filename
    tmp=secure_filename(f.filename)
-   M('upload : %s',tmp)
-   f.save(b.join(path_data,'upload',tmp))
+   logger.debug('upload : %s',tmp)
+   f.save(os.path.join(path_data,'upload',tmp))
    return jsonify('success')
- except P as e:
-  o('Exception:%s',e)
-  o(t())
+ except w as e:
+  logger.error('Exception:%s',e)
+  logger.error(traceback.format_exc())
   return jsonify('fail')
-@a('/robots.txt')
+@app.route('/robots.txt')
 def robot_to_root():
  return send_from_directory('','static/file/robots.txt')
-@a('/static/<path:path>')
+@app.route('/static/<path:path>')
 def rc():
  try:
-  M('XXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-  M(path)
- except P as e:
-  o('Exception:%s',e)
-  o(t())
+  logger.debug('XXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+  logger.debug(path)
+ except w as e:
+  logger.error('Exception:%s',e)
+  logger.error(traceback.format_exc())
   return jsonify('fail')
-@a('/get_ip')
+@app.route('/get_ip')
 def get_ip():
- if n.get_setting_value('ddns').find('soju6jan.com')!=-1:
-  headers_list=W.getlist("X-Forwarded-For")
-  user_ip=headers_list[0]if headers_list else v
-  M('IIIIIIIIIIIIIIIIIIPPPPPPPPPPPPPPPPPP : %s',user_ip)
+ if system.SystemLogic.get_setting_value('ddns').find('soju6jan.com')!=-1:
+  headers_list=request.headers.getlist("X-Forwarded-For")
+  user_ip=headers_list[0]if headers_list else request.remote_addr
+  logger.debug('IIIIIIIIIIIIIIIIIIPPPPPPPPPPPPPPPPPP : %s',user_ip)
   return jsonify(user_ip)
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

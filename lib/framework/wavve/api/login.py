@@ -1,22 +1,15 @@
 import traceback
-d=id
-h=False
-W=Exception
-a=traceback.format_exc
+V=id
+n=False
+c=Exception
 import json
 from framework import py_urllib
-f=py_urllib.urlencode
 from framework.wavve.api import logger,session,config,logger
-l=session.post
-G=logger.error
-G=logger.error
-j=logger.debug
-j=logger.debug
-def do_login(d,pw,json_return=h):
+def do_login(V,pw,json_return=n):
  try:
-  body={"type":"general","id":d,"pushid":"","password":pw,"profile":"0","networktype":"","carrier":"","mcc":"","mnc":"","markettype":"unknown","adid":"","simoperator":"","installerpackagename":""}
-  url="%s/login?%s"%(config['base_url'],f(config['base_parameter']))
-  response=l(url,json=body,headers=config['headers'])
+  body={"type":"general","id":V,"pushid":"","password":pw,"profile":"0","networktype":"","carrier":"","mcc":"","mnc":"","markettype":"unknown","adid":"","simoperator":"","installerpackagename":""}
+  url="%s/login?%s"%(config['base_url'],py_urllib.urlencode(config['base_parameter']))
+  response=session.post(url,json=body,headers=config['headers'])
   data=response.json()
   if 'credential' in data:
    if json_return:
@@ -24,17 +17,17 @@ def do_login(d,pw,json_return=h):
    else:
     return data['credential']
   else:
-   j('login fail!!')
+   logger.debug('login fail!!')
    if 'resultcode' in data:
-    j(data['resultmessage'])
- except W as e:
-  G('Exception:%s',e)
-  G(a())
+    logger.debug(data['resultmessage'])
+ except c as e:
+  logger.error('Exception:%s',e)
+  logger.error(traceback.format_exc())
  return
 def get_baseparameter():
  try:
   return config['base_parameter'].copy()
- except W as e:
-  G('Exception:%s',e)
-  G(a())
+ except c as e:
+  logger.error('Exception:%s',e)
+  logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

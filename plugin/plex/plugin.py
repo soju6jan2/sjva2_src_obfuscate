@@ -1,59 +1,38 @@
 import os
-f=Exception
+m=Exception
 import traceback
-D=traceback.format_exc
 import time
 from datetime import datetime
 import urllib
 import json
-R=json.dumps
-n=json.loads
 import requests
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify,session,send_from_directory 
-t=session.query
-g=request.args
 from flask_socketio import SocketIO,emit,send
 from flask_login import login_user,logout_user,current_user,login_required
 from framework.logger import get_logger
 from framework import app,db,scheduler,path_data,socketio,SystemModelSetting
-l=db.session
 from framework.util import Util,AlchemyEncoder
-V=Util.db_list_to_dict
 from system.logic import SystemLogic
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 from.model import ModelSetting
 from.logic import Logic
-uc=Logic.plungin_command
-uU=Logic.analyze_show_data
-uO=Logic.get_server_hash
-un=Logic.load_section_list
-uD=Logic.analyze_show
-P=Logic.get_sj_daum_version
-r=Logic.get_sjva_plugin_version
-W=Logic.connect_plex_server_by_url
-Q=Logic.connect_plex_server_by_name
-Y=Logic.setting_save
-p=Logic.get_plex_server_list
-C=Logic.db_default
-o=Logic.plugin_unload
-v=Logic.plugin_load
 blueprint=Blueprint(package_name,package_name,url_prefix='/%s'%package_name,template_folder='templates')
 menu={'main':[package_name,u'PLEX'],'sub':[['setting',u'설정'],['plugin',u'플러그인'],['tool',u'툴'],['tivimate',u'Tivimate'],['lc',u'Live Channels'],['log',u'로그']]}
 def plugin_load():
  try:
   logger.debug('plugin_load:%s',package_name)
-  v()
- except f as e:
+  Logic.plugin_load()
+ except m as e:
   logger.error('Exception:%s',e)
-  logger.error(D())
+  logger.error(traceback.format_exc())
 def plugin_unload():
  try:
   logger.debug('plugin_unload:%s',package_name)
-  o()
- except f as e:
+  Logic.plugin_unload()
+ except m as e:
   logger.error('Exception:%s',e)
-  logger.error(D())
+  logger.error(traceback.format_exc())
 last_data={}
 @blueprint.route('/')
 def home():
@@ -63,44 +42,44 @@ def home():
 def detail(sub):
  logger.debug('DETAIL %s %s',package_name,sub)
  if sub=='setting':
-  setting_list=db.t(ModelSetting).all()
-  arg=V(setting_list)
+  setting_list=db.session.query(ModelSetting).all()
+  arg=Util.db_list_to_dict(setting_list)
   return render_template('plex_setting.html',sub=sub,arg=arg)
  elif sub=='plugin':
-  setting_list=db.t(ModelSetting).all()
-  arg=V(setting_list)
+  setting_list=db.session.query(ModelSetting).all()
+  arg=Util.db_list_to_dict(setting_list)
   return render_template('plex_plugin.html',sub=sub,arg=arg)
  elif sub=='tool':
   return render_template('plex_tool.html')
  elif sub=='lc':
-  setting_list=db.t(ModelSetting).all()
-  arg=V(setting_list)
+  setting_list=db.session.query(ModelSetting).all()
+  arg=Util.db_list_to_dict(setting_list)
   try:
    if arg['lc_json']=='':
     arg['lc_json']="[]"
-   tmp=n(arg['lc_json'])
-   arg['lc_json']=R(tmp,indent=4)
-  except f as e:
+   tmp=json.loads(arg['lc_json'])
+   arg['lc_json']=json.dumps(tmp,indent=4)
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D())
-   arg['lc_json']=C['lc_json']
-   tmp=n(arg['lc_json'])
-   arg['lc_json']=R(tmp,indent=4)
+   logger.error(traceback.format_exc())
+   arg['lc_json']=Logic.db_default['lc_json']
+   tmp=json.loads(arg['lc_json'])
+   arg['lc_json']=json.dumps(tmp,indent=4)
   return render_template('plex_lc.html',arg=arg)
  elif sub=='tivimate':
-  setting_list=db.t(ModelSetting).all()
-  arg=V(setting_list)
+  setting_list=db.session.query(ModelSetting).all()
+  arg=Util.db_list_to_dict(setting_list)
   try:
    if arg['tivimate_json']=='':
     arg['tivimate_json']="[]"
-   tmp=n(arg['tivimate_json'])
-   arg['tivimate_json']=R(tmp,indent=4)
-  except f as e:
+   tmp=json.loads(arg['tivimate_json'])
+   arg['tivimate_json']=json.dumps(tmp,indent=4)
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D())
-   arg['tivimate_json']=C['tivimate_json']
-   tmp=n(arg['tivimate_json'])
-   arg['tivimate_json']=R(tmp,indent=4)
+   logger.error(traceback.format_exc())
+   arg['tivimate_json']=Logic.db_default['tivimate_json']
+   tmp=json.loads(arg['tivimate_json'])
+   arg['tivimate_json']=json.dumps(tmp,indent=4)
   return render_template('plex_tivimate.html',arg=arg) 
  elif sub=='log':
   return render_template('log.html',package=package_name)
@@ -111,103 +90,103 @@ def ajax(sub):
  logger.debug('AJAX %s %s',package_name,sub)
  if sub=='server_list':
   try:
-   ret=p(request)
+   ret=Logic.get_plex_server_list(request)
    return jsonify(ret)
-  except f as e:
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D())
+   logger.error(traceback.format_exc())
  elif sub=='setting_save':
   try:
-   ret=Y(request)
+   ret=Logic.setting_save(request)
    return jsonify(ret)
-  except f as e:
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D())
+   logger.error(traceback.format_exc())
  elif sub=='connect_by_name':
   try:
-   ret=Q(request)
+   ret=Logic.connect_plex_server_by_name(request)
    return jsonify(ret)
-  except f as e:
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D())
+   logger.error(traceback.format_exc())
  elif sub=='connect_by_url':
   try:
-   ret=W(request)
+   ret=Logic.connect_plex_server_by_url(request)
    return jsonify(ret)
-  except f as e:
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D())
+   logger.error(traceback.format_exc())
  elif sub=='get_sjva_version':
   try:
-   ret=r(request)
+   ret=Logic.get_sjva_plugin_version(request)
    return jsonify(ret)
-  except f as e:
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D()) 
+   logger.error(traceback.format_exc()) 
  elif sub=='get_sj_daum_version':
   try:
-   ret=P(request)
+   ret=Logic.get_sj_daum_version(request)
    return jsonify(ret)
-  except f as e:
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D()) 
+   logger.error(traceback.format_exc()) 
  elif sub=='analyze_show':
   try:
-   ret=uD(request)
+   ret=Logic.analyze_show(request)
    last_data['analyze_show']=ret
    return jsonify(ret)
-  except f as e:
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D())
+   logger.error(traceback.format_exc())
  elif sub=='analyze_show_event':
   try:
-   key=g.get('key')
-   return Response(uD(key),mimetype="text/event-stream")
-  except f as e:
+   key=request.args.get('key')
+   return Response(Logic.analyze_show(key),mimetype="text/event-stream")
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D())
+   logger.error(traceback.format_exc())
  elif sub=='load_tool':
   try:
-   last_data['sections']=un()
-   last_data['plex_server_hash']=uO()
-   last_data['analyze_show']=uU
+   last_data['sections']=Logic.load_section_list()
+   last_data['plex_server_hash']=Logic.get_server_hash()
+   last_data['analyze_show']=Logic.analyze_show_data
    return jsonify(last_data)
-  except f as e:
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D())
+   logger.error(traceback.format_exc())
  elif sub=='send_command':
   try:
-   ret=uc(request)
+   ret=Logic.plungin_command(request)
    return jsonify(ret)
-  except f as e:
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D())
+   logger.error(traceback.format_exc())
 @blueprint.route('/api/<sub>',methods=['GET','POST'])
 def api(sub):
  if sub=='m3u' or sub=='get.php':
   try:
    from.logic_m3u import LogicM3U
    return LogicM3U.make_m3u()[0]
-  except f as e:
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D())
+   logger.error(traceback.format_exc())
  elif sub=='xml' or sub=='xmltv.php':
   try:
    from.logic_m3u import LogicM3U
    data=LogicM3U.make_m3u()[1]
    return Response(data,mimetype='application/xml')
-  except f as e:
+  except m as e:
    logger.error('Exception:%s',e)
-   logger.error(D())
+   logger.error(traceback.format_exc())
 @blueprint.route('/get.php')
 def get_php():
  logger.debug('xtream codes server')
- logger.debug(g)
+ logger.debug(request.args)
  return redirect('/plex/api/m3u')
 @blueprint.route('/xmltv.php')
 def xmltv_php():
  logger.debug('xtream codes server xmltv')
- logger.debug(g)
+ logger.debug(request.args)
  return redirect('/plex/api/xml')
 @blueprint.route('/player_api.php')
 def player_api():
@@ -215,6 +194,6 @@ def player_api():
 @blueprint.route('/login')
 def login():
  logger.debug('xtream codes login')
- logger.debug(g)
+ logger.debug(request.args)
  return jsonify('')
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

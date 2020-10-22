@@ -1,9 +1,8 @@
 import os
-I=object
-h=staticmethod
-j=Exception
+c=object
+V=staticmethod
+H=Exception
 import traceback
-V=traceback.format_exc
 import logging
 import platform
 import time
@@ -12,10 +11,9 @@ from framework.logger import get_logger
 from framework import path_app_root,path_data
 import framework.common.notify as Notify
 from.plugin import logger,package_name
-D=logger.error
 from.model import ModelSetting
-class SystemLogicNotify(I):
- @h
+class SystemLogicNotify(c):
+ @V
  def process_ajax(sub,req):
   try:
    if sub=='telegram_test':
@@ -27,8 +25,8 @@ class SystemLogicNotify(I):
    elif sub=='advanced_test':
     ret=Notify.send_advanced_message(req.form['text'],policy=req.form['policy'],message_id=req.form['message_id'])
     return jsonify(ret)
-  except j as e:
-   D('Exception:%s',e)
-   D(V())
+  except H as e:
+   logger.error('Exception:%s',e)
+   logger.error(traceback.format_exc())
    return jsonify('exception')
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,18 +1,15 @@
 import os
-Y=False
-u=os.environ
+i=False
 import sys
 from framework import app,logger,path_app_root
-N=app.name
-e=app.config
 from celery import Celery
 try:
- redis_port=u['REDIS_PORT']
+ redis_port=os.environ['REDIS_PORT']
 except:
  redis_port='6379'
-e['CELERY_BROKER_URL']='redis://localhost:%s/0'%redis_port
-e['CELERY_RESULT_BACKEND']='redis://localhost:%s/0'%redis_port
-celery=Celery(N,broker=e['CELERY_BROKER_URL'],backend=e['CELERY_RESULT_BACKEND'])
-celery.conf['CELERY_ENABLE_UTC']=Y
+app.config['CELERY_BROKER_URL']='redis://localhost:%s/0'%redis_port
+app.config['CELERY_RESULT_BACKEND']='redis://localhost:%s/0'%redis_port
+celery=Celery(app.name,broker=app.config['CELERY_BROKER_URL'],backend=app.config['CELERY_RESULT_BACKEND'])
+celery.conf['CELERY_ENABLE_UTC']=i
 celery.conf.update(task_serializer='pickle',result_serializer='pickle',accept_content=['pickle'],timezone='Asia/Seoul')
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

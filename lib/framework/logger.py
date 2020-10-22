@@ -1,56 +1,48 @@
 import os
-R=int
-E=None
-f=True
-b=os.path
+C=int
+q=None
+X=True
 import logging
-tN=logging.StreamHandler
-te=logging.Formatter
-tu=logging.DEBUG
-ti=logging.getLogger
-tL=logging.handlers
-import tL
+import logging.handlers
 from datetime import datetime
-tz=datetime.utcnow
 from framework import path_data
 from pytz import timezone,utc
-tB=utc.localize
 level_unset_logger_list=[]
 logger_list=[]
 def get_logger(name):
- logger=ti(name)
+ logger=logging.getLogger(name)
  if not logger.handlers:
   global level_unset_logger_list
   global logger_list
-  level=tu
+  level=logging.DEBUG
   from framework import flag_system_loading 
   try:
    if flag_system_loading:
     try:
      from system.model import ModelSetting as SystemModelSetting
      level=SystemModelSetting.get('log_level')
-     level=R(level)
+     level=C(level)
     except:
-     level=tu
-    if level_unset_logger_list is not E:
+     level=logging.DEBUG
+    if level_unset_logger_list is not q:
      for item in level_unset_logger_list:
       item.setLevel(level)
-     level_unset_logger_list=E
+     level_unset_logger_list=q
    else:
     level_unset_logger_list.append(logger)
   except:
    pass
   logger.setLevel(level)
-  formatter=te(u'[%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s] %(message)s')
+  formatter=logging.Formatter(u'[%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s] %(message)s')
   def customTime(*args):
-   utc_dt=tB(tz())
+   utc_dt=utc.localize(datetime.utcnow())
    my_tz=timezone("Asia/Seoul")
    converted=utc_dt.astimezone(my_tz)
    return converted.timetuple()
   formatter.converter=customTime
   file_max_bytes=1*1024*1024 
-  fileHandler=tL.RotatingFileHandler(filename=b.join(path_data,'log','%s.log'%name),maxBytes=file_max_bytes,backupCount=5,encoding='utf8',delay=f)
-  streamHandler=tN()
+  fileHandler=logging.handlers.RotatingFileHandler(filename=os.path.join(path_data,'log','%s.log'%name),maxBytes=file_max_bytes,backupCount=5,encoding='utf8',delay=X)
+  streamHandler=logging.StreamHandler()
   fileHandler.setFormatter(formatter)
   streamHandler.setFormatter(formatter)
   logger.addHandler(fileHandler)

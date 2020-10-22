@@ -1,17 +1,9 @@
 import os
-E=None
-P=Exception
-D=print
-B=os.system
-z=os.mkdir
-b=os.path
+q=None
+w=Exception
+h=print
 from datetime import datetime,timedelta
 from flask import request,abort
-v=request.remote_addr
-I=request.environ
-J=request.args
-U=request.form
-O=request.method
 from functools import wraps
 def check_api(original_function):
  @wraps(original_function)
@@ -21,19 +13,19 @@ def check_api(original_function):
   try:
    from system import ModelSetting as SystemModelSetting
    if SystemModelSetting.get_bool('auth_use_apikey'):
-    if O=='POST':
-     apikey=U['apikey']
+    if request.method=='POST':
+     apikey=request.form['apikey']
     else:
-     apikey=J.get('apikey')
-    if apikey is E or apikey!=SystemModelSetting.get('auth_apikey'):
+     apikey=request.args.get('apikey')
+    if apikey is q or apikey!=SystemModelSetting.get('auth_apikey'):
      logger.debug('CHECK API : ABORT no match ({})'.format(apikey))
-     logger.debug(I.get('HTTP_X_REAL_IP',v))
+     logger.debug(request.environ.get('HTTP_X_REAL_IP',request.remote_addr))
      abort(403)
      return 
-  except P as e:
-   D('Exception:%s',e)
+  except w as e:
+   h('Exception:%s',e)
    import traceback
-   D(traceback.format_exc())
+   h(traceback.format_exc())
    logger.debug('CHECK API : ABORT exception')
    abort(403)
    return 
@@ -41,36 +33,35 @@ def check_api(original_function):
  return wrapper_function
 def make_default_dir(path_data):
  try:
-  if not b.exists(path_data):
-   z(path_data)
-  tmp=b.join(path_data,'tmp')
+  if not os.path.exists(path_data):
+   os.mkdir(path_data)
+  tmp=os.path.join(path_data,'tmp')
   try:
    import shutil
-   if b.exists(tmp):
+   if os.path.exists(tmp):
     shutil.rmtree(tmp)
   except:
    pass
   sub=['db','log','download','bin','download_tmp','command','custom','output','upload','tmp']
   for item in sub:
-   tmp=b.join(path_data,item)
-   if not b.exists(tmp):
-    z(tmp)
- except P as e:
-  D('Exception:%s',e)
+   tmp=os.path.join(path_data,item)
+   if not os.path.exists(tmp):
+    os.mkdir(tmp)
+ except w as e:
+  h('Exception:%s',e)
   import traceback
-  D(traceback.format_exc())
+  h(traceback.format_exc())
 def pip_install():
  from framework import app
- e=app.config
- D('pip_install start')
+ h('pip_install start')
  try:
   import discord_webhook
-  D('discord_webhook already installed..')
+  h('discord_webhook already installed..')
  except:
   try:
-   B("{} install discord-webhook".format(e['config']['pip']))
-   D('discord-webhook install..')
+   os.system("{} install discord-webhook".format(app.config['config']['pip']))
+   h('discord-webhook install..')
   except:
-   D('discord-webhook fail..')
- D('pip_install end')
+   h('discord-webhook fail..')
+ h('pip_install end')
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

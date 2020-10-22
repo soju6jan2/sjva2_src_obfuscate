@@ -1,68 +1,54 @@
 import os
-J=True
-xd=repr
-xa=getattr
-T=None
-G=staticmethod
-l=Exception
-V=False
-x=os.path
+B=True
+q=repr
+k=getattr
+m=None
+M=staticmethod
+W=Exception
+H=False
 import traceback
-c=traceback.format_exc
 from datetime import datetime
-H=datetime.now
 import json
-h=json.dumps
-X=json.loads
 from framework.logger import get_logger
 from framework import db,app,path_data
-i=app.config
-R=db.session
-z=db.JSON
-j=db.Boolean
-F=db.String
-Q=db.DateTime
-u=db.Integer
-n=db.Column
-M=db.Model
 from sqlalchemy import or_,and_,func,not_
 from sqlalchemy.orm import backref
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-i['SQLALCHEMY_BINDS'][package_name]='sqlite:///%s'%(x.join(path_data,'db','%s.db'%package_name))
+app.config['SQLALCHEMY_BINDS'][package_name]='sqlite:///%s'%(os.path.join(path_data,'db','%s.db'%package_name))
 from framework.common.plugin import get_model_setting
 ModelSetting=get_model_setting(package_name,logger)
-class ModelFileprocessMovieItem(M):
+class ModelFileprocessMovieItem(db.Model):
  __tablename__='%s_item'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=n(u,primary_key=J)
- created_time=n(Q)
- filename=n(F)
- source_dir=n(F)
- is_file=n(j)
- flag_move=n(j)
- target=n(F)
- dest_folder_name=n(F)
- movie_title=n(F)
- movie_id=n(F)
- movie_poster=n(F)
- movie_more_title=n(F)
- movie_more_info=n(F)
- json=n(z)
+ id=db.Column(db.Integer,primary_key=B)
+ created_time=db.Column(db.DateTime)
+ filename=db.Column(db.String)
+ source_dir=db.Column(db.String)
+ is_file=db.Column(db.Boolean)
+ flag_move=db.Column(db.Boolean)
+ target=db.Column(db.String)
+ dest_folder_name=db.Column(db.String)
+ movie_title=db.Column(db.String)
+ movie_id=db.Column(db.String)
+ movie_poster=db.Column(db.String)
+ movie_more_title=db.Column(db.String)
+ movie_more_info=db.Column(db.String)
+ json=db.Column(db.JSON)
  def __init__(self):
-  self.created_time=H()
+  self.created_time=datetime.now()
  def __repr__(self):
-  return xd(self.as_dict())
+  return q(self.as_dict())
  def as_dict(self):
-  ret={x.name:xa(self,x.name)for x in self.__table__.columns}
+  ret={x.name:k(self,x.name)for x in self.__table__.columns}
   ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')
-  if self.json is not T:
-   ret['json']=X(ret['json'])
+  if self.json is not m:
+   ret['json']=json.loads(ret['json'])
   else:
    ret['json']={}
   return ret
- @G
+ @M
  def save(item):
   try:
    model=ModelFileprocessMovieItem()
@@ -72,7 +58,7 @@ class ModelFileprocessMovieItem(M):
    model.flag_move=item['flag_move']
    model.target=item['target']
    model.dest_folder_name=item['dest_folder_name']
-   if item['movie']is not T:
+   if item['movie']is not m:
     model.movie_title=item['movie']['title']
     model.movie_id=item['movie']['id']
     if 'more' in item['movie']:
@@ -81,15 +67,15 @@ class ModelFileprocessMovieItem(M):
      model.movie_more_info=item['movie']['more']['info'][0]
    if 'guessit' in item:
     del item['guessit']
-   model.json=h(item)
-   R.add(model)
-   R.commit()
-   return J
-  except l as e:
+   model.json=json.dumps(item)
+   db.session.add(model)
+   db.session.commit()
+   return B
+  except W as e:
    logger.error('Exception:%s',e)
-   logger.error(c())
+   logger.error(traceback.format_exc())
    logger.debug(item)
-   R.rollback()
+   db.session.rollback()
    logger.debug('ROLLBACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-   return V
+   return H
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

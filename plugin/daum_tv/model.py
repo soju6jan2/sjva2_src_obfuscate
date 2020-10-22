@@ -1,90 +1,78 @@
 import traceback,os
-H=True
-B=None
-w=repr
-Q=getattr
-t=Exception
-e=len
-U=staticmethod
-i=os.path
-s=traceback.format_exc
+I=True
+W=None
+T=repr
+y=getattr
+A=Exception
+i=len
+P=staticmethod
 from datetime import datetime
-c=datetime.now
 import json
-K=json.loads
 from framework.logger import get_logger
 from framework import db,path_data,app
-O=app.config
-j=db.session
-F=db.DateTime
-b=db.JSON
-S=db.String
-G=db.Integer
-n=db.Column
-J=db.Model
 from sqlalchemy import or_,and_,func,not_
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-O['SQLALCHEMY_BINDS'][package_name]='sqlite:///%s'%(i.join(path_data,'db','%s.db'%package_name))
+app.config['SQLALCHEMY_BINDS'][package_name]='sqlite:///%s'%(os.path.join(path_data,'db','%s.db'%package_name))
 from framework.common.plugin import get_model_setting
 ModelSetting=get_model_setting(package_name,logger)
-class ModelDaumTVShow(J):
+class ModelDaumTVShow(db.Model):
  __tablename__='%s_show_library'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=n(G,primary_key=H)
- daum_id=n(G)
- title=n(S)
- status=n(G)
- studio=n(S)
- broadcast_info=n(S)
- broadcast_term=n(S)
- start_date=n(S)
- genre=n(S)
- summary=n(S)
- poster_url=n(S)
- episode_count_one_day=n(G)
- episode_list_json=n(b)
- update_time=n(F)
- last_episode_no=n(S)
- last_episode_date=n(S)
- search_title=n(S)
+ id=db.Column(db.Integer,primary_key=I)
+ daum_id=db.Column(db.Integer)
+ title=db.Column(db.String)
+ status=db.Column(db.Integer)
+ studio=db.Column(db.String)
+ broadcast_info=db.Column(db.String)
+ broadcast_term=db.Column(db.String)
+ start_date=db.Column(db.String)
+ genre=db.Column(db.String)
+ summary=db.Column(db.String)
+ poster_url=db.Column(db.String)
+ episode_count_one_day=db.Column(db.Integer)
+ episode_list_json=db.Column(db.JSON)
+ update_time=db.Column(db.DateTime)
+ last_episode_no=db.Column(db.String)
+ last_episode_date=db.Column(db.String)
+ search_title=db.Column(db.String)
  def __init__(self,daum_id):
   self.daum_id=daum_id
   self.episode_count_one_day=1
   self.studio=''
   self.broadcast_info=''
   self.broadcast_term=''
-  self.episode_list=B
+  self.episode_list=W
  def __repr__(self):
-  return w(self.as_dict())
+  return T(self.as_dict())
  def as_dict(self):
-  ret={x.name:Q(self,x.name)for x in self.__table__.columns}
-  ret['episode_list_json']=K(ret['episode_list_json'])
+  ret={x.name:y(self,x.name)for x in self.__table__.columns}
+  ret['episode_list_json']=json.loads(ret['episode_list_json'])
   ret['update_time']=self.update_time.strftime('%m-%d %H:%M:%S')
   return ret
  def save(self):
   try:
-   self.update_time=c()
+   self.update_time=datetime.now()
    self.search_title=self.title.replace(' ','').replace('-','').replace('/','').replace('!','').replace('(','').replace(')','').replace('#','')
-   j.add(self)
-   j.commit()
-  except t as e:
+   db.session.add(self)
+   db.session.commit()
+  except A as e:
    logger.error('Exception:%s',e)
-   logger.error(s()) 
+   logger.error(traceback.format_exc()) 
  def has_episode_info(self):
-  return e(self.episode_list)>0
- @U
+  return i(self.episode_list)>0
+ @P
  def get(daum_id):
   try:
    logger.debug('GET DaumID:%s',daum_id)
-   item=j.query(ModelDaumTVShow).filter_by(daum_id=daum_id).with_for_update().first()
+   item=db.session.query(ModelDaumTVShow).filter_by(daum_id=daum_id).with_for_update().first()
    if not item:
     item=ModelDaumTVShow(daum_id)
-   if item.episode_list_json is not B:
-    item.episode_list=K(item.episode_list_json)
+   if item.episode_list_json is not W:
+    item.episode_list=json.loads(item.episode_list_json)
    return item
-  except t as e:
+  except A as e:
    logger.error('Exception:%s',e)
-   logger.error(s())
+   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,128 +1,118 @@
 import os
-W=True
-J=str
-f=getattr
-X=None
-p=int
-R=False
-c=os.path
+e=True
+P=str
+K=getattr
+z=None
+g=int
+i=False
 from datetime import datetime
-H=datetime.now
 from framework import db,app,path_data
-P=app.config
-o=db.JSON
-w=db.Boolean
-s=db.DateTime
-A=db.String
-S=db.Integer
-r=db.Column
-B=db.Model
 from.plugin import logger,package_name
-P['SQLALCHEMY_BINDS'][package_name]='sqlite:///%s'%(c.join(path_data,'db','%s.db'%package_name))
+app.config['SQLALCHEMY_BINDS'][package_name]='sqlite:///%s'%(os.path.join(path_data,'db','%s.db'%package_name))
 from framework.common.plugin import get_model_setting
 ModelSetting=get_model_setting(package_name,logger)
-class ModelRcloneJob(B):
+class ModelRcloneJob(db.Model):
  __tablename__='%s_job'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=r(S,primary_key=W)
- job_type=r(S)
- name=r(A)
- command=r(A)
- remote=r(A)
- remote_path=r(A)
- local_path=r(A)
- option_user=r(A)
- option_static=r(A)
- last_run_time=r(s)
- last_file_count=r(S)
- is_scheduling=r(w)
+ id=db.Column(db.Integer,primary_key=e)
+ job_type=db.Column(db.Integer)
+ name=db.Column(db.String)
+ command=db.Column(db.String)
+ remote=db.Column(db.String)
+ remote_path=db.Column(db.String)
+ local_path=db.Column(db.String)
+ option_user=db.Column(db.String)
+ option_static=db.Column(db.String)
+ last_run_time=db.Column(db.DateTime)
+ last_file_count=db.Column(db.Integer)
+ is_scheduling=db.Column(db.Boolean)
  def __init__(self):
   self.last_file_count=0
  def __repr__(self):
-  return J(self.as_dict())
+  return P(self.as_dict())
  def as_dict(self):
-  ret={x.name:f(self,x.name)for x in self.__table__.columns}
-  ret['last_run_time']=self.last_run_time.strftime('%m-%d %H:%M:%S')if self.last_run_time is not X else ''
+  ret={x.name:K(self,x.name)for x in self.__table__.columns}
+  ret['last_run_time']=self.last_run_time.strftime('%m-%d %H:%M:%S')if self.last_run_time is not z else ''
   return ret
-class ModelRcloneFile(B):
+class ModelRcloneFile(db.Model):
  __tablename__='%s_file'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=r(S,primary_key=W)
- job_id=r(S)
- folder=r(A)
- name=r(A)
- percent=r(S)
- size=r(A)
- speed=r(A)
- rt_hour=r(A)
- rt_min=r(A)
- rt_sec=r(A)
- log=r(A)
- created_time=r(s)
- finish_time=r(s)
+ id=db.Column(db.Integer,primary_key=e)
+ job_id=db.Column(db.Integer)
+ folder=db.Column(db.String)
+ name=db.Column(db.String)
+ percent=db.Column(db.Integer)
+ size=db.Column(db.String)
+ speed=db.Column(db.String)
+ rt_hour=db.Column(db.String)
+ rt_min=db.Column(db.String)
+ rt_sec=db.Column(db.String)
+ log=db.Column(db.String)
+ created_time=db.Column(db.DateTime)
+ finish_time=db.Column(db.DateTime)
  def __init__(self,job_id,folder,name):
-  self.job_id=p(job_id)
+  self.job_id=g(job_id)
   self.folder=folder
   self.name=name
   self.log=''
-  self.created_time=H()
+  self.created_time=datetime.now()
  def __repr__(self):
-  return J(self.as_dict())
+  return P(self.as_dict())
  def as_dict(self):
-  ret={x.name:f(self,x.name)for x in self.__table__.columns}
+  ret={x.name:K(self,x.name)for x in self.__table__.columns}
   ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')
-  ret['finish_time']=self.finish_time.strftime('%m-%d %H:%M:%S')if self.finish_time is not X else ''
+  ret['finish_time']=self.finish_time.strftime('%m-%d %H:%M:%S')if self.finish_time is not z else ''
   ret['delta']=''
   try:
-   ret['delta']=J(self.finish_time-self.created_time).split('.')[0]
+   ret['delta']=P(self.finish_time-self.created_time).split('.')[0]
   except:
    pass
   return ret
-class ModelRcloneMount(B):
+class ModelRcloneMount(db.Model):
  __tablename__='%s_mount'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=r(S,primary_key=W)
- created_time=r(s)
- json=r(o)
- name=r(A)
- remote=r(A)
- remote_path=r(A)
- local_path=r(A)
- option=r(A)
- auto_start=r(w)
+ id=db.Column(db.Integer,primary_key=e)
+ created_time=db.Column(db.DateTime)
+ json=db.Column(db.JSON)
+ name=db.Column(db.String)
+ remote=db.Column(db.String)
+ remote_path=db.Column(db.String)
+ local_path=db.Column(db.String)
+ option=db.Column(db.String)
+ auto_start=db.Column(db.Boolean)
  def __init__(self):
-  self.current_status=R
-  self.created_time=H()
+  self.current_status=i
+  self.created_time=datetime.now()
  def __repr__(self):
-  return J(self.as_dict())
+  return P(self.as_dict())
  def as_dict(self):
-  ret={x.name:f(self,x.name)for x in self.__table__.columns}
+  ret={x.name:K(self,x.name)for x in self.__table__.columns}
   ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')
   return ret
-class ModelRcloneServe(B):
+class ModelRcloneServe(db.Model):
  __tablename__='%s_serve'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=r(S,primary_key=W)
- created_time=r(s)
- json=r(o)
- name=r(A)
- command=r(A)
- remote=r(A)
- remote_path=r(A)
- port=r(S)
- option=r(A)
- auto_start=r(w)
+ id=db.Column(db.Integer,primary_key=e)
+ created_time=db.Column(db.DateTime)
+ json=db.Column(db.JSON)
+ name=db.Column(db.String)
+ command=db.Column(db.String)
+ remote=db.Column(db.String)
+ remote_path=db.Column(db.String)
+ port=db.Column(db.Integer)
+ option=db.Column(db.String)
+ auto_start=db.Column(db.Boolean)
  def __init__(self):
-  self.current_status=R
-  self.created_time=H()
+  self.current_status=i
+  self.created_time=datetime.now()
  def __repr__(self):
-  return J(self.as_dict())
+  return P(self.as_dict())
  def as_dict(self):
-  ret={x.name:f(self,x.name)for x in self.__table__.columns}
+  ret={x.name:K(self,x.name)for x in self.__table__.columns}
   ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')
   ret['command_ui']=ModelRcloneServe.commands[ret['command']]
   return ret

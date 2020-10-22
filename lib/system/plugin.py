@@ -1,114 +1,68 @@
 import os
-H=None
-e=str
-j=Exception
-i=True
-XR=super
-C=False
-x=classmethod
-u=os.path
-p=os.listdir
+C=None
+M=str
+H=Exception
+F=True
+h=super
+l=False
+T=classmethod
 import traceback
-V=traceback.format_exc
 import logging
 import threading
-v=threading.Thread
 import time
-T=time.sleep
 import json
-t=json.loads
 import requests
-Y=requests.get
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify
-VM=request.sid
-Vk=request.headers
-Vg=request.form
 from framework.logger import get_logger
 from framework import app,db,scheduler,socketio,check_api,path_app_root,path_data
-k=socketio.emit
-Vn=socketio.on
-VG=socketio.stop
-Vt=scheduler.get_job_list_info
-Vx=scheduler.is_running
-S=scheduler.is_include
 from framework.util import Util,SingletonClass
 from flask_login import login_user,logout_user,current_user,login_required
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 from.logic import SystemLogic
-Vq=SystemLogic.recent_version
-VY=SystemLogic.get_recent_version
-VQ=SystemLogic.link_save
-Vp=SystemLogic.get_setting_value
-Vs=SystemLogic.command_run
-VN=SystemLogic.setting_save_after
-VE=SystemLogic.setting_save_system
-Vm=SystemLogic.get_info
-Vu=SystemLogic.point
-Vy=SystemLogic.plugin_load
 from.model import ModelSetting
-VP=ModelSetting.setting_save
-VF=ModelSetting.to_dict
 from.logic_plugin import LogicPlugin
-VS=LogicPlugin.plugin_uninstall
-VK=LogicPlugin.plugin_install_by_api
-Vd=LogicPlugin.get_plugin_list
 from.logic_selenium import SystemLogicSelenium
-VU=SystemLogicSelenium.process_ajax
-Vb=SystemLogicSelenium.plugin_unload
 from.logic_command import SystemLogicCommand
-XB=SystemLogicCommand.execute_command_return
-XV=SystemLogicCommand.plugin_unload
 from.logic_command2 import SystemLogicCommand2
-Xc=SystemLogicCommand2.plugin_unload
 from.logic_notify import SystemLogicNotify
-Xr=SystemLogicNotify.process_ajax
 from.logic_telegram_bot import SystemLogicTelegramBot
-XA=SystemLogicTelegramBot.process_ajax
-Xa=SystemLogicTelegramBot.plugin_load
 from.logic_auth import SystemLogicAuth
-XD=SystemLogicAuth.process_ajax
-Xo=SystemLogicAuth.get_auth_status
 from.logic_env import SystemLogicEnv
-Xz=SystemLogicEnv.process_ajax
-Xw=SystemLogicEnv.load_export
 from.logic_site import SystemLogicSite
-Xj=SystemLogicSite.process_api
-Xh=SystemLogicSite.process_ajax
-XI=SystemLogicSite.plugin_load
 blueprint=Blueprint(package_name,package_name,url_prefix='/%s'%package_name,template_folder='templates')
 menu={'main':[package_name,u'설정'],'sub':[['setting',u'일반설정'],['plugin',u'플러그인'],['information',u'정보'],['log',u'로그']],'sub2':{'setting':[['basic',u'기본'],['auth',u'인증'],['env',u'시스템'],['notify',u'알림'],['telegram_bot',u'텔레그램 봇'],['selenium',u'Selenium'],['trans',u'번역'],['site',u'Site'],['memo',u'메모']],'rss':[['setting',u'설정'],['job',u'작업'],['list',u'목록']],'cache':[['setting',u'설정'],['list',u'목록']]},} 
 def plugin_load():
  logger.debug('plugin_load:%s',package_name)
- Vy()
- Xa()
- XI()
+ SystemLogic.plugin_load()
+ SystemLogicTelegramBot.plugin_load()
+ SystemLogicSite.plugin_load()
 def plugin_unload():
  logger.debug('plugin_load:%s',package_name)
- Vb()
- XV()
- Xc()
+ SystemLogicSelenium.plugin_unload()
+ SystemLogicCommand.plugin_unload()
+ SystemLogicCommand2.plugin_unload()
 @blueprint.route('/')
 def normal():
  return redirect('/%s/setting'%package_name)
 @login_required
 def home():
- return render_template('info.html',arg=H)
+ return render_template('info.html',arg=C)
 @blueprint.route('/<sub>',methods=['GET','POST'])
 @login_required
 def first_menu(sub):
- arg=H
+ arg=C
  if sub=='home':
-  return render_template('%s_%s.html'%(package_name,sub),arg=H)
+  return render_template('%s_%s.html'%(package_name,sub),arg=C)
  elif sub=='setting':
   return redirect('/%s/%s/basic'%(package_name,sub))
  elif sub=='plugin':
-  arg=VF()
+  arg=ModelSetting.to_dict()
   return render_template('system_plugin.html',arg=arg)
  elif sub=='information':
   return render_template('manual.html',sub=sub,arg='system.json')
  elif sub=='log':
-  log_files=p(u.join(path_data,'log'))
+  log_files=os.listdir(os.path.join(path_data,'log'))
   log_files.sort()
   log_list=[]
   arg={'package_name':package_name,'sub':sub}
@@ -118,16 +72,16 @@ def first_menu(sub):
   arg['log_list']='|'.join(log_list)
   arg['all_list']='|'.join(log_files)
   arg['filename']=''
-  if 'filename' in Vg:
-   arg['filename']=Vg['filename']
+  if 'filename' in request.form:
+   arg['filename']=request.form['filename']
   logger.debug(arg)
   return render_template('%s_%s.html'%(package_name,sub),arg=arg)
  elif sub=='restart':
   restart()
-  return render_template('system_restart.html',sub=sub,referer=Vk.get("Referer"))
+  return render_template('system_restart.html',sub=sub,referer=request.headers.get("Referer"))
  elif sub=='shutdown':
   shutdown()
-  return render_template('system_restart.html',sub=sub,referer=Vk.get("Referer"))
+  return render_template('system_restart.html',sub=sub,referer=request.headers.get("Referer"))
  elif sub=='telegram':
   return redirect('/%s/%s/setting'%(package_name,sub))
  return render_template('sample.html',title='%s - %s'%(package_name,sub))
@@ -136,75 +90,73 @@ def first_menu(sub):
 def second_menu(sub,sub2):
  try:
   if sub=='setting':
-   arg=VF()
+   arg=ModelSetting.to_dict()
    arg['sub']=sub2
    if sub2=='basic':
-    arg['point']=Vu
+    arg['point']=SystemLogic.point
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
    elif sub2 in['trans','selenium','notify']:
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
    elif sub2=='auth':
-    arg['auth_result']=Xo()
+    arg['auth_result']=SystemLogicAuth.get_auth_status()
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
    elif sub2=='telegram_bot':
-    arg['scheduler']=e(S('%s_%s'%(package_name,sub2)))
-    arg['is_running']=e(Vx('%s_%s'%(package_name,sub2)))
+    arg['scheduler']=M(scheduler.is_include('%s_%s'%(package_name,sub2)))
+    arg['is_running']=M(scheduler.is_running('%s_%s'%(package_name,sub2)))
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
    elif sub2=='env':
-    arg['export']=Xw()
-    if arg['export']is H:
+    arg['export']=SystemLogicEnv.load_export()
+    if arg['export']is C:
      arg['export']=u'export.sh 파일이 없습니다.'
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
    elif sub2=='site':
-    arg['scheduler']=e(S('%s_%s'%(package_name,sub2)))
-    arg['is_running']=e(Vx('%s_%s'%(package_name,sub2)))
+    arg['scheduler']=M(scheduler.is_include('%s_%s'%(package_name,sub2)))
+    arg['is_running']=M(scheduler.is_running('%s_%s'%(package_name,sub2)))
     from system.model import ModelSetting as SystemModelSetting
-          VP=ModelSetting.setting_save
-          VF=ModelSetting.to_dict
     arg['site_get_daum_cookie_url']='{ddns}/{package_name}/api/{sub2}/daum_cookie'.format(ddns=SystemModelSetting.get('ddns'),package_name=package_name,sub2=sub2)
     if SystemModelSetting.get_bool('auth_use_apikey'):
      arg['site_get_daum_cookie_url']+='?apikey={apikey}'.format(apikey=SystemModelSetting.get('auth_apikey'))
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
    elif sub2=='memo':
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
- except j as e:
+ except H as e:
   logger.error('Exception:%s',e)
-  logger.error(V())
+  logger.error(traceback.format_exc())
 def restart():
  try:
   try:
    import framework
    framework.exit_code=1
    app_close()
-  except j as e:
+  except H as e:
    logger.error('Exception:%s',e)
-   logger.error(V())
- except j as e:
+   logger.error(traceback.format_exc())
+ except H as e:
   logger.error('Exception:%s',e)
-  logger.error(V())
+  logger.error(traceback.format_exc())
 def shutdown():
  try:
   try:
    nginx_kill='/app/data/custom/nginx/files/kill.sh'
-   if u.exists(nginx_kill):
-    XB([nginx_kill])
-  except j as e:
+   if os.path.exists(nginx_kill):
+    SystemLogicCommand.execute_command_return([nginx_kill])
+  except H as e:
    logger.error('Exception:%s',e)
-   logger.error(V()) 
+   logger.error(traceback.format_exc()) 
   import framework
   framework.exit_code=0
   app_close()
- except j as e:
+ except H as e:
   logger.error('Exception:%s',e)
-  logger.error(V())
+  logger.error(traceback.format_exc())
 def app_close():
  try:
   from framework.init_plugin import plugin_unload
   plugin_unload()
-  VG()
- except j as e:
+  socketio.stop()
+ except H as e:
   logger.error('Exception:%s',e)
-  logger.error(V())
+  logger.error(traceback.format_exc())
 @blueprint.route('/ajax/<sub>/<sub2>',methods=['GET','POST'])
 @login_required
 def second_ajax(sub,sub2):
@@ -215,22 +167,20 @@ def second_ajax(sub,sub2):
    return SystemLogicTrans.process_ajax(sub2,request)
   elif sub=='auth':
    from.logic_auth import SystemLogicAuth
-   return XD(sub2,request)
-      XD=SystemLogicAuth.process_ajax
-      Xo=SystemLogicAuth.get_auth_status
+   return SystemLogicAuth.process_ajax(sub2,request)
   elif sub=='selenium':
-   return VU(sub2,request)
+   return SystemLogicSelenium.process_ajax(sub2,request)
   elif sub=='notify':
-   return Xr(sub2,request)
+   return SystemLogicNotify.process_ajax(sub2,request)
   elif sub=='telegram_bot':
-   return XA(sub2,request)
+   return SystemLogicTelegramBot.process_ajax(sub2,request)
   elif sub=='env':
-   return Xz(sub2,request)
+   return SystemLogicEnv.process_ajax(sub2,request)
   elif sub=='site':
-   return Xh(sub2,request) 
- except j as e:
+   return SystemLogicSite.process_ajax(sub2,request) 
+ except H as e:
   logger.error('Exception:%s',e)
-  logger.error(V())
+  logger.error(traceback.format_exc())
 @blueprint.route('/ajax/<sub>',methods=['GET','POST'])
 @login_required
 def ajax(sub):
@@ -238,151 +188,151 @@ def ajax(sub):
   if sub=='info':
    try:
     ret={}
-    ret['system']=Vm()
-    ret['scheduler']=Vt()
+    ret['system']=SystemLogic.get_info()
+    ret['scheduler']=scheduler.get_job_list_info()
     return jsonify(ret)
-   except j as e:
+   except H as e:
     logger.error('Exception:%s',e)
-    logger.error(V())
+    logger.error(traceback.format_exc())
     return jsonify()
   elif sub=='setting_save_system':
    try:
-    ret=VE(request)
+    ret=SystemLogic.setting_save_system(request)
     return jsonify(ret)
-   except j as e:
+   except H as e:
     logger.error('Exception:%s',e)
-    logger.error(V())
+    logger.error(traceback.format_exc())
   elif sub=='setting_save':
-   ret=VP(request)
-   VN()
+   ret=ModelSetting.setting_save(request)
+   SystemLogic.setting_save_after()
    return jsonify(ret)
   elif sub=='ddns_test':
    try:
-    url=Vg['ddns']+'/version'
-    res=Y(url)
+    url=request.form['ddns']+'/version'
+    res=requests.get(url)
     data=res.text
     return jsonify(data)
-   except j as e:
+   except H as e:
     logger.error('Exception:%s',e)
-    logger.error(V())
+    logger.error(traceback.format_exc())
     return jsonify('fail')
   elif sub=='celery_test':
    try:
     try:
      import framework
      framework.exit_code=1
-     VG()
-    except j as e:
+     socketio.stop()
+    except H as e:
      logger.error('Exception:%s',e)
-     logger.error(V())
+     logger.error(traceback.format_exc())
     return jsonify()
-   except j as e:
+   except H as e:
     logger.error('Exception:%s',e)
-    logger.error(V())
+    logger.error(traceback.format_exc())
   elif sub=='command_run':
    try:
-    command_text=Vg['command_text']
-    ret=Vs(command_text)
+    command_text=request.form['command_text']
+    ret=SystemLogic.command_run(command_text)
     return jsonify(ret)
-   except j as e:
+   except H as e:
     logger.error('Exception:%s',e)
-    logger.error(V())
+    logger.error(traceback.format_exc())
   elif sub=='get_link_list':
    try:
-    link_json=Vp('link_json')
-    j=t(link_json)
+    link_json=SystemLogic.get_setting_value('link_json')
+    j=json.loads(link_json)
     return jsonify(j)
-   except j as e:
+   except H as e:
     logger.error('Exception:%s',e)
-    logger.error(V())
+    logger.error(traceback.format_exc())
   elif sub=='link_save':
    try:
-    link_data_str=Vg['link_data']
-    ret=VQ(link_data_str)
+    link_data_str=request.form['link_data']
+    ret=SystemLogic.link_save(link_data_str)
     return jsonify(ret)
-   except j as e:
+   except H as e:
     logger.error('Exception:%s',e)
-    logger.error(V())
+    logger.error(traceback.format_exc())
   elif sub=='plugin_list':
    try:
-    return jsonify(Vd())
-   except j as e:
+    return jsonify(LogicPlugin.get_plugin_list())
+   except H as e:
     logger.error('Exception:%s',e)
-    logger.error(V())
+    logger.error(traceback.format_exc())
   elif sub=='plugin_install':
    try:
-    plugin_git=Vg['plugin_git']
-    return jsonify(VK(plugin_git))
-   except j as e:
+    plugin_git=request.form['plugin_git']
+    return jsonify(LogicPlugin.plugin_install_by_api(plugin_git))
+   except H as e:
     logger.error('Exception:%s',e)
-    logger.error(V())
+    logger.error(traceback.format_exc())
   elif sub=='plugin_uninstall':
    try:
-    plugin_name=Vg['plugin_name']
-    return jsonify(VS(plugin_name))
-   except j as e:
+    plugin_name=request.form['plugin_name']
+    return jsonify(LogicPlugin.plugin_uninstall(plugin_name))
+   except H as e:
     logger.error('Exception:%s',e)
-    logger.error(V())
+    logger.error(traceback.format_exc())
   elif sub=='recent_version':
-   ret=VY()
-   ret={'ret':ret,'version':Vq}
+   ret=SystemLogic.get_recent_version()
+   ret={'ret':ret,'version':SystemLogic.recent_version}
    return jsonify(ret)
- except j as e:
+ except H as e:
   logger.error('Exception:%s',e)
-  logger.error(V())
-@Vn('connect',namespace='/%s'%package_name)
+  logger.error(traceback.format_exc())
+@socketio.on('connect',namespace='/%s'%package_name)
 def connect():
  try:
-  InfoProcess.instance().connect(VM)
- except j as e:
+  InfoProcess.instance().connect(request.sid)
+ except H as e:
   logger.error('Exception:%s',e)
-  logger.error(V())
-@Vn('disconnect',namespace='/%s'%package_name)
+  logger.error(traceback.format_exc())
+@socketio.on('disconnect',namespace='/%s'%package_name)
 def disconnect():
  try:
-  InfoProcess.instance().disconnect(VM)
- except j as e:
+  InfoProcess.instance().disconnect(request.sid)
+ except H as e:
   logger.error('Exception:%s',e)
-  logger.error(V())
-@Vn('connect',namespace='/system_restart')
+  logger.error(traceback.format_exc())
+@socketio.on('connect',namespace='/system_restart')
 def connect_system_restart():
  try:
-  k("on_connect",'restart',namespace='/system_restart',broadcast=i)
- except j as e:
+  socketio.emit("on_connect",'restart',namespace='/system_restart',broadcast=F)
+ except H as e:
   logger.error('Exception:%s',e)
-  logger.error(V())
-@Vn('disconnect',namespace='/system_restart')
+  logger.error(traceback.format_exc())
+@socketio.on('disconnect',namespace='/system_restart')
 def disconnect_system_restart():
  try:
   pass
- except j as e:
+ except H as e:
   logger.error('Exception:%s',e)
-  logger.error(V())
-class InfoThread(v):
+  logger.error(traceback.format_exc())
+class InfoThread(threading.Thread):
  def __init__(self):
-  XR(InfoThread,self).__init__()
-  self.stop_flag=C
-  self.daemon=i
+  h(InfoThread,self).__init__()
+  self.stop_flag=l
+  self.daemon=F
  def stop(self):
-  self.stop_flag=i
+  self.stop_flag=F
  def run(self):
   while not self.stop_flag:
    ret={}
-   ret['system']=Vm()
-   ret['scheduler']=Vt()
-   k("status",ret,namespace='/system',broadcast=i)
-   T(1)
+   ret['system']=SystemLogic.get_info()
+   ret['scheduler']=scheduler.get_job_list_info()
+   socketio.emit("status",ret,namespace='/system',broadcast=F)
+   time.sleep(1)
 class InfoProcess(SingletonClass):
  sid_list=[]
- thread=H
- @x
+ thread=C
+ @T
  def connect(cls,sid):
   logger.debug('Info connect:%s',InfoProcess.sid_list)
   if not InfoProcess.sid_list:
    InfoProcess.thread=InfoThread()
    InfoProcess.thread.start()
   InfoProcess.sid_list.append(sid)
- @x
+ @T
  def disconnect(cls,sid):
   logger.debug('Info disconnect:%s',InfoProcess.sid_list)
   InfoProcess.sid_list.remove(sid)
@@ -393,21 +343,18 @@ class InfoProcess(SingletonClass):
 def first_api(sub):
  try:
   if sub=='plugin_add':
-   plugin_git=Vg['plugin_git']
+   plugin_git=request.form['plugin_git']
    from system.logic_plugin import LogicPlugin
-   ret=VK(plugin_git)
-      VS=LogicPlugin.plugin_uninstall
-      VK=LogicPlugin.plugin_install_by_api
-      Vd=LogicPlugin.get_plugin_list
+   ret=LogicPlugin.plugin_install_by_api(plugin_git)
    return jsonify(ret)
   elif sub=='restart':
    logger.debug('web restart')
    import system
    system.restart()
    return jsonify({'ret':'success'})
- except j as e:
+ except H as e:
   logger.error('Exception:%s',e)
-  logger.error(V())
+  logger.error(traceback.format_exc())
 @blueprint.route('/api/<sub>/<sub2>',methods=['GET','POST'])
 @check_api
 def second_api(sub,sub2):
@@ -417,11 +364,8 @@ def second_api(sub,sub2):
    return SystemLogicTrans.process_api(sub2,request)
   elif sub=='site':
    from.logic_site import SystemLogicSite
-   return Xj(sub2,request)
-      Xj=SystemLogicSite.process_api
-      Xh=SystemLogicSite.process_ajax
-      XI=SystemLogicSite.plugin_load
- except j as e:
+   return SystemLogicSite.process_api(sub2,request)
+ except H as e:
   logger.error('Exception:%s',e)
-  logger.error(V())
+  logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
