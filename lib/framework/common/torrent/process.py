@@ -1,12 +1,12 @@
 import traceback
-N=staticmethod
-m=True
-P=False
-i=None
-u=str
+q=staticmethod
+P=True
+U=False
+L=None
+F=str
 z=Exception
-K=len
-E=type
+u=len
+j=type
 import os
 import json
 import time
@@ -17,13 +17,13 @@ from system.model import ModelSetting as SystemModelSetting
 from.process_movie import ProcessMovie
 from.process_av import ProcessAV
 class TorrentProcess:
- @N
+ @q
  def is_broadcast_member():
   if SystemModelSetting.get('ddns').find('https://sjva-server.soju6jan.com')!=-1:
-   return m
-  return P
- @N
- def server_process(save_list,category=i):
+   return P
+  return U
+ @q
+ def server_process(save_list,category=L):
   if TorrentProcess.is_broadcast_member():
    logger.debug(category)
    if category=='KTV':
@@ -32,11 +32,11 @@ class TorrentProcess:
     return TorrentProcess.server_process_movie(save_list)
    elif category=='AV':
     return TorrentProcess.server_process_av(save_list)
- @N
+ @q
  def server_process_ktv(save_list):
   for item in save_list:
    item=item.as_dict()
-   if item['torrent_info']is not i:
+   if item['torrent_info']is not L:
     try:
      for info in item['torrent_info']:
       logger.debug('Magnet : %s',info['magnet_uri'])
@@ -55,11 +55,11 @@ class TorrentProcess:
         f['ktv']['number']=entity.filename_no
         f['ktv']['quality']=entity.filename_quality
         f['ktv']['release']=entity.filename_release
-        if entity.daum_info is not i:
+        if entity.daum_info is not L:
          daum=entity.daum_info.as_dict()
-         f['daum']={'daum_id':u(daum['daum_id']),'poster_url':daum['poster_url'],'genre':daum['genre'],'title':daum['title'],}
+         f['daum']={'daum_id':F(daum['daum_id']),'poster_url':daum['poster_url'],'genre':daum['genre'],'title':daum['title'],}
         else:
-         f['daum']=i
+         f['daum']=L
         info['video_count']+=1
       if info['video_count']==1:
        ret={}
@@ -87,7 +87,7 @@ class TorrentProcess:
     except z as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc()) 
- @N
+ @q
  def server_process_movie(save_list):
   lists=[]
   for item in save_list:
@@ -98,7 +98,7 @@ class TorrentProcess:
      ext=os.path.splitext(tmp[1])[1].lower()
      if ext in['.smi','.srt','.ass']:
       sub.append(tmp)
-   if item['torrent_info']is not i:
+   if item['torrent_info']is not L:
     try:
      for info in item['torrent_info']:
       fileinfo=TorrentProcess.get_max_size_fileinfo(info)
@@ -112,7 +112,7 @@ class TorrentProcess:
       torrent_info['dirname']=fileinfo['dirname']
       torrent_info['url']=item['url']
       movie_info={}
-      if movie['movie']is not i:
+      if movie['movie']is not L:
        movie_info['title']=movie['movie']['title']
        movie_info['target']=movie['target'].replace('sub_x','sub')
        movie_info['kor']=movie['is_include_kor']
@@ -129,12 +129,12 @@ class TorrentProcess:
         movie_info['daum']['rate']=movie['movie']['more']['rate']
         movie_info['daum']['genre']=movie['movie']['more']['genre']
       else:
-       movie_info=i
+       movie_info=L
       ret={}
       ret['server_id']=item['id']
-      if K(sub)>0:
+      if u(sub)>0:
        ret['s']=sub
-      if movie_info is not i:
+      if movie_info is not L:
        ret['m']=movie_info
       ret['t']=torrent_info
       lists.append(ret)
@@ -149,7 +149,7 @@ class TorrentProcess:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc()) 
   return lists
- @N
+ @q
  def server_process_av(save_list):
   lists=[]
   for item in save_list:
@@ -158,15 +158,15 @@ class TorrentProcess:
    av_type='censored' if av_type in['NONE','torrent_ymav','censored_tor']else av_type
    av_type='uncensored' if av_type in['torrent_nmav','uncensored_tor']else av_type
    av_type='western' if av_type in['torrent_amav','white_tor']else av_type
-   if item['torrent_info']is not i:
+   if item['torrent_info']is not L:
     try:
      for info in item['torrent_info']:
       fileinfo=TorrentProcess.get_max_size_fileinfo(info)
       av=ProcessAV.process(fileinfo['filename'],av_type)
-      if av is i:
+      if av is L:
        if av_type=='western' and fileinfo['dirname']!='':
         av=ProcessAV.process(fileinfo['dirname'],av_type)
-      if av is i:
+      if av is L:
        logger.debug(u'AV 검색 실패')
        logger.debug(fileinfo['filename'])
        logger.debug(av_type)
@@ -179,8 +179,8 @@ class TorrentProcess:
       torrent_info['filename']=fileinfo['filename']
       torrent_info['dirname']=fileinfo['dirname']
       torrent_info['url']=item['url']
-      av_info=i
-      if av is not i:
+      av_info=L
+      if av is not L:
        av_info={}
        av_info['meta']=av['type']
        av_info['code_show']=av['data']['update']['code_show']
@@ -198,7 +198,7 @@ class TorrentProcess:
        logger.debug(fileinfo['filename'])
       ret={'av_type':av_type}
       ret['server_id']=item['id']
-      if av_info is not i:
+      if av_info is not L:
        ret['av']=av_info
       ret['t']=torrent_info
       lists.append(ret)
@@ -213,7 +213,7 @@ class TorrentProcess:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc()) 
   return lists
- @N
+ @q
  def analyse_torrent_info_file(file_info):
   try:
    file_info['dirs']=os.path.split(file_info['path'])
@@ -224,26 +224,26 @@ class TorrentProcess:
    elif file_info['ext'].lower()in['.srt','.smi','.ass']:
     file_info['type']='sub'
    else:
-    file_info['type']=i
+    file_info['type']=L
    return file_info
   except z as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
+ @q
  def get_max_size_fileinfo(torrent_info):
   try:
    ret={}
    max_size=-1
-   max_filename=i
+   max_filename=L
    for t in torrent_info['files']:
     if t['size']>max_size:
      max_size=t['size']
-     max_filename=u(t['path'])
+     max_filename=F(t['path'])
    t=max_filename.split('/')
    ret['filename']=t[-1]
-   if K(t)==1:
+   if u(t)==1:
     ret['dirname']=''
-   elif K(t)==2:
+   elif u(t)==2:
     ret['dirname']=t[0]
    else:
     ret['dirname']=max_filename.replace('/%s'%ret['filename'],'')
@@ -252,7 +252,7 @@ class TorrentProcess:
   except z as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
+ @q
  def receive_new_data(entity,package_name):
   try:
    if not TorrentProcess.is_broadcast_member():
@@ -268,12 +268,12 @@ class TorrentProcess:
   except z as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
- def append(E,data):
+ @q
+ def append(j,data):
   try:
    import requests
    import json
-   response=requests.post("https://sjva.me/sjva/torrent_%s.php"%E,data={'data':json.dumps(data.as_dict())})
+   response=requests.post("https://sjva.me/sjva/torrent_%s.php"%j,data={'data':json.dumps(data.as_dict())})
   except z as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())

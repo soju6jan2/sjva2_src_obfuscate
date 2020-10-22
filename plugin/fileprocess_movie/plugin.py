@@ -1,5 +1,5 @@
 import os
-x=Exception
+o=Exception
 p=str
 import traceback
 import time
@@ -25,14 +25,14 @@ def plugin_load():
  try:
   logger.debug('plugin_load:%s',package_name)
   Logic.plugin_load()
- except x as exception:
+ except o as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def plugin_unload():
  try:
   logger.debug('plugin_unload:%s',package_name)
   Logic.plugin_unload()
- except x as exception:
+ except o as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @blueprint.route('/')
@@ -62,7 +62,7 @@ def ajax(sub):
   try:
    ret=Logic.setting_save(request)
    return jsonify(ret)
-  except x as exception:
+  except o as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='scheduler':
@@ -74,7 +74,7 @@ def ajax(sub):
    else:
     Logic.scheduler_stop()
    return jsonify(go)
-  except x as exception:
+  except o as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return jsonify('fail')
@@ -82,14 +82,14 @@ def ajax(sub):
   try:
    ret=Logic.filelist(request)
    return jsonify(ret)
-  except x as exception:
+  except o as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='one_execute':
   try:
    ret=Logic.one_execute()
    return jsonify(ret)
-  except x as exception:
+  except o as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return jsonify('fail')
@@ -97,7 +97,7 @@ def ajax(sub):
   try:
    ret=Logic.reset_db()
    return jsonify(ret)
-  except x as exception:
+  except o as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

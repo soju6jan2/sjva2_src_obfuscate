@@ -1,14 +1,14 @@
 version='0.2.16.31'
-n=False
-J=True
-N=len
-F=int
-E=Exception
+g=False
+z=True
+D=len
+O=int
+h=Exception
 import os
 import sys
 path_app_root=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 path_data=os.path.join(path_app_root,'data')
-flag_system_loading=n
+flag_system_loading=g
 from datetime import datetime,timedelta
 import json
 import traceback
@@ -41,24 +41,24 @@ try:
  app.secret_key=os.urandom(24)
  app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///data/db/sjva.db?check_same_thread=False'
  app.config['SQLALCHEMY_BINDS']={'sjva':'sqlite:///data/db/sjva.db'}
- app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=n
+ app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=g
  app.config['config']={}
  logger.debug('======================================')
  logger.debug(sys.argv)
- app.config['config']['run_by_real']=J if sys.argv[0]=='sjva.py' else n
- app.config['config']['run_by_migration']=J if sys.argv[-2]=='db' else n
- app.config['config']['run_by_worker']=J if sys.argv[0].find('celery')!=-1 else n
- app.config['config']['run_by_init_db']=J if sys.argv[-1]=='init_db' else n
+ app.config['config']['run_by_real']=z if sys.argv[0]=='sjva.py' else g
+ app.config['config']['run_by_migration']=z if sys.argv[-2]=='db' else g
+ app.config['config']['run_by_worker']=z if sys.argv[0].find('celery')!=-1 else g
+ app.config['config']['run_by_init_db']=z if sys.argv[-1]=='init_db' else g
  if sys.version_info[0]==2:
   app.config['config']['pip']='pip'
-  app.config['config']['is_py2']=J
-  app.config['config']['is_py3']=n
+  app.config['config']['is_py2']=z
+  app.config['config']['is_py3']=g
  else:
-  app.config['config']['is_py2']=n
-  app.config['config']['is_py3']=J
+  app.config['config']['is_py2']=g
+  app.config['config']['is_py3']=z
   app.config['config']['pip']='pip3'
  pip_install()
- db=SQLAlchemy(app,session_options={"autoflush":n})
+ db=SQLAlchemy(app,session_options={"autoflush":g})
  scheduler=Scheduler()
  socketio=SocketIO(app,cors_allowed_origins="*")
  login_manager=LoginManager()
@@ -68,17 +68,17 @@ try:
  from.log_viewer import*
  from.manual import*
  USERS={"sjva"+version:User("sjva"+version,passwd_hash="sjva"+version),}
- app.config['config']['is_debug']=n
+ app.config['config']['is_debug']=g
  app.config['config']['repeat']=-1
  if app.config['config']['run_by_real']:
-  if N(sys.argv)>2:
-   app.config['config']['repeat']=F(sys.argv[2])
- if N(sys.argv)>3:
+  if D(sys.argv)>2:
+   app.config['config']['repeat']=O(sys.argv[2])
+ if D(sys.argv)>3:
   app.config['config']['is_debug']=(sys.argv[-1]=='debug')
- app.config['config']['use_celery']=J
+ app.config['config']['use_celery']=z
  for tmp in sys.argv:
   if tmp=='no_celery':
-   app.config['config']['use_celery']=n
+   app.config['config']['use_celery']=g
    break
  logger.debug('use_celery : %s',app.config['config']['use_celery'])
  logger.debug('======================================')
@@ -88,7 +88,7 @@ try:
  from system.model import ModelSetting as SystemModelSetting
  try:
   db.create_all()
- except E as exception:
+ except h as exception:
   logger.error('CRITICAL db.create_all()!!!')
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
@@ -99,7 +99,7 @@ try:
  app.config['config']['level']=tmp['level']
  app.config['config']['point']=tmp['point']
  system.plugin_load()
- flag_system_loading=J 
+ flag_system_loading=z 
  if app.config['config']['run_by_init_db']:
   logger.debug('================================================')
   logger.debug('Run by init db.. exit')
@@ -107,23 +107,23 @@ try:
  app.register_blueprint(system.blueprint)
  try:
   if SystemModelSetting.get('ddns').find('sjva-server.soju6jan.com')!=-1:
-   app.config['config']['is_sjva_server']=J
-   app.config['config']['is_server']=J
-   app.config['config']['is_admin']=J
+   app.config['config']['is_sjva_server']=z
+   app.config['config']['is_server']=z
+   app.config['config']['is_admin']=z
   else:
-   app.config['config']['is_sjva_server']=n
-   app.config['config']['is_server']=n
-   app.config['config']['is_admin']=n
+   app.config['config']['is_sjva_server']=g
+   app.config['config']['is_server']=g
+   app.config['config']['is_admin']=g
   app.config['config']['rss_subtitle_webhook']='https://discordapp.com/api/webhooks/689800985887113329/GBTUBpP9L0dOegqL4sH-u1fwpssPKq0gBOGPb50JQjim22gUqskYCtj-wnup6BsY3vvc'
  except:
-  app.config['config']['is_sjva_server']=n
-  app.config['config']['is_server']=n
+  app.config['config']['is_sjva_server']=g
+  app.config['config']['is_server']=g
  if app.config['config']['is_sjva_server']or app.config['config']['is_debug']or SystemModelSetting.get('ddns').find('sjva-dev.soju6jan.com')!=-1:
-  app.config['config']['server']=J
-  app.config['config']['is_admin']=J
+  app.config['config']['server']=z
+  app.config['config']['is_admin']=z
  else:
-  app.config['config']['server']=n
-  app.config['config']['is_admin']=n
+  app.config['config']['server']=g
+  app.config['config']['is_admin']=g
  app.config['config']['running_type']='native'
  if 'SJVA_RUNNING_TYPE' in os.environ:
   app.config['config']['running_type']=os.environ['SJVA_RUNNING_TYPE']
@@ -166,7 +166,7 @@ try:
    app.config['config']['port']=9999
   logger.debug('PORT:%s',app.config['config']['port'])
  logger.debug('### LAST')
-except E as exception:
+except h as exception:
  logger.error('Exception:%s',exception)
  logger.error(traceback.format_exc())
 from.init_route import*

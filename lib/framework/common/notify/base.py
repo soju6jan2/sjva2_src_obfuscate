@@ -1,14 +1,14 @@
 import os
-r=None
-S=True
-s=Exception
-Q=False
-c=len
+K=None
+o=True
+O=Exception
+g=False
+p=len
 import traceback
 from framework.common.notify import logger
 from framework.common.notify.telegram import send_telegram_message
 from framework.common.notify.discord import send_discord_message
-def send_message(text,message_id=r,image_url=r):
+def send_message(text,message_id=K,image_url=K):
  from system.model import ModelSetting as SystemModelSetting
  if SystemModelSetting.get_bool('notify_advaned_use'):
   return send_advanced_message(text,image_url=image_url,message_id=message_id)
@@ -17,12 +17,12 @@ def send_message(text,message_id=r,image_url=r):
    send_telegram_message(text,image_url=image_url,bot_token=SystemModelSetting.get('notify_telegram_token'),chat_id=SystemModelSetting.get('notify_telegram_chat_id'))
   if SystemModelSetting.get_bool('notify_discord_use'):
    send_discord_message(text,image_url=image_url,webhook_url=SystemModelSetting.get('notify_discord_webhook'))
-def send_advanced_message(text,image_url=r,policy=r,message_id=r):
+def send_advanced_message(text,image_url=K,policy=K,message_id=K):
  from system.model import ModelSetting as SystemModelSetting
  try:
-  if policy is r:
+  if policy is K:
    policy=SystemModelSetting.get('notify_advaned_policy')
-  if message_id is r:
+  if message_id is K:
    message_id='DEFAULT'
   policy_list=_make_policy_dict(policy)
   if message_id.strip()not in policy_list:
@@ -33,11 +33,11 @@ def send_advanced_message(text,image_url=r,policy=r,message_id=r):
    elif tmp.find(',')!=-1:
     tmp2=tmp.split(',')
     send_telegram_message(text,image_url=image_url,bot_token=tmp2[0],chat_id=tmp2[1])
-  return S
- except s as exception:
+  return o
+ except O as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
- return Q
+ return g
 def _make_policy_dict(policy):
  try:
   ret={}
@@ -47,12 +47,12 @@ def _make_policy_dict(policy):
     continue
    else:
     tmp2=t.split('=')
-    if c(tmp2)!=2:
+    if p(tmp2)!=2:
      continue
     ret[tmp2[0].strip()]=[x.strip()for x in tmp2[1].split('|')]
   return ret
- except s as exception:
+ except O as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
- return Q
+ return g
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

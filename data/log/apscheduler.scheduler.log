@@ -1,24 +1,6 @@
-[2020-10-22 22:15:54,444|INFO|base.py:166] Scheduler started
-[2020-10-22 22:15:54,471|DEBUG|base.py:940] Looking for jobs to run
-[2020-10-22 22:15:54,472|DEBUG|base.py:1016] No jobs; waiting until a job is added
-[2020-10-22 22:21:14,871|INFO|base.py:166] Scheduler started
-[2020-10-22 22:21:14,883|DEBUG|base.py:940] Looking for jobs to run
-[2020-10-22 22:21:14,883|DEBUG|base.py:1016] No jobs; waiting until a job is added
-[2020-10-22 22:23:59,885|INFO|base.py:166] Scheduler started
-[2020-10-22 22:23:59,937|DEBUG|base.py:940] Looking for jobs to run
-[2020-10-22 22:23:59,937|DEBUG|base.py:1016] No jobs; waiting until a job is added
-[2020-10-22 22:32:22,915|INFO|base.py:166] Scheduler started
-[2020-10-22 22:32:22,954|DEBUG|base.py:940] Looking for jobs to run
-[2020-10-22 22:32:22,954|DEBUG|base.py:1016] No jobs; waiting until a job is added
-[2020-10-22 22:34:31,273|INFO|base.py:166] Scheduler started
-[2020-10-22 22:34:31,325|DEBUG|base.py:940] Looking for jobs to run
-[2020-10-22 22:34:31,325|DEBUG|base.py:1016] No jobs; waiting until a job is added
-[2020-10-22 22:35:37,616|INFO|base.py:166] Scheduler started
-[2020-10-22 22:35:37,688|DEBUG|base.py:940] Looking for jobs to run
-[2020-10-22 22:35:37,688|DEBUG|base.py:1016] No jobs; waiting until a job is added
-[2020-10-22 22:41:10,890|INFO|base.py:166] Scheduler started
-[2020-10-22 22:41:10,960|DEBUG|base.py:940] Looking for jobs to run
-[2020-10-22 22:41:10,961|DEBUG|base.py:1016] No jobs; waiting until a job is added
-[2020-10-22 22:45:51,130|INFO|base.py:166] Scheduler started
-[2020-10-22 22:45:51,199|DEBUG|base.py:940] Looking for jobs to run
-[2020-10-22 22:45:51,199|DEBUG|base.py:1016] No jobs; waiting until a job is added
+[2020-10-23 00:45:27,302|INFO|base.py:166] Scheduler started
+[2020-10-23 00:45:34,783|DEBUG|base.py:940] Looking for jobs to run
+[2020-10-23 00:45:34,784|DEBUG|base.py:1016] No jobs; waiting until a job is added
+[2020-10-23 00:45:45,463|INFO|base.py:166] Scheduler started
+[2020-10-23 00:45:45,757|DEBUG|base.py:940] Looking for jobs to run
+[2020-10-23 00:45:45,758|DEBUG|base.py:1016] No jobs; waiting until a job is added
