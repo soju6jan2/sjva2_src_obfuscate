@@ -1,9 +1,9 @@
 class MyEvent:
-A=set
-s=ValueError
-f=len
+D=set
+a=ValueError
+u=len
  def __init__(self):
-  self.handlers=A()
+  self.handlers=D()
  def handle(self,handler):
   self.handlers.add(handler)
   return self
@@ -11,13 +11,13 @@ f=len
   try:
    self.handlers.remove(handler)
   except:
-   raise s("Handler is not handling this event, so cannot unhandle it.")
+   raise a("Handler is not handling this event, so cannot unhandle it.")
   return self
  def fire(self,*args,**kargs):
   for handler in self.handlers:
    handler(*args,**kargs)
  def getHandlerCount(self):
-  return f(self.handlers)
+  return u(self.handlers)
  __iadd__=handle
  __isub__=unhandle
  __call__=fire

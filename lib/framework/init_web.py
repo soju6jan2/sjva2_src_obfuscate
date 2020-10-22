@@ -1,5 +1,5 @@
 import re
-o=None
+H=None
 y=False
 from flask_login import current_user
 def get_menu(full_query):
@@ -8,18 +8,18 @@ def get_menu(full_query):
   return match.group('menu'),match.group('sub'),match.group('sub2')
  match=re.compile(r'\/(?P<menu>.*?)\/(?P<sub>.*?)($|\/|\?)').match(full_query)
  if match:
-  return match.group('menu'),match.group('sub'),o
+  return match.group('menu'),match.group('sub'),H
  match=re.compile(r'\/(?P<menu>.*?)($|\/|\?)').match(full_query)
  if match:
-  return match.group('menu'),o,o
- return 'home',o,o
+  return match.group('menu'),H,H
+ return 'home',H,H
 def get_theme():
  theme_list={'Default':56,'Cerulean':56,'Cosmo':54,'Cyborg':54,'Darkly':70,'Flatly':70,'Journal':56,'Litera':57,'Lumen':56,'Lux':88,'Materia':80,'Minty':56,'Pulse':75,'Sandstone':53,'Simplex':67,'Sketchy':56,'Slate':53,'Solar':56,'Spacelab':58,'Superhero':48,'United':56,'Yeti':54,}
  from system.model import ModelSetting as SystemModelSetting
  theme=SystemModelSetting.get('theme')
  return[theme,theme_list[theme]]
 def get_login_status():
- if current_user is o:
+ if current_user is H:
   return y
  return current_user.is_authenticated
 def get_web_title():

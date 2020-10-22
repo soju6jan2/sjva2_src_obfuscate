@@ -1,9 +1,9 @@
 version='0.2.16.30'
 y=False
-G=True
-f=len
-I=int
-e=Exception
+w=True
+u=len
+M=int
+r=Exception
 import os
 import sys
 path_app_root=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -52,17 +52,17 @@ try:
  app.config['config']={}
  logger.debug('======================================')
  logger.debug(sys.argv)
- app.config['config']['run_by_real']=G if sys.argv[0]=='sjva.py' else y
- app.config['config']['run_by_migration']=G if sys.argv[-2]=='db' else y
- app.config['config']['run_by_worker']=G if sys.argv[0].find('celery')!=-1 else y
- app.config['config']['run_by_init_db']=G if sys.argv[-1]=='init_db' else y
+ app.config['config']['run_by_real']=w if sys.argv[0]=='sjva.py' else y
+ app.config['config']['run_by_migration']=w if sys.argv[-2]=='db' else y
+ app.config['config']['run_by_worker']=w if sys.argv[0].find('celery')!=-1 else y
+ app.config['config']['run_by_init_db']=w if sys.argv[-1]=='init_db' else y
  if sys.version_info[0]==2:
   app.config['config']['pip']='pip'
-  app.config['config']['is_py2']=G
+  app.config['config']['is_py2']=w
   app.config['config']['is_py3']=y
  else:
   app.config['config']['is_py2']=y
-  app.config['config']['is_py3']=G
+  app.config['config']['is_py3']=w
   app.config['config']['pip']='pip3'
  pip_install()
  db=SQLAlchemy(app,session_options={"autoflush":y})
@@ -78,11 +78,11 @@ try:
  app.config['config']['is_debug']=y
  app.config['config']['repeat']=-1
  if app.config['config']['run_by_real']:
-  if f(sys.argv)>2:
-   app.config['config']['repeat']=I(sys.argv[2])
- if f(sys.argv)>3:
+  if u(sys.argv)>2:
+   app.config['config']['repeat']=M(sys.argv[2])
+ if u(sys.argv)>3:
   app.config['config']['is_debug']=(sys.argv[-1]=='debug')
- app.config['config']['use_celery']=G
+ app.config['config']['use_celery']=w
  for tmp in sys.argv:
   if tmp=='no_celery':
    app.config['config']['use_celery']=y
@@ -95,7 +95,7 @@ try:
  from system.model import ModelSetting as SystemModelSetting
  try:
   db.create_all()
- except e as e:
+ except r as e:
   logger.error('CRITICAL db.create_all()!!!')
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
@@ -106,7 +106,7 @@ try:
  app.config['config']['level']=tmp['level']
  app.config['config']['point']=tmp['point']
  system.plugin_load()
- flag_system_loading=G 
+ flag_system_loading=w 
  if app.config['config']['run_by_init_db']:
   logger.debug('================================================')
   logger.debug('Run by init db.. exit')
@@ -114,9 +114,9 @@ try:
  app.register_blueprint(system.blueprint)
  try:
   if SystemModelSetting.get('ddns').find('sjva-server.soju6jan.com')!=-1:
-   app.config['config']['is_sjva_server']=G
-   app.config['config']['is_server']=G
-   app.config['config']['is_admin']=G
+   app.config['config']['is_sjva_server']=w
+   app.config['config']['is_server']=w
+   app.config['config']['is_admin']=w
   else:
    app.config['config']['is_sjva_server']=y
    app.config['config']['is_server']=y
@@ -126,8 +126,8 @@ try:
   app.config['config']['is_sjva_server']=y
   app.config['config']['is_server']=y
  if app.config['config']['is_sjva_server']or app.config['config']['is_debug']or SystemModelSetting.get('ddns').find('sjva-dev.soju6jan.com')!=-1:
-  app.config['config']['server']=G
-  app.config['config']['is_admin']=G
+  app.config['config']['server']=w
+  app.config['config']['is_admin']=w
  else:
   app.config['config']['server']=y
   app.config['config']['is_admin']=y
@@ -173,7 +173,7 @@ try:
    app.config['config']['port']=9999
   logger.debug('PORT:%s',app.config['config']['port'])
  logger.debug('### LAST')
-except e as e:
+except r as e:
  logger.error('Exception:%s',e)
  logger.error(traceback.format_exc())
 from.init_route import*

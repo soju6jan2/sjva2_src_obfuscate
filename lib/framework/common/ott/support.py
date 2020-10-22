@@ -1,18 +1,18 @@
 import os
-V=object
-E=staticmethod
-O=None
-y=Exception
-A=int
-x=max
+y=object
+w=staticmethod
+h=None
+o=Exception
+f=int
+g=max
 import io
 import traceback
 import requests
 import re
 import json
 from framework import logger
-class OTTSupport(V):
- @E
+class OTTSupport(y):
+ @w
  def get_naver_url(target_url,quality):
   try:
    if target_url.startswith('SPORTS_'):
@@ -27,28 +27,28 @@ class OTTSupport(V):
    else:
     data=requests.get(target_url).text
     match=re.compile(r"sApiF:\s'(?P<url>.*?)',").search(data)
-    if match is not O:
+    if match is not h:
      json_url=match.group('url')
      data=requests.get(json_url).json()
-     url=O
+     url=h
      for tmp in data['streams']:
       if tmp['qualityId']==quality:
        url=tmp['url']
        break
    return url
-  except y as e:
+  except o as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
- @E
+ @w
  def get_kakao_url(target):
   try:
    tmp="https://tv.kakao.com/api/v5/ft/livelinks/impress?player=monet_html5&service=kakao_tv&section=kakao_tv&dteType=PC&profile=BASE&liveLinkId={liveid}&withRaw=true&contentType=HLS".format(liveid=target)
    url=requests.get(tmp).json()['raw']['videoLocation']['url']
    return url
-  except y as e:
+  except o as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
- @E
+ @w
  def get_kbs_url(source_id):
   try:
    tmp='http://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=%s'%source_id
@@ -57,27 +57,27 @@ class OTTSupport(V):
    idx2=data.find(');',idx1)-1
    data=data[idx1:idx2].replace('\\','')
    data=json.loads(data)
-   x=0
-   url=O
+   g=0
+   url=h
    for item in data['channel_item']:
     logger.debug(item)
-    tmp=A(item['bitrate'].replace('Kbps',''))
-    if tmp>x:
+    tmp=f(item['bitrate'].replace('Kbps',''))
+    if tmp>g:
      url=item['service_url']
-     x=tmp
+     g=tmp
    return url
-  except y as e:
+  except o as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
- @E
+ @w
  def get_sbs_url(source_id):
   try:
-   prefix='' if A(source_id[1:])<20 else 'virtual/'
+   prefix='' if f(source_id[1:])<20 else 'virtual/'
    tmp='http://apis.sbs.co.kr/play-api/1.0/onair/%schannel/%s?v_type=2&platform=pcweb&protocol=hls&ssl=N&jwt-token=%s&rnd=462'%(prefix,source_id,'')
    data=requests.get(tmp).json()
    url=data['onair']['source']['mediasource']['mediaurl']
    return url
-  except y as e:
+  except o as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,9 +1,9 @@
 import traceback
-C=object
-J=staticmethod
-o=False
-E=None
-d=True
+x=object
+b=staticmethod
+j=False
+p=None
+T=True
 W=Exception
 import os
 import json
@@ -14,13 +14,13 @@ from guessit import guessit
 from framework.common.torrent import logger
 from framework.common.daum import MovieSearch
 from system.model import ModelSetting as SystemModelSetting
-class ProcessMovie(C):
- @J
+class ProcessMovie(x):
+ @b
  def get_info_from_rss(f):
   try:
    logger.debug('INFO: [%s]',f)
    item={}
-   item['flag_move']=o
+   item['flag_move']=j
    item['name']=f
    item['guessit']=guessit(f)
    if 'language' in item['guessit']:
@@ -29,8 +29,8 @@ class ProcessMovie(C):
     item['guessit']['screen_size']='--'
    if 'source' not in item['guessit']:
     item['guessit']['source']='--'
-   item['search_name']=E
-   item['movie']=E
+   item['search_name']=p
+   item['movie']=p
    match=re.compile(r'^(?P<name>.*?)[\s\.\[\_\(]\d{4}').match(item['name'])
    if match:
     item['search_name']=match.group('name').replace('.',' ').strip()
@@ -53,17 +53,17 @@ class ProcessMovie(C):
        item['target']='vod'
       else:
        item['target']='sub_x'
-     item['flag_move']=d
+     item['flag_move']=T
     else:
      logger.debug('NO META!!!!!!!!!!')
-     if item['is_include_kor']==o:
+     if item['is_include_kor']==j:
       logger.debug('imdb search %s %s ',item['search_name'].lower(),item['guessit']['year'])
       movie=MovieSearch.search_imdb(item['search_name'].lower(),item['guessit']['year'])
-      if movie is not E:
+      if movie is not p:
        logger.debug('IMDB TITLE:[%s][%s]',movie['title'],movie['year'])
        item['movie']=movie
        item['target']='imdb'
-       item['flag_move']=d
+       item['flag_move']=T
    item['guessit']=''
    return item
   except W as e:

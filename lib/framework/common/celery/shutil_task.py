@@ -1,18 +1,18 @@
 import os
-J=False
-H=Exception
+W=False
+w=Exception
 G=True
 import traceback
 import shutil
 from framework import app,celery,logger
-def move(source_path,target_path,run_in_celery=J):
+def move(source_path,target_path,run_in_celery=W):
  try:
-  if app.config['config']['use_celery']and run_in_celery==J:
+  if app.config['config']['use_celery']and run_in_celery==W:
    result=_move_task.apply_async((source_path,target_path))
    return result.get()
   else:
    return _move_task(source_path,target_path)
- except H as e:
+ except w as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
   return _move_task(source_path,target_path)
@@ -23,18 +23,18 @@ def _move_task(source_path,target_path):
   shutil.move(source_path,target_path)
   logger.debug('_move_task end')
   return G
- except H as e:
+ except w as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
-  return J
-def move_exist_remove(source_path,target_path,run_in_celery=J):
+  return W
+def move_exist_remove(source_path,target_path,run_in_celery=W):
  try:
-  if app.config['config']['use_celery']and run_in_celery==J:
+  if app.config['config']['use_celery']and run_in_celery==W:
    result=_move_exist_remove_task.apply_async((source_path,target_path))
    return result.get()
   else:
    return _move_exist_remove_task(source_path,target_path)
- except H as e:
+ except w as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
   return _move_exist_remove_task(source_path,target_path)
@@ -49,10 +49,10 @@ def _move_exist_remove_task(source_path,target_path):
   shutil.move(source_path,target_path)
   logger.debug('_move_exist_remove end')
   return G
- except H as e:
+ except w as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
-  return J
+  return W
 def copytree(source_path,target_path):
  try:
   if app.config['config']['use_celery']:
@@ -60,7 +60,7 @@ def copytree(source_path,target_path):
    return result.get()
   else:
    return _copytree_task(source_path,target_path)
- except H as e:
+ except w as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
   return _copytree_task(source_path,target_path)
@@ -69,10 +69,10 @@ def _copytree_task(source_path,target_path):
  try:
   shutil.copytree(source_path,target_path)
   return G
- except H as e:
+ except w as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
-  return J
+  return W
 def copy(source_path,target_path):
  try:
   if app.config['config']['use_celery']:
@@ -80,7 +80,7 @@ def copy(source_path,target_path):
    return result.get()
   else:
    return _copy_task(source_path,target_path)
- except H as e:
+ except w as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
   return _copy_task(source_path,target_path)
@@ -89,10 +89,10 @@ def _copy_task(source_path,target_path):
  try:
   shutil.copy(source_path,target_path)
   return G
- except H as e:
+ except w as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
-  return J
+  return W
 def rmtree(source_path):
  try:
   if app.config['config']['use_celery']:
@@ -100,7 +100,7 @@ def rmtree(source_path):
    return result.get()
   else:
    return _rmtree_task(source_path)
- except H as e:
+ except w as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
   return _rmtree_task(source_path)
@@ -109,10 +109,10 @@ def _rmtree_task(source_path):
  try:
   shutil.rmtree(source_path)
   return G
- except H as e:
+ except w as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
-  return J 
+  return W 
 def remove(remove_path):
  try:
   logger.debug('CELERY os.remove start : %s',remove_path)
@@ -121,7 +121,7 @@ def remove(remove_path):
    return result.get()
   else:
    return _remove_task(remove_path)
- except H as e:
+ except w as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
   return _remove_task(remove_path)
@@ -132,8 +132,8 @@ def _remove_task(remove_path):
  try:
   os.remove(remove_path)
   return G
- except H as e:
+ except w as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
-  return J 
+  return W 
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

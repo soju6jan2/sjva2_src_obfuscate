@@ -1,9 +1,9 @@
 import traceback
 y=False
-P=object
-o=None
-G=True
-e=Exception
+L=object
+H=None
+w=True
+r=Exception
 from pytz import timezone
 from datetime import datetime,timedelta
 from random import randint
@@ -21,9 +21,9 @@ job_defaults={'coalesce':y,'max_instances':1}
 from framework.logger import get_logger
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Scheduler(P):
+class Scheduler(L):
  job_list=[]
- first_run_check_thread=o
+ first_run_check_thread=H
  def __init__(self):
   self.sched=GeventScheduler(timezone='Asia/Seoul')
   self.sched.start()
@@ -36,13 +36,13 @@ class Scheduler(P):
  def first_run_check_thread_function(self):
   logger.warning('XX first_run_check_thread_function')
   try:
-   flag_exit=G
+   flag_exit=w
    for job_instance in self.job_list:
     if not job_instance.run:
      continue
     if job_instance.count==0 and not job_instance.is_running and job_instance.is_interval:
      job=self.sched.get_job(job_instance.job_id)
-     if job is not o:
+     if job is not H:
       logger.warning('job_instance : %s',job_instance.plugin)
       logger.warning('XX job re-sched:%s',job)
       flag_exit=y
@@ -53,7 +53,7 @@ class Scheduler(P):
    if flag_exit:
     self.remove_job("scheduler_check")
    logger.warning('first_run_check_thread_function end!!')
-  except e as e:
+  except r as e:
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
  def shutdown(self):
@@ -72,16 +72,16 @@ class Scheduler(P):
             job = self.sched.get_job(job_id) 
             job.modify(next_run_time=datetime.now(timezone('Asia/Seoul')) + timedelta(seconds=5))
     """ 
- def add_job_instance(self,job_instance,run=G):
+ def add_job_instance(self,job_instance,run=w):
   from framework import app
   if app.config['config']['run_by_real']and app.config['config']['auth_status']:
    if not self.is_include(job_instance.job_id):
     job_instance.run=run
     Scheduler.job_list.append(job_instance)
     if job_instance.is_interval:
-     self.sched.add_job(job_instance.job_function,'interval',minutes=job_instance.interval,seconds=job_instance.interval_seconds,id=job_instance.job_id,args=(o))
+     self.sched.add_job(job_instance.job_function,'interval',minutes=job_instance.interval,seconds=job_instance.interval_seconds,id=job_instance.job_id,args=(H))
     elif job_instance.is_cron:
-     self.sched.add_job(job_instance.job_function,CronTrigger.from_crontab(job_instance.interval),id=job_instance.job_id,args=(o))
+     self.sched.add_job(job_instance.job_function,CronTrigger.from_crontab(job_instance.interval),id=job_instance.job_id,args=(H))
     job=self.sched.get_job(job_instance.job_id)
     if run and job_instance.is_interval:
      tmp=randint(5,20)
@@ -93,7 +93,7 @@ class Scheduler(P):
   job.modify(next_run_time=datetime.now(timezone('Asia/Seoul'))+timedelta(seconds=tmp))
  def is_include(self,job_id):
   job=self.sched.get_job(job_id)
-  return(job is not o)
+  return(job is not H)
  def remove_job(self,job_id):
   try:
    if self.is_include(job_id):
@@ -102,7 +102,7 @@ class Scheduler(P):
     if not job.is_running:
      self.remove_job_instance(job_id)
     logger.debug('remove job_id:%s',job_id)
-   return G
+   return w
   except JobLookupError as err:
    logger.debug("fail to remove Scheduler: {err}".format(err=err))
    logger.debug(traceback.format_exc())
@@ -113,7 +113,7 @@ class Scheduler(P):
     return job
  def is_running(self,job_id):
   job=self.get_job_instance(job_id)
-  if job is o:
+  if job is H:
    return y
   else:
    return job.is_running
@@ -146,7 +146,7 @@ class Scheduler(P):
    tmp+='%s초'%(remain%60)
    entity['remain_time']=tmp
    job=self.get_job_instance(j.id)
-   if job is not o:
+   if job is not H:
     entity['count']=job.count
     entity['plugin']=job.plugin
     if job.is_cron:
@@ -158,7 +158,7 @@ class Scheduler(P):
      entity['interval']='%s분 %s초'%(job.interval,job.interval_seconds)
     entity['is_running']=job.is_running
     entity['description']=job.description
-    entity['running_timedelta']=job.running_timedelta.seconds if job.running_timedelta is not o else '-'
+    entity['running_timedelta']=job.running_timedelta.seconds if job.running_timedelta is not H else '-'
     entity['make_time']=job.make_time.strftime('%m-%d %H:%M:%S')
     entity['run']=job.run
    else:
@@ -169,7 +169,7 @@ class Scheduler(P):
     entity['description']=''
     entity['running_timedelta']=''
     entity['make_time']=''
-    entity['run']=G
+    entity['run']=w
    ret.append(entity)
   return ret
 """

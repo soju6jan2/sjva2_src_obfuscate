@@ -1,10 +1,10 @@
 import os
-G=True
+w=True
 y=False
-e=Exception
-E=sorted
-d=getattr
-f=len
+r=Exception
+K=sorted
+P=getattr
+u=len
 import sys
 import traceback
 from framework import app,db,logger,plugin_instance_list,plugin_menu
@@ -12,15 +12,15 @@ import system
 def is_include_menu(plugin_name):
  try:
   if plugin_name not in['daum_tv','ffmpeg','fileprocess_movie','gdrive_scan','ktv','plex','rclone']:
-   return G
+   return w
   if system.SystemLogic.get_setting_value('use_plugin_%s'%plugin_name)=='True':
-   return G
+   return w
   elif system.SystemLogic.get_setting_value('use_plugin_%s'%plugin_name)=='False':
    return y
- except e as e:
+ except r as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc()) 
- return G
+ return w
 def plugin_init():
  try:
   if not app.config['config']['auth_status']:
@@ -48,7 +48,7 @@ def plugin_init():
       add_plugin_list.append(t)
     plugins=plugins+add_plugin_list
     pass_include=pass_include+add_plugin_list
-   except e as e:
+   except r as e:
     logger.error('Exception:%s',e)
     logger.error(traceback.format_exc())
    try:
@@ -65,10 +65,10 @@ def plugin_init():
          break
       plugins=plugins+add_plugin_list
       pass_include=pass_include+add_plugin_list
-   except e as e:
+   except r as e:
     logger.error('Exception:%s',e)
     logger.error(traceback.format_exc())
-   plugins=E(plugins)
+   plugins=K(plugins)
   """
         try: plugins.remove('epg')
         except: pass
@@ -85,7 +85,7 @@ def plugin_init():
    try:
     mod=__import__('%s'%(plugin_name),fromlist=[])
     try:
-     mod_plugin_info=d(mod,'plugin_info') 
+     mod_plugin_info=P(mod,'plugin_info') 
      if 'policy_point' in mod_plugin_info:
       if mod_plugin_info['policy_point']>app.config['config']['point']:
        continue
@@ -94,19 +94,19 @@ def plugin_init():
        continue
     except:
      logger.debug('no plugin_info : %s',plugin_name)
-    mod_blue_print=d(mod,'blueprint')
+    mod_blue_print=P(mod,'blueprint')
     if mod_blue_print:
      if plugin_name in pass_include or is_include_menu(plugin_name):
       app.register_blueprint(mod_blue_print)
     plugin_instance_list[plugin_name]=mod
-   except e as e:
+   except r as e:
     logger.error('Exception:%s',e)
     logger.error(traceback.format_exc())
     logger.debug('no blueprint')
   if not app.config['config']['run_by_worker']:
    try:
     db.create_all()
-   except e as e:
+   except r as e:
     logger.error('Exception:%s',e)
     logger.error(traceback.format_exc())
     logger.debug('db.create_all error')
@@ -115,31 +115,31 @@ def plugin_init():
   for key,mod in plugin_instance_list.items():
    try:
     logger.debug('### plugin_load start : %s',key)
-    mod_plugin_load=d(mod,'plugin_load')
+    mod_plugin_load=P(mod,'plugin_load')
     if mod_plugin_load and(key in pass_include or is_include_menu(key)):
      mod.plugin_load()
     logger.debug('### plugin_load return : %s',key)
-   except e as e:
+   except r as e:
     logger.error('Exception:%s',e)
     logger.error(traceback.format_exc())
     logger.debug('no init_scheduler')
    try:
-    mod_menu=d(mod,'menu')
+    mod_menu=P(mod,'menu')
     if mod_menu and(key in pass_include or is_include_menu(key)):
      plugin_menu.append(mod_menu)
-   except e as e:
+   except r as e:
     logger.debug('no menu')
-  logger.debug('Plugin Log completed.. : %s ',f(plugin_instance_list))
- except e as e:
+  logger.debug('Plugin Log completed.. : %s ',u(plugin_instance_list))
+ except r as e:
   logger.error('Exception:%s',e)
   logger.error(traceback.format_exc())
 def plugin_unload():
  for key,mod in plugin_instance_list.items():
   try:
-   mod_plugin_unload=d(mod,'plugin_unload')
+   mod_plugin_unload=P(mod,'plugin_unload')
    if mod_plugin_unload:
     mod.plugin_unload()
-  except e as e:
+  except r as e:
    logger.error('module:%s',key)
    logger.error('Exception:%s',e)
    logger.error(traceback.format_exc())
