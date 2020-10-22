@@ -1,12 +1,12 @@
 import traceback
 Y=staticmethod
-b=True
-K=False
-J=None
-t=str
-E=Exception
-F=len
-j=type
+o=True
+i=False
+m=None
+c=str
+d=Exception
+x=len
+G=type
 import os
 import json
 import time
@@ -20,10 +20,10 @@ class TorrentProcess:
  @Y
  def is_broadcast_member():
   if SystemModelSetting.get('ddns').find('https://sjva-server.soju6jan.com')!=-1:
-   return b
-  return K
+   return o
+  return i
  @Y
- def server_process(save_list,category=J):
+ def server_process(save_list,category=m):
   if TorrentProcess.is_broadcast_member():
    logger.debug(category)
    if category=='KTV':
@@ -36,7 +36,7 @@ class TorrentProcess:
  def server_process_ktv(save_list):
   for item in save_list:
    item=item.as_dict()
-   if item['torrent_info']is not J:
+   if item['torrent_info']is not m:
     try:
      for info in item['torrent_info']:
       logger.debug('Magnet : %s',info['magnet_uri'])
@@ -55,11 +55,11 @@ class TorrentProcess:
         f['ktv']['number']=entity.filename_no
         f['ktv']['quality']=entity.filename_quality
         f['ktv']['release']=entity.filename_release
-        if entity.daum_info is not J:
+        if entity.daum_info is not m:
          daum=entity.daum_info.as_dict()
-         f['daum']={'daum_id':t(daum['daum_id']),'poster_url':daum['poster_url'],'genre':daum['genre'],'title':daum['title'],}
+         f['daum']={'daum_id':c(daum['daum_id']),'poster_url':daum['poster_url'],'genre':daum['genre'],'title':daum['title'],}
         else:
-         f['daum']=J
+         f['daum']=m
         info['video_count']+=1
       if info['video_count']==1:
        ret={}
@@ -84,7 +84,7 @@ class TorrentProcess:
        from framework.common.telegram_bot import TelegramBot
        TelegramBot.super_send_message(text)
        time.sleep(0.5)
-    except E as exception:
+    except d as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc()) 
  @Y
@@ -98,7 +98,7 @@ class TorrentProcess:
      ext=os.path.splitext(tmp[1])[1].lower()
      if ext in['.smi','.srt','.ass']:
       sub.append(tmp)
-   if item['torrent_info']is not J:
+   if item['torrent_info']is not m:
     try:
      for info in item['torrent_info']:
       fileinfo=TorrentProcess.get_max_size_fileinfo(info)
@@ -112,7 +112,7 @@ class TorrentProcess:
       torrent_info['dirname']=fileinfo['dirname']
       torrent_info['url']=item['url']
       movie_info={}
-      if movie['movie']is not J:
+      if movie['movie']is not m:
        movie_info['title']=movie['movie']['title']
        movie_info['target']=movie['target'].replace('sub_x','sub')
        movie_info['kor']=movie['is_include_kor']
@@ -129,12 +129,12 @@ class TorrentProcess:
         movie_info['daum']['rate']=movie['movie']['more']['rate']
         movie_info['daum']['genre']=movie['movie']['more']['genre']
       else:
-       movie_info=J
+       movie_info=m
       ret={}
       ret['server_id']=item['id']
-      if F(sub)>0:
+      if x(sub)>0:
        ret['s']=sub
-      if movie_info is not J:
+      if movie_info is not m:
        ret['m']=movie_info
       ret['t']=torrent_info
       lists.append(ret)
@@ -145,7 +145,7 @@ class TorrentProcess:
       from framework.common.telegram_bot import TelegramBot
       TelegramBot.super_send_message(text)
       time.sleep(0.5)
-    except E as exception:
+    except d as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc()) 
   return lists
@@ -158,15 +158,15 @@ class TorrentProcess:
    av_type='censored' if av_type in['NONE','torrent_ymav','censored_tor']else av_type
    av_type='uncensored' if av_type in['torrent_nmav','uncensored_tor']else av_type
    av_type='western' if av_type in['torrent_amav','white_tor']else av_type
-   if item['torrent_info']is not J:
+   if item['torrent_info']is not m:
     try:
      for info in item['torrent_info']:
       fileinfo=TorrentProcess.get_max_size_fileinfo(info)
       av=ProcessAV.process(fileinfo['filename'],av_type)
-      if av is J:
+      if av is m:
        if av_type=='western' and fileinfo['dirname']!='':
         av=ProcessAV.process(fileinfo['dirname'],av_type)
-      if av is J:
+      if av is m:
        logger.debug(u'AV 검색 실패')
        logger.debug(fileinfo['filename'])
        logger.debug(av_type)
@@ -179,8 +179,8 @@ class TorrentProcess:
       torrent_info['filename']=fileinfo['filename']
       torrent_info['dirname']=fileinfo['dirname']
       torrent_info['url']=item['url']
-      av_info=J
-      if av is not J:
+      av_info=m
+      if av is not m:
        av_info={}
        av_info['meta']=av['type']
        av_info['code_show']=av['data']['update']['code_show']
@@ -198,7 +198,7 @@ class TorrentProcess:
        logger.debug(fileinfo['filename'])
       ret={'av_type':av_type}
       ret['server_id']=item['id']
-      if av_info is not J:
+      if av_info is not m:
        ret['av']=av_info
       ret['t']=torrent_info
       lists.append(ret)
@@ -209,7 +209,7 @@ class TorrentProcess:
       from framework.common.telegram_bot import TelegramBot
       TelegramBot.super_send_message(text)
       time.sleep(0.5)
-    except E as exception:
+    except d as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc()) 
   return lists
@@ -224,9 +224,9 @@ class TorrentProcess:
    elif file_info['ext'].lower()in['.srt','.smi','.ass']:
     file_info['type']='sub'
    else:
-    file_info['type']=J
+    file_info['type']=m
    return file_info
-  except E as exception:
+  except d as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  @Y
@@ -234,22 +234,22 @@ class TorrentProcess:
   try:
    ret={}
    max_size=-1
-   max_filename=J
+   max_filename=m
    for t in torrent_info['files']:
     if t['size']>max_size:
      max_size=t['size']
-     max_filename=t(t['path'])
+     max_filename=c(t['path'])
    t=max_filename.split('/')
    ret['filename']=t[-1]
-   if F(t)==1:
+   if x(t)==1:
     ret['dirname']=''
-   elif F(t)==2:
+   elif x(t)==2:
     ret['dirname']=t[0]
    else:
     ret['dirname']=max_filename.replace('/%s'%ret['filename'],'')
    ret['max_size']=max_size
    return ret
-  except E as exception:
+  except d as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  @Y
@@ -265,16 +265,16 @@ class TorrentProcess:
     TorrentProcess.append('movie',entity)
    elif package_name=='bot_downloader_av':
     TorrentProcess.append('av',entity)
-  except E as exception:
+  except d as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  @Y
- def append(j,data):
+ def append(G,data):
   try:
    import requests
    import json
-   response=requests.post("https://sjva.me/sjva/torrent_%s.php"%j,data={'data':json.dumps(data.as_dict())})
-  except E as exception:
+   response=requests.post("https://sjva.me/sjva/torrent_%s.php"%G,data={'data':json.dumps(data.as_dict())})
+  except d as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

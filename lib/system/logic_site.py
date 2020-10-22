@@ -1,12 +1,12 @@
 import os
-s=object
-O=None
-Q=staticmethod
-B=True
-t=Exception
-W=False
-u=str
-j=len
+a=object
+L=None
+q=staticmethod
+t=True
+B=Exception
+C=False
+y=str
+h=len
 import traceback
 import logging
 import platform
@@ -17,9 +17,9 @@ from framework import path_app_root,path_data,socketio,scheduler
 from framework.job import Job
 from.plugin import logger,package_name
 from.model import ModelSetting
-class SystemLogicSite(s):
- daum_cookie=O
- @Q
+class SystemLogicSite(a):
+ daum_cookie=L
+ @q
  def process_ajax(sub,req):
   try:
    ret={}
@@ -28,12 +28,12 @@ class SystemLogicSite(s):
     ModelSetting.set('site_daum_test',site_daum_test)
     from framework.common.daum import DaumTV,MovieSearch
     ret['TV']=DaumTV.get_daum_tv_info(site_daum_test)
-    if ret['TV']is not O and 'episode_list' in ret['TV']:
+    if ret['TV']is not L and 'episode_list' in ret['TV']:
      del ret['TV']['episode_list']
     ret['MOVIE']=MovieSearch.search_movie(site_daum_test,-1)
     return jsonify(ret)
    elif sub=='site_daum_cookie_refresh':
-    ret=SystemLogicSite.get_daum_cookie_by_selenium(notify=B)
+    ret=SystemLogicSite.get_daum_cookie_by_selenium(notify=t)
     return jsonify(ret)
    elif sub=='scheduler':
     go=req.form['scheduler']
@@ -42,85 +42,85 @@ class SystemLogicSite(s):
     else:
      SystemLogicSite.scheduler_stop()
     return jsonify(go)
-  except t as exception:
+  except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   ret['ret']=W
-   ret['log']=u(traceback.format_exc())
+   ret['ret']=C
+   ret['log']=y(traceback.format_exc())
   return jsonify(ret)
- @Q
+ @q
  def process_api(sub,req):
   ret={}
   try:
    if sub=='daum_cookie':
     return ModelSetting.get('site_daum_cookie')
-  except t as exception:
+  except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    ret['ret']='exception'
-   ret['data']=u(exception)
+   ret['data']=y(exception)
   return jsonify(ret)
- @Q
+ @q
  def plugin_load():
   return
-  SystemLogicSite.get_daum_cookies(force=B)
+  SystemLogicSite.get_daum_cookies(force=t)
   if ModelSetting.get_bool('site_daum_auto_start'):
    SystemLogicSite.scheduler_start()
- @Q
+ @q
  def scheduler_start():
-  job=Job(package_name,'%s_site'%package_name,ModelSetting.get('site_daum_interval'),SystemLogicSite.scheduler_function,u"Daum cookie refresh",W)
+  job=Job(package_name,'%s_site'%package_name,ModelSetting.get('site_daum_interval'),SystemLogicSite.scheduler_function,u"Daum cookie refresh",C)
   scheduler.add_job_instance(job)
- @Q
+ @q
  def scheduler_stop():
   scheduler.remove_job('%s_site'%package_name)
- @Q
+ @q
  def scheduler_function():
   try:
    data=SystemLogicSite.get_daum_cookie_by_selenium()
    if data['ret']:
     ModelSetting.set('site_daum_cookie',data['data'])
-    SystemLogicSite.get_daum_cookies(force=B)
-  except t as exception:
+    SystemLogicSite.get_daum_cookies(force=t)
+  except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @Q 
- def get_daum_cookie_by_selenium(notify=W):
+ @q 
+ def get_daum_cookie_by_selenium(notify=C):
   try:
    ret={}
-   ret['ret']=W
+   ret['ret']=C
    from.logic_selenium import SystemLogicSelenium
    if notify:
     data={'type':'success','msg':u'<strong>사이트 접속중입니다.</strong>'}
-    socketio.emit("notify",data,namespace='/framework',broadcast=B) 
+    socketio.emit("notify",data,namespace='/framework',broadcast=t) 
    SystemLogicSelenium.get_pagesoruce_by_selenium('https://www.daum.net','//*[@id="daumFoot"]/div/a[1]/img')
    if notify:
     data={'type':'success','msg':u'쿠키 확인'}
-    socketio.emit("notify",data,namespace='/framework',broadcast=B) 
+    socketio.emit("notify",data,namespace='/framework',broadcast=t) 
    driver=SystemLogicSelenium.get_driver()
    cookies=driver.get_cookies()
    for tmp in cookies:
     if tmp['name']=='TIARA':
-     ret['ret']=B
+     ret['ret']=t
      ret['data']='TIARA=%s'%tmp['value']
      return ret
-  except t as exception:
+  except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
   return ret
- @Q
- def get_daum_cookies(force=W):
+ @q
+ def get_daum_cookies(force=C):
   try:
-   if SystemLogicSite.daum_cookie is O or force:
+   if SystemLogicSite.daum_cookie is L or force:
     ret={}
     tmp=ModelSetting.get('site_daum_cookie')
     tmps=tmp.split(';')
     for t in tmps:
      t2=t.split('=')
-     if j(t2)==2:
+     if h(t2)==2:
       ret[t2[0]]=t2[1]
     SystemLogicSite.daum_cookie=ret
    return SystemLogicSite.daum_cookie
-  except t as exception:
+  except B as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return{'TIARA':'gaXEIPluo-wWAFlwZN6l8gN3yzhkoo_piP.Kymhuy.6QBt4Q6.cRtxbKDaWpWajcyteRHzrlTVpJRxLjwLoMvyYLVi_7xJ1L'}

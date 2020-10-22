@@ -1,16 +1,16 @@
 import os
-X=True
-b=object
-L=staticmethod
-v=None
-T=list
-i=sorted
-N=Exception
-z=len
-a=int
-w=False
-n=range
-c=str
+x=True
+F=object
+v=staticmethod
+R=None
+l=list
+k=sorted
+I=Exception
+m=len
+C=int
+V=False
+S=range
+t=str
 from datetime import datetime,timedelta
 import traceback
 import subprocess
@@ -25,195 +25,195 @@ from system.logic_command2 import SystemLogicCommand2
 from.import logger,Vars
 REMOTE_NAME_SJVA_SHARE_TEMP='SJVA_SHARE_TEMP' 
 def emit(msg):
- socketio.emit("command_modal_add_text",msg,namespace='/framework',broadcast=X)
-class RcloneTool2(b):
- @L
- def lsjson(rclone_path,config_path,remote_path,option=v):
+ socketio.emit("command_modal_add_text",msg,namespace='/framework',broadcast=x)
+class RcloneTool2(F):
+ @v
+ def lsjson(rclone_path,config_path,remote_path,option=R):
   try:
    from system.logic_command import SystemLogicCommand
    command=[rclone_path,'--config',config_path,'lsjson',remote_path]
-   if option is not v:
+   if option is not R:
     command+=option
    ret=SystemLogicCommand.execute_command_return(command,format='json')
-   if ret is not v:
-    ret=T(i(ret,key=lambda k:k['Path']))
+   if ret is not R:
+    ret=l(k(ret,key=lambda k:k['Path']))
    return ret
-  except N as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
- def size(rclone_path,config_path,remote_path,option=v):
+ @v
+ def size(rclone_path,config_path,remote_path,option=R):
   try:
    from system.logic_command import SystemLogicCommand
    command=[rclone_path,'--config',config_path,'size',remote_path,'--json']
-   if option is not v:
+   if option is not R:
     command+=option
    ret=SystemLogicCommand.execute_command_return(command,format='json')
    return ret
-  except N as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
- def rmdir(rclone_path,config_path,remote_path,option=v):
+ @v
+ def rmdir(rclone_path,config_path,remote_path,option=R):
   try:
    from system.logic_command import SystemLogicCommand
    command=[rclone_path,'--config',config_path,'rmdir',remote_path,'--drive-use-trash=false','-vv']
-   if option is not v:
+   if option is not R:
     command+=option
    logger.debug('RMDIR:%s',' '.join(command))
    ret=SystemLogicCommand.execute_command_return(command)
    return ret
-  except N as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
- def purge(rclone_path,config_path,remote_path,option=v):
+ @v
+ def purge(rclone_path,config_path,remote_path,option=R):
   try:
    from system.logic_command import SystemLogicCommand
    command=[rclone_path,'--config',config_path,'purge',remote_path,'--drive-use-trash=false','-vv']
-   if option is not v:
+   if option is not R:
     command+=option
    logger.debug('PURGE:%s',' '.join(command))
-   ret=SystemLogicCommand.execute_command_return(command,force_log=X)
+   ret=SystemLogicCommand.execute_command_return(command,force_log=x)
    logger.debug(ret)
    return ret
-  except N as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
- def mkdir(rclone_path,config_path,remote_path,option=v):
+ @v
+ def mkdir(rclone_path,config_path,remote_path,option=R):
   try:
    from system.logic_command import SystemLogicCommand
    command=[rclone_path,'--config',config_path,'mkdir',remote_path]
-   if option is not v:
+   if option is not R:
     command+=option
    logger.debug('MKDIR:%s',' '.join(command))
    ret=SystemLogicCommand.execute_command_return(command)
    return ret
-  except N as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
- def getid(rclone_path,config_path,remote_path,option=v):
+ @v
+ def getid(rclone_path,config_path,remote_path,option=R):
   try:
    from system.logic_command import SystemLogicCommand
    command=[rclone_path,'--config',config_path,'backend','getid',remote_path]
-   if option is not v:
+   if option is not R:
     command+=option
    ret=SystemLogicCommand.execute_command_return(command).strip()
    logger.debug('GETID : %s\n%s',' '.join(command),ret)
-   if ret is not v and(z(ret.split(' '))>1 or ret==''):
-    ret=v
+   if ret is not R and(m(ret.split(' '))>1 or ret==''):
+    ret=R
    return ret
-  except N as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
- def moveto(rclone_path,config_path,remote_path,remote_path2,option=v):
+ @v
+ def moveto(rclone_path,config_path,remote_path,remote_path2,option=R):
   try:
    from system.logic_command import SystemLogicCommand
    command=[rclone_path,'--config',config_path,'moveto',remote_path,remote_path2]
-   if option is not v:
+   if option is not R:
     command+=option
    logger.debug('MOVETO : %s',' '.join(command))
    ret=SystemLogicCommand.execute_command_return(command).strip()
    return ret
-  except N as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
+ @v
  def get_datetime(item):
   ret=datetime.strptime(item['ModTime'],'%Y-%m-%dT%H:%M:%S.%fZ')
   ret=ret+timedelta(hours=9)
   return ret
- @L
+ @v
  def get_datetime_diff(item):
   d=RcloneTool2.get_datetime(item)
   delta=datetime.now()-d
   seconds=delta.total_seconds()
-  return(a)(seconds/60)
- @L
+  return(C)(seconds/60)
+ @v
  def can_use_share(rclone_path,config_path,remote_path):
   try:
    size_data=RcloneTool2.size(rclone_path,config_path,'%s:{1vgB9BQaDjjKDa04k6st7po7HUqGeYY5o}'%remote_path.split(':')[0])
    if size_data['count']==1 and size_data['bytes']==7:
-    return X
-  except N as exception:
+    return x
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return w
- @L
+  return V
+ @v
  def can_use_relay(rclone_path,config_path,remote_path):
   try:
    folderid=RcloneTool2.getid(rclone_path,config_path,remote_path)
    config_path=os.path.join(path_app_root,'lib','framework','common','share','tool.pyo')
    tmp=RcloneTool2.lsjson(rclone_path,config_path,'remote_test:{%s}'%folderid)
-   if tmp is not v:
-    return X
-  except N as exception:
+   if tmp is not R:
+    return x
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return w
- @L
- def do_user_upload(rclone_path,config_path,remote_path,folder_name,upload_folderid,board_type,category_type,show_modal=X,is_move=w):
+  return V
+ @v
+ def do_user_upload(rclone_path,config_path,remote_path,folder_name,upload_folderid,board_type,category_type,show_modal=x,is_move=V):
   try:
-   ret={'completed':w,'folderid':'','lsjson':v}
+   ret={'completed':V,'folderid':'','lsjson':R}
    gdrive_remote=remote_path.split(':')[0]
    server_remote='{gdrive_remote}:{{{upload_folderid}}}'.format(gdrive_remote=gdrive_remote,upload_folderid=upload_folderid)
-   socketio.emit("command_modal_clear",v,namespace='/framework',broadcast=X)
-   socketio.emit("command_modal_show",'업로드',namespace='/framework',broadcast=X)
-   socketio.emit("command_modal_add_text",'잠시만 기다리세요.\n\n',namespace='/framework',broadcast=X)
-   socketio.emit("command_modal_add_text",'1. 업로드 가능 테스트.\n',namespace='/framework',broadcast=X)
+   socketio.emit("command_modal_clear",R,namespace='/framework',broadcast=x)
+   socketio.emit("command_modal_show",'업로드',namespace='/framework',broadcast=x)
+   socketio.emit("command_modal_add_text",'잠시만 기다리세요.\n\n',namespace='/framework',broadcast=x)
+   socketio.emit("command_modal_add_text",'1. 업로드 가능 테스트.\n',namespace='/framework',broadcast=x)
    can_use_share_flag=RcloneTool2.can_use_share(rclone_path,config_path,remote_path)
    if can_use_share_flag:
-    socketio.emit("command_modal_add_text",'업로드 가능합니다.\n\n',namespace='/framework',broadcast=X)
+    socketio.emit("command_modal_add_text",'업로드 가능합니다.\n\n',namespace='/framework',broadcast=x)
    else:
-    socketio.emit("command_modal_add_text",'업로드 불가능합니다. 구글 그룹스에 가입하세요.\n\n',namespace='/framework',broadcast=X)
+    socketio.emit("command_modal_add_text",'업로드 불가능합니다. 구글 그룹스에 가입하세요.\n\n',namespace='/framework',broadcast=x)
     return ret
-   socketio.emit("command_modal_add_text",'2. 컨텐츠 크기 및 파일목록.\n',namespace='/framework',broadcast=X)
+   socketio.emit("command_modal_add_text",'2. 컨텐츠 크기 및 파일목록.\n',namespace='/framework',broadcast=x)
    ret['lsjson']=RcloneTool2.lsjson(rclone_path,config_path,remote_path,option=['-R','--files-only'])
    ret['size']=RcloneTool2.size(rclone_path,config_path,remote_path)
    emit('파일수 : {}\n파일크기 : {}\n\n'.format(ret['size']['count'],ret['size']['bytes']))
-   socketio.emit("command_modal_add_text",'3. 공유드라이브 폴더 생성\n',namespace='/framework',broadcast=X)
+   socketio.emit("command_modal_add_text",'3. 공유드라이브 폴더 생성\n',namespace='/framework',broadcast=x)
    tmp_foldername="{board_type}^{category_type}^{count}^{bytes}^{folder_name}^{user_id}".format(board_type=board_type,category_type=category_type,count=ret['size']['count'],bytes=ret['size']['bytes'],folder_name=folder_name,user_id=SystemModelSetting.get('sjva_me_user_id'))
    upload_remote='{server_remote}/{tmp_foldername}/{folder_name}'.format(server_remote=server_remote,tmp_foldername=tmp_foldername,folder_name=folder_name)
    RcloneTool2.mkdir(rclone_path,config_path,upload_remote)
    emit('remote path : {}\n\n'.format(upload_remote))
-   socketio.emit("command_modal_add_text",'4. 생성된 폴더의 ID 정보\n',namespace='/framework',broadcast=X)
-   for i in n(1,11):
+   socketio.emit("command_modal_add_text",'4. 생성된 폴더의 ID 정보\n',namespace='/framework',broadcast=x)
+   for i in S(1,11):
     emit('{}/10. GETID 시도\n'.format(i))
     tmp=RcloneTool2.getid(rclone_path,config_path,upload_remote)
-    if tmp is not v:
+    if tmp is not R:
      ret['folder_id']=tmp
      break
     emit('실패. 10초 후 다시 시도합니다.\n')
     time.sleep(10)
    emit('\n')
-   if ret['folder_id']is v:
+   if ret['folder_id']is R:
     emit('폴더ID를 얻을 수 없어 중단합니다.\n\n')
     emit('이미 폴더는 만들어졌으니, 잠시 후 다시 시도하면 정보를 가져올 수 있습니다.\n\n')
     return ret
    else:
     emit('폴더 ID : %s\n\n'%ret['folder_id'])
    command=[rclone_path,'--config',config_path,'move' if is_move else 'copy',remote_path,upload_remote,'--drive-server-side-across-configs=true','-v']
-   return_log=SystemLogicCommand2('업로드',[['msg','5. Rclone 명령'],command,['msg','Rclone 명령을 완료하였습니다.'],],wait=X,show_modal=show_modal,clear=w).start()
+   return_log=SystemLogicCommand2('업로드',[['msg','5. Rclone 명령'],command,['msg','Rclone 명령을 완료하였습니다.'],],wait=x,show_modal=show_modal,clear=V).start()
    for tmp in return_log:
     if(tmp.find('Transferred')!=-1 and tmp.find('100%')!=-1)or(tmp.find('Checks:')!=-1 and tmp.find('100%')!=-1):
-     ret['completed']=X
+     ret['completed']=x
      if is_move:
       emit('purge 명령으로 move 루트 삭제\n')
       RcloneTool2.purge(rclone_path,config_path,remote_path)
      break
    emit('업로드 결과 : {}. (True:성공, False:실패)\n\n'.format(ret['completed']))
    return ret
-  except N as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   emit('에러 : {}'.format(c(e)))
- @L
+   emit('에러 : {}'.format(t(e)))
+ @v
  def do_user_download(rclone_path,config_path,folderid,remote_path):
   try:
-   ret={'completed':w,'folderid':'','lsjson':v}
+   ret={'completed':V,'folderid':'','lsjson':R}
    source_remote='{gdrive_remote}:{{{folderid}}}'.format(gdrive_remote=remote_path.split(':')[0],folderid=folderid)
    command=[rclone_path,'--config',config_path,'move',source_remote,remote_path,'--drive-server-side-across-configs=true','-v','--delete-empty-src-dirs','--drive-use-trash=false']
    return_log=SystemLogicCommand.execute_command_return(command)
@@ -221,40 +221,40 @@ class RcloneTool2(b):
    if(return_log.find('Transferred')!=-1 and return_log.find('100%')!=-1)or(return_log.find('Checks:')!=-1 and return_log.find('100%')!=-1):
     RcloneTool2.purge(rclone_path,config_path,source_remote)
     logger.debug('성공')
-    return X
+    return x
    logger.debug('성공xxxxxxxxxxxxx')
-  except N as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return w
- @L
+  return V
+ @v
  def do_relay_completed(rclone_path,config_path,source_remote_path,original_remote_path):
   try:
    command=[rclone_path,'--config',config_path,'move',source_remote_path,original_remote_path,'--drive-server-side-across-configs=true','-v','--delete-empty-src-dirs','--drive-use-trash=false']
    return_log=SystemLogicCommand.execute_command_return(command)
    if(return_log.find('Transferred')!=-1 and return_log.find('100%')!=-1)or(return_log.find('Checks:')!=-1 and return_log.find('100%')!=-1):
     RcloneTool2.purge(rclone_path,config_path,source_remote_path)
-    return X
-  except N as exception:
+    return x
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return w
- @L
+  return V
+ @v
  def do_relay_download(rclone_path,config_path,clone_id,relay_remote_path,original_id,last_remote_path):
   try:
-   ret1=ret2=ret3=w
+   ret1=ret2=ret3=V
    ret1=RcloneTool2.do_user_download(rclone_path,config_path,clone_id,relay_remote_path)
    if ret1:
     sourceid=RcloneTool2.getid(rclone_path,config_path,relay_remote_path)
     ret2=RcloneTool2.do_relay_copy(rclone_path,sourceid,original_id)
    ret3=RcloneTool2.do_relay_completed(rclone_path,config_path,relay_remote_path,last_remote_path)
    if ret1 and ret2 and ret3:
-    return X
-  except N as exception:
+    return x
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return w
- @L
+  return V
+ @v
  def do_relay_copy(rclone_path,sourceid,targetid):
   try:
    sa_worker_path=os.path.join(path_app_root,'lib','framework','common','share','tool.pyo')
@@ -268,27 +268,27 @@ class RcloneTool2(b):
     if t['Name'].startswith('copy'):
      copy_count+=1
    for_range=3 if copy_count<10 else 1
-   is_correct=w
+   is_correct=V
    try:
     content_source_size_data=RcloneTool2.size(rclone_path,sa_worker_path,'worker1:{%s}/source'%targetid,['--drive-service-account-file-path',account_file_path])
     logger.debug('content_source_size_data : %s',content_source_size_data)
     source_remote='worker1:{%s}'%sourceid
-    for i in n(10):
+    for i in S(10):
      user_size_data=RcloneTool2.size(rclone_path,sa_worker_path,source_remote,['--drive-service-account-file-path',account_file_path])
-     if user_size_data is not v and content_source_size_data is not v and user_size_data['bytes']==content_source_size_data['bytes']:
+     if user_size_data is not R and content_source_size_data is not R and user_size_data['bytes']==content_source_size_data['bytes']:
       logger.debug('복사 사이즈 같음 : %s %s',user_size_data,content_source_size_data)
-      is_correct=X
+      is_correct=x
       break
      else:
       logger.debug('복사 사이즈 다름 : %s %s',user_size_data,content_source_size_data)
       time.sleep(30)
-   except N as exception:
+   except I as exception:
     logger.debug('!bbbbbbbbbbbbbbbb  !!')
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
-   if is_correct==X:
-    for i in n(0,for_range):
-     tmp='%s/copy_%s_%s'%(target_remote,a(c(time.time()).split('.')[0]),SystemModelSetting.get('sjva_me_user_id'))
+   if is_correct==x:
+    for i in S(0,for_range):
+     tmp='%s/copy_%s_%s'%(target_remote,C(t(time.time()).split('.')[0]),SystemModelSetting.get('sjva_me_user_id'))
      command=[rclone_path,'--config',sa_worker_path,'copy',source_remote,tmp,'--drive-service-account-file-path',account_file_path,'--drive-server-side-across-configs=true','-vv']
      logger.debug(command)
      return_log=SystemLogicCommand.execute_command_return(command)
@@ -299,29 +299,29 @@ class RcloneTool2(b):
       for_range+=1
       if for_range>10:
        for_range=10
-    return X
+    return x
    else:
     logger.debug("mmmmm RELAY COPY FAIL!!")
-  except N as exception:
+  except I as exception:
    logger.debug('!!!!!!!!!!!!!!!!!!!relay copy!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
+ @v
  def fileid_copy(rclone_path,config_path,fileid,remote_path):
   try:
    from framework.common.util import AESCipher
-   fileid=AESCipher.decrypt(c(fileid),Vars.key)
+   fileid=AESCipher.decrypt(t(fileid),Vars.key)
    command=[rclone_path,'--config',config_path,'copy','{remote}:{{{fileid}}}'.format(remote=remote_path.split(':')[0],fileid=fileid),remote_path,'--drive-server-side-across-configs','-v']
    from system.logic_command import SystemLogicCommand
    log=SystemLogicCommand.execute_command_return(command)
    logger.debug('fileid copy 결과 : %s',log)
    if log.find('100%')!=-1:
-    return X
-   return w
-  except N as exception:
+    return x
+   return V
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
+ @v
  def __make_rclone_conf(config_path,rclone_upload_remote,folder_id):
   try:
    from framework.common.util import read_file
@@ -329,13 +329,13 @@ class RcloneTool2(b):
     rclone_info=read_file(config_path)
    from framework import path_data
    import time
-   filename='%s.conf'%(c(time.time()).split('.')[0])
+   filename='%s.conf'%(t(time.time()).split('.')[0])
    conf_filepath=os.path.join(path_data,'tmp',filename)
    start=-1
-   dest_remote=v
-   match=v
-   first_rclone_info=v
-   while X:
+   dest_remote=R
+   match=R
+   first_rclone_info=R
+   while x:
     start=rclone_info.find('[',start+1)
     if start==-1:
      break
@@ -344,24 +344,24 @@ class RcloneTool2(b):
      dest_remote=rclone_info[start:]
     else:
      dest_remote=rclone_info[start:next_start]
-    if first_rclone_info is v and dest_remote.find('access_token')!=-1:
+    if first_rclone_info is R and dest_remote.find('access_token')!=-1:
      first_rclone_info=dest_remote
     import re
     match=re.compile(r'\[(?P<remote_name>.*?)\]').search(dest_remote.strip())
     if match.group('remote_name')==rclone_upload_remote:
      break
     else:
-     dest_remote=v
-     match=v
-   if rclone_upload_remote is not v:
-    if dest_remote is v:
-     raise N('cannot find remote_name')
+     dest_remote=R
+     match=R
+   if rclone_upload_remote is not R:
+    if dest_remote is R:
+     raise I('cannot find remote_name')
     else:
      if dest_remote.find('type = drive')==-1:
-      if first_rclone_info is not v:
+      if first_rclone_info is not R:
        src_remote_ready=first_rclone_info
       else:
-       raise N('cannot find google remote_name')
+       raise I('cannot find google remote_name')
      else:
       pass
       src_remote_ready=dest_remote
@@ -375,13 +375,13 @@ class RcloneTool2(b):
    import framework.common.util as CommonUtil
    CommonUtil.write_file(filedata,conf_filepath)
    return conf_filepath
-  except N as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @L
+ @v
  def folderid_decrypt(folderid):
   from framework.common.util import AESCipher
-  folderid=AESCipher.decrypt(c(folderid),Vars.key)
+  folderid=AESCipher.decrypt(t(folderid),Vars.key)
   return folderid
  """
     @staticmethod

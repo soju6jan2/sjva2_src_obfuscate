@@ -1,8 +1,8 @@
 import os
-w=True
-O=repr
-E=getattr
-v=None
+z=True
+o=repr
+R=getattr
+g=None
 j=staticmethod
 from datetime import datetime
 from framework import db,app,path_data
@@ -14,19 +14,19 @@ class ModelGDriveScanJob(db.Model):
  __tablename__='%s_job'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=w)
+ id=db.Column(db.Integer,primary_key=z)
  name=db.Column(db.String)
  gdrive_path=db.Column(db.String)
  plex_path=db.Column(db.String)
  def __repr__(self):
-  return O(self.as_dict())
+  return o(self.as_dict())
  def as_dict(self):
-  return{x.name:E(self,x.name)for x in self.__table__.columns}
+  return{x.name:R(self,x.name)for x in self.__table__.columns}
 class ModelGDriveScanFile(db.Model):
  __tablename__='%s_file'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=w)
+ id=db.Column(db.Integer,primary_key=z)
  gdrive_name=db.Column(db.String)
  name=db.Column(db.String)
  section_id=db.Column(db.Integer)
@@ -42,11 +42,11 @@ class ModelGDriveScanFile(db.Model):
   self.is_add=is_add
   self.created_time=datetime.now()
  def __repr__(self):
-  return O(self.as_dict())
+  return o(self.as_dict())
  def as_dict(self):
-  ret={x.name:E(self,x.name)for x in self.__table__.columns}
-  ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')if self.created_time is not v else ''
-  ret['scan_time']=self.scan_time.strftime('%m-%d %H:%M:%S')if self.scan_time is not v else ''
+  ret={x.name:R(self,x.name)for x in self.__table__.columns}
+  ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')if self.created_time is not g else ''
+  ret['scan_time']=self.scan_time.strftime('%m-%d %H:%M:%S')if self.scan_time is not g else ''
   return ret
  @j
  def add(gdrive_name,name,section_id,is_file,is_add):
