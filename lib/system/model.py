@@ -1,12 +1,12 @@
 import traceback
-J=True
-f=False
-E=getattr
-c=staticmethod
-N=None
-U=Exception
-y=int
-g=set
+A=True
+i=False
+e=getattr
+N=staticmethod
+f=None
+W=Exception
+n=int
+C=set
 import requests
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify
 from framework.logger import get_logger
@@ -16,65 +16,65 @@ package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 class ModelSetting(db.Model):
  __tablename__='system_setting'
- id=db.Column(db.Integer,primary_key=J)
- key=db.Column(db.String(100),unique=J,nullable=f)
- value=db.Column(db.String(100),nullable=f)
+ id=db.Column(db.Integer,primary_key=A)
+ key=db.Column(db.String(100),unique=A,nullable=i)
+ value=db.Column(db.String(100),nullable=i)
  def __init__(self,key,value):
   self.key=key
   self.value=value
  def __repr__(self):
   return "<SystemSetting(id:%s, key:%s, value:%s)>"%(self.id,self.key,self.value)
  def as_dict(self):
-  return{x.name:E(self,x.name)for x in self.__table__.columns}
- @c
+  return{x.name:e(self,x.name)for x in self.__table__.columns}
+ @N
  def get(key):
   try:
    ret=db.session.query(ModelSetting).filter_by(key=key).first()
-   if ret is not N:
+   if ret is not f:
     return ret.value.strip()
    else:
     return ''
-  except U as exception:
+  except W as exception:
    logger.error('Exception:%s %s',exception,key)
    logger.error(traceback.format_exc())
- @c
+ @N
  def get_int(key):
   try:
-   return y(ModelSetting.get(key))
-  except U as exception:
+   return n(ModelSetting.get(key))
+  except W as exception:
    logger.error('Exception:%s %s',exception,key)
    logger.error(traceback.format_exc())
- @c
+ @N
  def get_bool(key):
   try:
    return(ModelSetting.get(key)=='True')
-  except U as exception:
+  except W as exception:
    logger.error('Exception:%s %s',exception,key)
    logger.error(traceback.format_exc())
- @c
- def g(key,value):
+ @N
+ def C(key,value):
   try:
    logger.debug(key)
    item=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
-   if item is not N:
-    item.value=value.strip()if value is not N else value
+   if item is not f:
+    item.value=value.strip()if value is not f else value
     db.session.commit()
    else:
     db.session.add(ModelSetting(key,value.strip()))
-  except U as exception:
+  except W as exception:
    logger.error('Exception:%s %s',exception,key)
    logger.error(traceback.format_exc())
- @c
+ @N
  def to_dict():
   try:
    from framework.util import Util
    arg=Util.db_list_to_dict(db.session.query(ModelSetting).all())
    arg['package_name']=package_name
    return arg
-  except U as exception:
+  except W as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @c
+ @N
  def setting_save(req):
   try:
    for key,value in req.form.items():
@@ -86,20 +86,20 @@ class ModelSetting(db.Model):
     entity=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
     entity.value=value
    db.session.commit()
-   return J 
-  except U as exception:
+   return A 
+  except W as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    logger.debug('Error Key:%s Value:%s',key,value)
-   return f
- @c
+   return i
+ @N
  def get_list(key):
   try:
    value=ModelSetting.get(key)
    values=[x.strip().replace(' ','').strip()for x in value.replace('\n','|').split('|')]
    values=Util.get_list_except_empty(values)
    return values
-  except U as exception:
+  except W as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    logger.error('Error Key:%s Value:%s',key,value)

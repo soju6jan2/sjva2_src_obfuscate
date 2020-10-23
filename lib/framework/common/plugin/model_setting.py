@@ -1,13 +1,13 @@
 import traceback
-Q=True
-v=False
-L=repr
-j=getattr
-c=staticmethod
-z=Exception
-H=None
-W=int
-B=set
+M=True
+J=False
+Q=repr
+c=getattr
+Y=staticmethod
+h=Exception
+N=None
+T=int
+n=set
 from framework import db
 from framework.util import Util
 def get_model_setting(package_name,logger):
@@ -15,62 +15,62 @@ def get_model_setting(package_name,logger):
   __tablename__='%s_setting'%package_name
   __table_args__={'mysql_collate':'utf8_general_ci'}
   __bind_key__=package_name
-  id=db.Column(db.Integer,primary_key=Q)
-  key=db.Column(db.String,unique=Q,nullable=v)
-  value=db.Column(db.String,nullable=v)
+  id=db.Column(db.Integer,primary_key=M)
+  key=db.Column(db.String,unique=M,nullable=J)
+  value=db.Column(db.String,nullable=J)
   def __init__(self,key,value):
    self.key=key
    self.value=value
   def __repr__(self):
-   return L(self.as_dict())
+   return Q(self.as_dict())
   def as_dict(self):
-   return{x.name:j(self,x.name)for x in self.__table__.columns}
-  @c
+   return{x.name:c(self,x.name)for x in self.__table__.columns}
+  @Y
   def get(key):
    try:
     return db.session.query(ModelSetting).filter_by(key=key).first().value.strip()
-   except z as exception:
+   except h as exception:
     logger.error('Exception:%s %s',exception,key)
     logger.error(traceback.format_exc())
-  @c
+  @Y
   def has_key(key):
-   return(db.session.query(ModelSetting).filter_by(key=key).first()is not H)
-  @c
+   return(db.session.query(ModelSetting).filter_by(key=key).first()is not N)
+  @Y
   def get_int(key):
    try:
-    return W(ModelSetting.get(key))
-   except z as exception:
+    return T(ModelSetting.get(key))
+   except h as exception:
     logger.error('Exception:%s %s',exception,key)
     logger.error(traceback.format_exc())
-  @c
+  @Y
   def get_bool(key):
    try:
     return(ModelSetting.get(key)=='True')
-   except z as exception:
+   except h as exception:
     logger.error('Exception:%s %s',exception,key)
     logger.error(traceback.format_exc())
-  @c
-  def B(key,value):
+  @Y
+  def n(key,value):
    try:
     item=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
-    if item is not H:
-     item.value=value.strip()if value is not H else value
+    if item is not N:
+     item.value=value.strip()if value is not N else value
      db.session.commit()
     else:
      db.session.add(ModelSetting(key,value.strip()))
-   except z as exception:
+   except h as exception:
     logger.error('Exception:%s %s',exception,key)
     logger.error(traceback.format_exc())
-  @c
+  @Y
   def to_dict():
    try:
     ret=Util.db_list_to_dict(db.session.query(ModelSetting).all())
     ret['package_name']=package_name
     return ret 
-   except z as exception:
+   except h as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
-  @c
+  @Y
   def setting_save(req):
    try:
     for key,value in req.form.items():
@@ -82,23 +82,23 @@ def get_model_setting(package_name,logger):
      entity=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
      entity.value=value
     db.session.commit()
-    return Q 
-   except z as exception:
+    return M 
+   except h as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
     logger.debug('Error Key:%s Value:%s',key,value)
-    return v
-  @c
+    return J
+  @Y
   def get_list(key,delimeter,comment=' #'):
    try:
     value=ModelSetting.get(key).replace('\n',delimeter)
-    if comment is H:
+    if comment is N:
      values=[x.strip()for x in value.split(delimeter)]
     else:
      values=[x.split(comment)[0].strip()for x in value.split(delimeter)]
     values=Util.get_list_except_empty(values)
     return values
-   except z as exception:
+   except h as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
     logger.error('Error Key:%s Value:%s',key,value)

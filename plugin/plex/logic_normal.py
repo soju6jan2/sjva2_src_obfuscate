@@ -1,12 +1,12 @@
 import os
-r=object
-J=None
-W=staticmethod
-o=len
-K=Exception
-n=False
+E=object
+I=None
+F=staticmethod
+j=len
+S=Exception
+A=False
 R=int
-k=True
+g=True
 import traceback
 import time
 import shutil
@@ -21,14 +21,14 @@ from framework.job import Job
 from framework.util import Util
 from.plugin import logger,package_name
 from.model import ModelSetting
-class LogicNormal(r):
- server_instance=J
- @W
+class LogicNormal(E):
+ server_instance=I
+ @F
  def get_section_id_by_filepath(filepath):
   try:
-   if LogicNormal.server_instance is J:
+   if LogicNormal.server_instance is I:
     LogicNormal.server_instance=PlexServer(ModelSetting.get('server_url'),ModelSetting.get('server_token'))
-   if LogicNormal.server_instance is J:
+   if LogicNormal.server_instance is I:
     return
    sections=LogicNormal.server_instance.library.sections()
    tmp_len=0
@@ -36,78 +36,78 @@ class LogicNormal(r):
    for section in sections:
     for location in section.locations:
      if filepath.find(location)!=-1:
-      if o(location)>tmp_len:
-       tmp_len=o(location)
+      if j(location)>tmp_len:
+       tmp_len=j(location)
        tmp_section_id=section.key
    logger.debug('PLEX get_section_id_by_filepath %s:%s',tmp_section_id,filepath)
    return tmp_section_id
-  except K as exception:
+  except S as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
   return-1
- @W
+ @F
  def is_exist_in_library_using_bundle(filepath):
   try:
    url='%s/:/plugins/com.plexapp.plugins.SJVA/function/count_in_library?filename=%s&X-Plex-Token=%s'%(ModelSetting.get('server_url'),py_urllib.quote(filepath.encode('utf8')),ModelSetting.get('server_token'))
    data=requests.get(url).text
    if data=='0':
-    return n
+    return A
    else:
     try:
      tmp=R(data)
      if tmp>0:
-      return k
+      return g
     except:
-     return n
-  except K as exception:
+     return A
+  except S as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return n
- @W
+   return A
+ @F
  def get_library_key_using_bundle(filepath,section_id=-1):
   try:
    url='%s/:/plugins/com.plexapp.plugins.SJVA/function/db_handle?action=get_metadata_id_by_filepath&args=%s&X-Plex-Token=%s'%(ModelSetting.get('server_url'),py_urllib.quote(filepath.encode('utf8')),ModelSetting.get('server_token'))
    data=requests.get(url).text
    return data
-  except K as exception:
+  except S as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @W
+ @F
  def get_filepath_list_by_metadata_id_using_bundle(metadata_id):
   try:
    url='%s/:/plugins/com.plexapp.plugins.SJVA/function/db_handle?action=get_filepath_list_by_metadata_id&args=%s&X-Plex-Token=%s'%(ModelSetting.get('server_url'),metadata_id,ModelSetting.get('server_token'))
    data=requests.get(url).text
    ret=[x.strip()for x in data.split('\n')]
    return ret
-  except K as exception:
+  except S as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @W
- def metadata_refresh(filepath=J,metadata_id=J):
+ @F
+ def metadata_refresh(filepath=I,metadata_id=I):
   try:
-   if metadata_id is J:
-    if filepath is not J:
+   if metadata_id is I:
+    if filepath is not I:
      metadata_id=LogicNormal.get_library_key_using_bundle(filepath)
-   if metadata_id is J:
-    return n 
+   if metadata_id is I:
+    return A 
    url='%s/library/metadata/%s/refresh?X-Plex-Token=%s' %(ModelSetting.get('server_url'),metadata_id,ModelSetting.get('server_token'))
    data=requests.put(url).text
-   return k
-  except K as exception:
+   return g
+  except S as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return n
- @W
+  return A
+ @F
  def os_path_exists(filepath):
   try:
    url='%s/:/plugins/com.plexapp.plugins.SJVA/function/os_path_exists?filepath=%s&X-Plex-Token=%s'%(ModelSetting.get('server_url'),py_urllib.quote(filepath.encode('utf8')),ModelSetting.get('server_token'))
    data=requests.get(url).text
    return(data=='True')
-  except K as exception:
+  except S as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return n
- @W
+  return A
+ @F
  def find_by_filename_part(keyword):
   try:
    query="SELECT metadata_items.id, media_items.id, file, media_items.duration, media_items.bitrate, media_parts.created_at, media_items.size, media_items.width, media_items.height, media_items.video_codec, media_items.audio_codec FROM media_parts, media_items, metadata_items WHERE media_parts.media_item_id = media_items.id and media_items.metadata_item_id = metadata_items.id and LOWER(media_parts.file) LIKE '%{keyword}%' and media_items.width > 0 ORDER BY media_items.bitrate DESC".format(keyword=keyword)
@@ -116,7 +116,7 @@ class LogicNormal(r):
    query="SELECT metadata_items.id, media_items.id, file, media_streams.url FROM media_parts, media_items, metadata_items, media_streams WHERE media_streams.media_item_id = media_items.id and media_parts.media_item_id = media_items.id and media_items.metadata_item_id = metadata_items.id and media_streams.stream_type_id = 3 and media_parts.file LIKE '%{keyword}%' ORDER BY media_items.bitrate DESC".format(keyword=keyword)
    url='%s/:/plugins/com.plexapp.plugins.SJVA/function/db_query?query=%s&X-Plex-Token=%s'%(ModelSetting.get('server_url'),py_urllib.quote(query.encode('utf8')),ModelSetting.get('server_token'))
    data2=requests.get(url).json()
-   ret={'ret':k}
+   ret={'ret':g}
    ret['list']=[]
    ret['metadata_id']=[]
    for tmp in data1['data']:
@@ -157,17 +157,17 @@ class LogicNormal(r):
       break
    logger.debug(ret)
    return ret
-  except K as exception:
+  except S as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return J
- @W
+  return I
+ @F
  def execute_query(query):
   try:
    url='{server}/:/plugins/com.plexapp.plugins.SJVA/function/db_query?query={query}&X-Plex-Token={token}'.format(server=ModelSetting.get('server_url'),query=query,token=ModelSetting.get('server_token'))
    return requests.get(url).json()
-  except K as exception:
+  except S as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return n
+  return A
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

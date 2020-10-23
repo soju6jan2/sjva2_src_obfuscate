@@ -1,8 +1,8 @@
 import traceback
-t=object
-M=staticmethod
-G=None
-x=Exception
+B=object
+O=staticmethod
+W=None
+v=Exception
 import os
 import json
 import time
@@ -12,19 +12,19 @@ from guessit import guessit
 from framework.common.torrent import logger
 from system.model import ModelSetting as SystemModelSetting
 import framework.common.fileprocess as FileProcess
-class ProcessAV(t):
- @M
+class ProcessAV(B):
+ @O
  def process(filename,av_type):
   try:
    if av_type=='censored':
     tmp=FileProcess.change_filename_censored(filename)
-    if tmp is not G:
+    if tmp is not W:
      arg=os.path.splitext(tmp)[0].split('cd')[0]
      data=FileProcess.test_dmm(arg)
      if data and 'update' in data:
       from framework.common.notify import discord_proxy_image
       poster_ret=discord_proxy_image(data['update']['poster'])
-      if poster_ret is not G:
+      if poster_ret is not W:
        data['update']['poster']=poster_ret
       ret={'type':'dmm','data':data}
       return ret
@@ -41,7 +41,7 @@ class ProcessAV(t):
      data['update']['poster']=data['update']['poster'].split('url=')[1].split('&apikey')[0]
      ret={'type':'javdb','data':data}
      return ret
-  except x as exception:
+  except v as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

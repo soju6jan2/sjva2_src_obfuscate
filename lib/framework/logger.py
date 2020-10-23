@@ -1,7 +1,7 @@
 import os
-T=int
-t=None
-K=True
+H=int
+V=None
+M=True
 import logging
 import logging.handlers
 from datetime import datetime
@@ -21,13 +21,13 @@ def get_logger(name):
     try:
      from system.model import ModelSetting as SystemModelSetting
      level=SystemModelSetting.get('log_level')
-     level=T(level)
+     level=H(level)
     except:
      level=logging.DEBUG
-    if level_unset_logger_list is not t:
+    if level_unset_logger_list is not V:
      for item in level_unset_logger_list:
       item.setLevel(level)
-     level_unset_logger_list=t
+     level_unset_logger_list=V
    else:
     level_unset_logger_list.append(logger)
   except:
@@ -41,7 +41,7 @@ def get_logger(name):
    return converted.timetuple()
   formatter.converter=customTime
   file_max_bytes=1*1024*1024 
-  fileHandler=logging.handlers.RotatingFileHandler(filename=os.path.join(path_data,'log','%s.log'%name),maxBytes=file_max_bytes,backupCount=5,encoding='utf8',delay=K)
+  fileHandler=logging.handlers.RotatingFileHandler(filename=os.path.join(path_data,'log','%s.log'%name),maxBytes=file_max_bytes,backupCount=5,encoding='utf8',delay=M)
   streamHandler=logging.StreamHandler()
   fileHandler.setFormatter(formatter)
   streamHandler.setFormatter(formatter)
