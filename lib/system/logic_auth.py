@@ -1,14 +1,14 @@
 import os
-h=object
-N=staticmethod
-W=Exception
-k=range
-A=True
-i=False
-f=None
-n=int
-z=str
-V=len
+j=object
+x=staticmethod
+l=Exception
+G=range
+i=True
+L=False
+E=None
+g=int
+e=str
+a=len
 import traceback
 import random
 import json
@@ -21,8 +21,8 @@ from framework import path_app_root,app
 from framework.util import Util
 from.plugin import package_name,logger
 from.model import ModelSetting
-class SystemLogicAuth(h):
- @N
+class SystemLogicAuth(j):
+ @x
  def process_ajax(sub,req):
   logger.debug(sub)
   try:
@@ -32,22 +32,22 @@ class SystemLogicAuth(h):
    elif sub=='do_auth':
     ret=SystemLogicAuth.do_auth()
     return jsonify(ret)
-  except W as exception:
+  except l as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
+ @x
  def apikey_generate():
   try:
-   value=''.join(random.choice(string.ascii_uppercase+string.digits)for _ in k(10))
+   value=''.join(random.choice(string.ascii_uppercase+string.digits)for _ in G(10))
    return value
-  except W as exception:
+  except l as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
- def get_auth_status(retry=A):
+ @x
+ def get_auth_status(retry=i):
   try:
    value=ModelSetting.get('auth_status')
-   ret={'ret':i,'desc':'','level':0,'point':0}
+   ret={'ret':L,'desc':'','level':0,'point':0}
    if value=='':
     ret['desc']='미인증'
    elif value=='wrong_id':
@@ -58,7 +58,7 @@ class SystemLogicAuth(h):
     ret['desc']='미인증 - 홈페이지에 등록된 APIKEY와 다릅니다.'
    else:
     status=SystemLogicAuth.check_auth_status(value)
-    if status is not f and status['ret']:
+    if status is not E and status['ret']:
      ret['ret']=status['ret']
      ret['desc']='인증되었습니다. (회원등급:%s, 포인트:%s)'%(status['level'],status['point'])
      ret['level']=status['level']
@@ -66,15 +66,15 @@ class SystemLogicAuth(h):
     else:
      if retry:
       SystemLogicAuth.do_auth()
-      return SystemLogicAuth.get_auth_status(retry=i)
+      return SystemLogicAuth.get_auth_status(retry=L)
      else:
       ret['desc']='잘못된 값입니다. 다시 인증하세요.'
    return ret
-  except W as exception:
+  except l as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
- def check_auth_status(value=f):
+ @x
+ def check_auth_status(value=E):
   try:
    from framework.common.util import AESCipher
    if app.config['config']['is_py2']:
@@ -86,46 +86,46 @@ class SystemLogicAuth(h):
     tmp=tmp.split('_')
    ret={}
    ret['ret']=(ModelSetting.get('sjva_id')==tmp[0])
-   ret['level']=n(tmp[1])
-   ret['point']=n(tmp[2])
+   ret['level']=g(tmp[1])
+   ret['point']=g(tmp[2])
    return ret
-  except W as exception:
+  except l as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
+ @x
  def make_auth_status(level,point):
   try:
    from framework.common.util import AESCipher
    if app.config['config']['is_py2']:
-    ret=AESCipher.encrypt(z('%s_%s_%s'%(ModelSetting.get('sjva_id'),level,point)),mykey=(codecs.encode(SystemLogicAuth.get_ip().encode(),'hex')+codecs.encode(ModelSetting.get('auth_apikey').encode(),'hex')).zfill(32)[:32])
+    ret=AESCipher.encrypt(e('%s_%s_%s'%(ModelSetting.get('sjva_id'),level,point)),mykey=(codecs.encode(SystemLogicAuth.get_ip().encode(),'hex')+codecs.encode(ModelSetting.get('auth_apikey').encode(),'hex')).zfill(32)[:32])
    else:
     mykey=(codecs.encode(SystemLogicAuth.get_ip().encode(),'hex').decode()+codecs.encode(ModelSetting.get('auth_apikey').encode(),'hex').decode()).zfill(32)[:32].encode()
-    ret= AESCipher.encrypt(z('%s_%s_%s'%(ModelSetting.get('sjva_id'),level,point)),mykey=mykey)
+    ret= AESCipher.encrypt(e('%s_%s_%s'%(ModelSetting.get('sjva_id'),level,point)),mykey=mykey)
    logger.debug(ret)
    return ret
-  except W as exception:
+  except l as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
+ @x
  def get_ip():
   import socket
   s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
   try:
    s.connect(('10.255.255.255',1))
    IP=s.getsockname()[0]
-  except W:
+  except l:
    IP='127.0.0.1'
   finally:
    s.close()
   logger.debug('IP:%s',IP)
   return IP
- @N
+ @x
  def do_auth():
   try:
-   ret={'ret':i,'msg':'','level':0,'point':0}
+   ret={'ret':L,'msg':'','level':0,'point':0}
    apikey=ModelSetting.get('auth_apikey')
    user_id=ModelSetting.get('sjva_me_user_id')
-   if V(apikey)!=10:
+   if a(apikey)!=10:
     ret['msg']='APIKEY 문자 길이는 10자리여야합니다.'
     return ret
    if user_id=='':
@@ -133,18 +133,18 @@ class SystemLogicAuth(h):
     return ret
    data=requests.post('https://sjva.me/sjva/auth.php',data={'apikey':apikey,'user_id':user_id,'sjva_id':ModelSetting.get('sjva_id')}).json()
    if data['result']=='success':
-    ret['ret']=A
+    ret['ret']=i
     ret['msg']=u'총 %s개 등록<br>레벨:%s, 포인트:%s'%(data['count'],data['level'],data['point'])
-    ret['level']=n(data['level'])
-    ret['point']=n(data['point'])
+    ret['level']=g(data['level'])
+    ret['point']=g(data['point'])
     ModelSetting.set('auth_status',SystemLogicAuth.make_auth_status(ret['level'],ret['point']))
    else:
     ModelSetting.set('auth_status',data['result'])
-    tmp=SystemLogicAuth.get_auth_status(retry=i)
+    tmp=SystemLogicAuth.get_auth_status(retry=L)
     ret['ret']=tmp['ret']
     ret['msg']=tmp['desc']
    return ret
-  except W as exception:
+  except l as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

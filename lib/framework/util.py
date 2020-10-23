@@ -1,19 +1,19 @@
 import os
-w=object
-c=staticmethod
-l=abs
-M=True
-u=False
-H=int
-X=Exception
-L=iter
-V=None
-I=str
-C=len
-P=classmethod
-F=isinstance
-q=dir
-s=TypeError
+d=object
+W=staticmethod
+P=abs
+U=True
+E=False
+c=int
+N=Exception
+n=iter
+S=None
+a=str
+q=len
+x=classmethod
+t=isinstance
+B=dir
+G=TypeError
 import json
 import traceback
 import platform
@@ -23,49 +23,49 @@ from framework.logger import get_logger
 from framework import app
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Util(w):
- @c
+class Util(d):
+ @W
  def sizeof_fmt(num,suffix='Bytes'):
   for unit in['','K','M','G','T','P','E','Z']:
-   if l(num)<1024.0:
+   if P(num)<1024.0:
     return "%3.1f%s%s"%(num,unit,suffix)
    num/=1024.0
   return "%.1f%s%s"%(num,'Y',suffix)
- @c
+ @W
  def db_list_to_dict(db_list):
   ret={}
   for item in db_list:
    ret[item.key]=item.value
   return ret
- @c
+ @W
  def db_to_dict(db_list):
   ret=[]
   for item in db_list:
    ret.append(item.as_dict())
   return ret
- @c
+ @W
  def get_paging_info(count,current_page,page_size):
   try:
    paging={}
-   paging['prev_page']=M
-   paging['next_page']=M
+   paging['prev_page']=U
+   paging['next_page']=U
    if current_page<=10:
-    paging['prev_page']=u
-   paging['total_page']=H(count/page_size)+1
+    paging['prev_page']=E
+   paging['total_page']=c(count/page_size)+1
    if count%page_size==0:
     paging['total_page']-=1
-   paging['start_page']=H((current_page-1)/10)*10+1
+   paging['start_page']=c((current_page-1)/10)*10+1
    paging['last_page']=paging['total_page']if paging['start_page']+9>paging['total_page']else paging['start_page']+9
    if paging['last_page']==paging['total_page']:
-    paging['next_page']=u
+    paging['next_page']=E
    paging['current_page']=current_page
    paging['count']=count
    logger.debug('paging : c:%s %s %s %s %s %s',count,paging['total_page'],paging['prev_page'],paging['next_page'],paging['start_page'],paging['last_page'])
    return paging
-  except X as exception:
+  except N as exception:
    logger.debug('Exception:%s',exception)
    logger.debug(traceback.format_exc())
- @c
+ @W
  def get_list_except_empty(source):
   tmp=[]
   for _ in source:
@@ -74,7 +74,7 @@ class Util(w):
    if _.strip()!='':
     tmp.append(_.strip())
   return tmp
- @c
+ @W
  def save_from_dict_to_json(d,filename):
   try:
    import codecs
@@ -82,10 +82,10 @@ class Util(w):
    ofp=codecs.open(filename,'w',encoding='utf8')
    ofp.write(s)
    ofp.close()
-  except X as exception:
+  except N as exception:
    logger.debug('Exception:%s',exception)
    logger.debug(traceback.format_exc())
- @c
+ @W
  def execute_command(command):
   try:
    logger.debug('COMMAND RUN START : %s',command)
@@ -96,61 +96,61 @@ class Util(w):
     command=new_command
    ret=[]
    if app.config['config']['is_py2']:
-    p=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=M,bufsize=1)
+    p=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=U,bufsize=1)
     with p.stdout:
-     for line in L(p.stdout.readline,b''):
+     for line in n(p.stdout.readline,b''):
       try:
        line=line.decode('utf-8')
-      except X as exception:
+      except N as exception:
        try:
         line=line.decode('cp949')
-       except X as exception:
+       except N as exception:
         pass
       ret.append(line.strip())
      p.wait()
    else:
-    p=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=M)
+    p=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=U)
     with p.stdout:
-     for line in L(p.stdout.readline,''):
+     for line in n(p.stdout.readline,''):
       ret.append(line.strip())
      p.wait()
    logger.debug('COMMAND RUN END : %s',command)
    return ret
-  except X as exception:
+  except N as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @c
+ @W
  def change_text_for_use_filename(text):
   try:
    import re
    return re.sub('[\\/:*?\"<>|]','',text).strip()
-  except X as exception:
+  except N as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @c
+ @W
  def get_max_size_fileinfo(torrent_info):
   try:
    ret={}
    max_size=-1
-   max_filename=V
+   max_filename=S
    for t in torrent_info['files']:
     if t['size']>max_size:
      max_size=t['size']
-     max_filename=I(t['path'])
+     max_filename=a(t['path'])
    t=max_filename.split('/')
    ret['filename']=t[-1]
-   if C(t)==1:
+   if q(t)==1:
     ret['dirname']=''
-   elif C(t)==2:
+   elif q(t)==2:
     ret['dirname']=t[0]
    else:
     ret['dirname']=max_filename.replace('/%s'%ret['filename'],'')
    ret['max_size']=max_size
    return ret
-  except X as exception:
+  except N as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @c
+ @W
  def makezip(zip_path):
   import zipfile
   try:
@@ -163,32 +163,32 @@ class Util(w):
     fantasy_zip.close()
    import shutil
    shutil.rmtree(zip_path)
-   return M
-  except X as exception:
+   return U
+  except N as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return u
-class SingletonClass(w):
- __instance=V
- @P
+  return E
+class SingletonClass(d):
+ __instance=S
+ @x
  def __getInstance(cls):
   return cls.__instance
- @P
+ @x
  def instance(cls,*args,**kargs):
   cls.__instance=cls(*args,**kargs)
   cls.instance=cls.__getInstance
   return cls.__instance
 class AlchemyEncoder(json.JSONEncoder):
  def default(self,obj):
-  if F(obj.__class__,DeclarativeMeta):
+  if t(obj.__class__,DeclarativeMeta):
    fields={}
-   for field in[x for x in q(obj)if not x.startswith('_')and x!='metadata']:
+   for field in[x for x in B(obj)if not x.startswith('_')and x!='metadata']:
     data=obj.__getattribute__(field)
     try:
      json.dumps(data)
      fields[field]=data
-    except s:
-     fields[field]=V
+    except G:
+     fields[field]=S
    return fields
   return json.JSONEncoder.default(self,obj)
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
