@@ -1,8 +1,8 @@
 import os
-O=object
-s=None
-f=Exception
-x=False
+q=object
+F=None
+S=Exception
+z=False
 import traceback
 import time
 import threading
@@ -10,7 +10,7 @@ import platform
 from framework import db,scheduler
 from framework.job import Job
 from framework.util import Util
-class Logic(O):
+class Logic(q):
  db_default={'recent_menu_plugin':'',}
  def __init__(self,P):
   self.P=P
@@ -22,28 +22,28 @@ class Logic(O):
     module.migration()
    for module in self.P.module_list:
     module.plugin_load()
-   if self.P.ModelSetting is not s:
+   if self.P.ModelSetting is not F:
     for module in self.P.module_list:
      key='{sub}_auto_start'.format(sub=module.name)
      if self.P.ModelSetting.has_key(key)and self.P.ModelSetting.get_bool(key):
       self.scheduler_start(module.name)
-  except f as exception:
+  except S as exception:
    self.P.logger.error('Exception:%s',exception)
    self.P.logger.error(traceback.format_exc())
  def db_init(self):
   try:
-   if self.P.ModelSetting is s:
+   if self.P.ModelSetting is F:
     return
    for key,value in Logic.db_default.items():
     if db.session.query(self.P.ModelSetting).filter_by(key=key).count()==0:
      db.session.add(self.P.ModelSetting(key,value))
    for module in self.P.module_list:
-    if module.db_default is not s:
+    if module.db_default is not F:
      for key,value in module.db_default.items():
       if db.session.query(self.P.ModelSetting).filter_by(key=key).count()==0:
        db.session.add(self.P.ModelSetting(key,value))
    db.session.commit()
-  except f as exception:
+  except S as exception:
    self.P.logger.error('Exception:%s',exception)
    self.P.logger.error(traceback.format_exc())
  def plugin_unload(self):
@@ -51,37 +51,37 @@ class Logic(O):
    self.P.logger.debug('%s plugin_unload',self.P.package_name)
    for module in self.P.module_list:
     module.plugin_unload()
-  except f as exception:
+  except S as exception:
    self.P.logger.error('Exception:%s',exception)
    self.P.logger.error(traceback.format_exc())
  def scheduler_start(self,sub):
   try:
    job_id='%s_%s'%(self.P.package_name,sub)
    module=self.get_module(sub)
-   job=Job(self.P.package_name,job_id,module.get_scheduler_interval(),self.scheduler_function,module.get_scheduler_desc(),x,args=sub)
+   job=Job(self.P.package_name,job_id,module.get_scheduler_interval(),self.scheduler_function,module.get_scheduler_desc(),z,args=sub)
    scheduler.add_job_instance(job)
-  except f as exception:
+  except S as exception:
    self.P.logger.error('Exception:%s',exception)
    self.P.logger.error(traceback.format_exc())
  def scheduler_stop(self,sub):
   try:
    job_id='%s_%s'%(self.P.package_name,sub)
    scheduler.remove_job(job_id)
-  except f as exception:
+  except S as exception:
    self.P.logger.error('Exception:%s',exception)
    self.P.logger.error(traceback.format_exc())
  def scheduler_function(self,sub):
   try:
    module=self.get_module(sub)
    module.scheduler_function()
-  except f as exception:
+  except S as exception:
    self.P.logger.error('Exception:%s',exception)
    self.P.logger.error(traceback.format_exc())
  def reset_db(self,sub):
   try:
    module=self.get_module(sub)
    return module.reset_db()
-  except f as exception:
+  except S as exception:
    self.P.logger.error('Exception:%s',exception)
    self.P.logger.error(traceback.format_exc())
  def one_execute(self,sub):
@@ -100,7 +100,7 @@ class Logic(O):
      self.scheduler_function(sub)
     threading.Thread(target=func,args=()).start()
     ret='thread'
-  except f as exception:
+  except S as exception:
    self.P.logger.error('Exception:%s',exception)
    self.P.logger.error(traceback.format_exc())
    ret='fail'
@@ -110,15 +110,15 @@ class Logic(O):
    for module in self.P.module_list:
     if module.name==sub:
      return module
-  except f as exception:
+  except S as exception:
    self.P.logger.error('Exception:%s',exception)
    self.P.logger.error(traceback.format_exc())
- def process_telegram_data(self,data,target=s):
+ def process_telegram_data(self,data,target=F):
   try:
    for module in self.P.module_list:
-    if target is s or target.startswith(module.name):
+    if target is F or target.startswith(module.name):
      module.process_telegram_data(data,target=target)
-  except f as exception:
+  except S as exception:
    self.P.logger.error('Exception:%s',exception)
    self.P.logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

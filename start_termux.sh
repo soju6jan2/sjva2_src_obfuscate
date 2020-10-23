@@ -25,7 +25,7 @@ if [ "${USE_CELERY}" == "true" ] ; then
     echo "Start redis-server port:${REDIS_PORT}"
 fi
 
-if [ "${RUN_FILEBROWSER}" == "true" ]; then
+if [ "${RUN_FILEBROWSER}" == "true" ] && [ -f ./bin/${OS_PREFIX}/filebrowser ]; then
     chmod +x ./bin/${OS_PREFIX}/filebrowser
     if [ -z "${FILEBROWSER_BASEURL}" ]; then
         nohup ./bin/${OS_PREFIX}/filebrowser -a 0.0.0.0 -p ${FILEBROWSER_PORT} -r / -d ./data/db/filebrowser.db > /dev/null 2>&1 &

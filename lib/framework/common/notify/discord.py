@@ -1,30 +1,30 @@
 import os
-y=None
-L=True
-s=Exception
-A=False
+W=None
+u=True
+J=Exception
+Y=False
 import traceback
 from discord_webhook import DiscordWebhook,DiscordEmbed
 from framework.common.notify import logger
-def send_discord_message(text,image_url=y,webhook_url=y):
+def send_discord_message(text,image_url=W,webhook_url=W):
  from system.model import ModelSetting as SystemModelSetting
  try:
-  if webhook_url is y:
+  if webhook_url is W:
    webhook_url=SystemModelSetting.get('notify_discord_webhook')
   webhook=DiscordWebhook(url=webhook_url,content=text)
-  if image_url is not y:
+  if image_url is not W:
    embed=DiscordEmbed()
    embed.set_timestamp()
    embed.set_image(url=image_url)
    webhook.add_embed(embed)
   response=webhook.execute()
-  return L
- except s as exception:
+  return u
+ except J as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
- return A
-def discord_proxy_image(image_url,webhook_url=y):
- if webhook_url is y or webhook_url=='':
+ return Y
+def discord_proxy_image(image_url,webhook_url=W):
+ if webhook_url is W or webhook_url=='':
   webhook_url='https://discordapp.com/api/webhooks/723161710030225510/_kqNtqrPtEH8pBV9oh-STl9qplcx1iZXa0VnyZNtQzk8LJs9jJt1p19abWVUwmRUgbzt'
  try:
   webhook=DiscordWebhook(url=webhook_url,content='')
@@ -39,7 +39,7 @@ def discord_proxy_image(image_url,webhook_url=y):
   data=response.json()
   url=data['embeds'][0]['image']['proxy_url']
   return url
- except s as exception:
+ except J as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

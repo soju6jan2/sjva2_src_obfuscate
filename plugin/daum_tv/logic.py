@@ -1,16 +1,16 @@
 import os
-G=object
-K=None
-t=staticmethod
-X=Exception
-W=True
-S=False
-c=len
-V=sorted
-R=int
-e=abs
-n=round
-o=float
+r=object
+A=None
+C=staticmethod
+x=Exception
+o=True
+n=False
+H=len
+P=sorted
+a=int
+p=abs
+L=round
+E=float
 from datetime import datetime
 import traceback
 import logging
@@ -32,35 +32,35 @@ from system.logic import SystemLogic
 from.model import ModelSetting,ModelDaumTVShow
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Logic(G):
+class Logic(r):
  db_default={}
- account=K 
- server=K 
- @t
+ account=A 
+ server=A 
+ @C
  def db_init():
   try:
    for key,value in Logic.db_default.items():
     if db.session.query(ModelSetting).filter_by(key=key).count()==0:
      db.session.add(ModelSetting(key,value))
    db.session.commit()
-  except X as exception:
+  except x as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @t
+ @C
  def plugin_load():
   try:
    Logic.db_init()
-  except X as exception:
+  except x as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @t
+ @C
  def plugin_unload():
   try:
    Logic.db_init()
-  except X as exception:
+  except x as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @t
+ @C
  def setting_save(req):
   try:
    for key,value in req.form.items():
@@ -68,34 +68,34 @@ class Logic(G):
     entity=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
     entity.value=value
    db.session.commit()
-   return W 
-  except X as exception:
+   return o 
+  except x as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return S
- @t
+   return n
+ @C
  def refresh(req):
   try:
    title=req.form['title']
-   Logic.get_daum_tv_info(title,force_update=W)
-   return W 
-  except X as exception:
+   Logic.get_daum_tv_info(title,force_update=o)
+   return o 
+  except x as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return S
- @t
- def get_show_info_on_home_title(title,daum_id=K):
+   return n
+ @C
+ def get_show_info_on_home_title(title,daum_id=A):
   try:
    title=title.replace(u'[종영]','')
-   if daum_id is K:
+   if daum_id is A:
     url='https://search.daum.net/search?q=%s'%(py_urllib.quote(title.encode('utf8')))
    else:
     url='https://search.daum.net/search?q=%s&irk=%s&irt=tv-program&DA=TVP'%(py_urllib.quote(title.encode('utf8')),daum_id)
    return Logic.get_lxml_by_url(url)
-  except X as exception:
+  except x as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @t
+ @C
  def get_lxml_by_url(url):
   try:
    from framework.common.daum import headers,session
@@ -104,14 +104,14 @@ class Logic(G):
    data=res.text
    root=lxml.html.fromstring(data)
    return root
-  except X as exception:
+  except x as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @t
+ @C
  def get_show_info_on_home(root):
   try:
    tags=root.xpath('//*[@id="tvpColl"]/div[2]/div/div[1]/span/a')
-   if c(tags)!=1:
+   if H(tags)!=1:
     return
    entity={}
    entity['title']=tags[0].text
@@ -121,7 +121,7 @@ class Logic(G):
    entity['id']=re.compile(r'irk\=(?P<id>\d+)').search(tags[0].attrib['href']).group('id')
    entity['status']=0 
    tags=root.xpath('//*[@id="tvpColl"]/div[2]/div/div[1]/span/span')
-   if c(tags)==1:
+   if H(tags)==1:
     if tags[0].text==u'방송종료':
      entity['status']=1
     elif tags[0].text==u'방송예정':
@@ -149,7 +149,7 @@ class Logic(G):
       if more[0].xpath('span')[0].text==u'시리즈 더보기':
        more_root=Logic.get_lxml_by_url(url)
        tags=more_root.xpath('//*[@id="series"]/ul/li')
-    except X as exception:
+    except x as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc())
     for tag in tags:
@@ -160,9 +160,9 @@ class Logic(G):
       dic['date']=tag.xpath('span')[0].text
       dic['year']=re.compile(r'(?P<year>\d{4})').search(dic['date']).group('year')
      else:
-      dic['year']=K
+      dic['year']=A
      entity['series'].append(dic)
-    entity['series']=V(entity['series'],key=lambda k:R(k['id']))
+    entity['series']=P(entity['series'],key=lambda k:a(k['id']))
    entity['equal_name']=[]
    tags=root.xpath(u'//div[@id="tv_program"]//dt[contains(text(),"동명 콘텐츠")]//following-sibling::dd')
    if tags:
@@ -182,10 +182,10 @@ class Logic(G):
       elif tag.text==u'(동명회차)':
        continue
    return entity
-  except X as exception:
+  except x as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @t
+ @C
  def get_search_name_from_original(search_name):
   search_name=search_name.replace('일일연속극','').strip()
   search_name=search_name.replace('특별기획드라마','').strip()
@@ -196,18 +196,18 @@ class Logic(G):
   search_name=re.sub(r'\(.*?\)','',search_name).strip()
   search_name=re.sub(r'^\(.*?\)드라마','',search_name).strip()
   return search_name
- @t
- def get_daum_tv_info(search_name,daum_id=K,on_home=S,force_update=S):
+ @C
+ def get_daum_tv_info(search_name,daum_id=A,on_home=n,force_update=n):
   try:
    logger.debug('get_daum_tv_info 1 %s',search_name)
    search_name=Logic.get_search_name_from_original(search_name)
    logger.debug('get_daum_tv_info 2 %s',search_name)
    if not force_update:
-    if daum_id is not K:
+    if daum_id is not A:
      entity=ModelDaumTVShow.get(daum_id)
-     if entity.update_time is not K and entity.status==1:
+     if entity.update_time is not A and entity.status==1:
       return entity
-   if daum_id is not K:
+   if daum_id is not A:
     url='https://search.daum.net/search?w=tv&q=%s&irk=%s&irt=tv-program&DA=TVP'%(py_urllib.quote(search_name.encode('utf8')),daum_id)
    else:
     url='https://search.daum.net/search?w=tv&q=%s'%(py_urllib.quote(search_name.encode('utf8')))
@@ -220,12 +220,12 @@ class Logic(G):
    daum_id=match.group('id')if match else ''
    entity=ModelDaumTVShow.get(daum_id)
    if not force_update:
-    if entity.update_time is not K and entity.status==1:
+    if entity.update_time is not A and entity.status==1:
      return entity
    items=root.xpath('//*[@id="tv_program"]/div[1]/div[2]/strong')
    if not items:
-    return K
-   if c(items)==1:
+    return A
+   if H(items)==1:
     entity.title=items[0].text.strip()
     entity.title=entity.title.replace('?','').replace(':','')
    entity.status=0
@@ -263,50 +263,50 @@ class Logic(G):
    if match:
     entity.start_date=match.group(1)
    items=root.xpath('//*[@id="tv_program"]/div[1]/dl[1]/dd')
-   if c(items)==1:
+   if H(items)==1:
     entity.genre=items[0].text.strip().split(' ')[0]
     entity.genre=entity.genre.split('(')[0].strip()
    items=root.xpath('//*[@id="tv_program"]/div[1]/dl[2]/dd')
-   if c(items)==1:
+   if H(items)==1:
     entity.summary=items[0].text.replace('&nbsp',' ')
    items=root.xpath('//*[@id="tv_program"]/div[1]/div[1]/a/img')
-   if c(items)==1:
+   if H(items)==1:
     entity.poster_url='https:%s'%items[0].attrib['src']
    items=root.xpath('//*[@id="clipDateList"]/li')
    entity.episode_list={}
-   if c(items)>300:
-    items=items[c(items)-300:]
-   today=R(datetime.now().strftime('%Y%m%d'))
+   if H(items)>300:
+    items=items[H(items)-300:]
+   today=a(datetime.now().strftime('%Y%m%d'))
    for item in items:
     try:
      a_tag=item.xpath('a')
-     if c(a_tag)==1:
+     if H(a_tag)==1:
       span_tag=a_tag[0].xpath('span[@class="txt_episode"]')
-      if c(span_tag)==1:
+      if H(span_tag)==1:
        if item.attrib['data-clip']in entity.episode_list:
         if entity.episode_list[item.attrib['data-clip']][0]==span_tag[0].text.strip().replace(u'회',''):
          pass
         else:
-         idx=c(entity.episode_list[item.attrib['data-clip']])-1
-         _=e(R(entity.episode_list[item.attrib['data-clip']][idx])-R(span_tag[0].text.strip().replace(u'회','')))
+         idx=H(entity.episode_list[item.attrib['data-clip']])-1
+         _=p(a(entity.episode_list[item.attrib['data-clip']][idx])-a(span_tag[0].text.strip().replace(u'회','')))
          if _<=4:
-          if item.attrib['data-clip']!='' and today>=R(item.attrib['data-clip']):
+          if item.attrib['data-clip']!='' and today>=a(item.attrib['data-clip']):
            entity.last_episode_date=item.attrib['data-clip']
            entity.last_episode_no=span_tag[0].text.strip().replace(u'회','')
           entity.episode_list[item.attrib['data-clip']].append(span_tag[0].text.strip().replace(u'회',''))
          else:
           pass
        else:
-        if item.attrib['data-clip']!='' and today>=R(item.attrib['data-clip']):
+        if item.attrib['data-clip']!='' and today>=a(item.attrib['data-clip']):
          entity.last_episode_date=item.attrib['data-clip']
          entity.last_episode_no=span_tag[0].text.strip().replace(u'회','')
         entity.episode_list[item.attrib['data-clip']]=[span_tag[0].text.strip().replace(u'회','')]
-    except X as exception:
+    except x as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc())
    try:
-    if c(entity.episode_list):
-     entity.episode_count_one_day=R(n(o(c(items))/c(entity.episode_list)))
+    if H(entity.episode_list):
+     entity.episode_count_one_day=a(L(E(H(items))/H(entity.episode_list)))
      if entity.episode_count_one_day==0:
       entity.episode_count_one_day=1
     else:
@@ -315,12 +315,12 @@ class Logic(G):
     entity.episode_count_one_day=1
    entity.episode_list_json=json.dumps(entity.episode_list)
    entity.save()
-   logger.debug('daum tv len(entity.episode_list) : %s %s %s',c(items),c(entity.episode_list),entity.episode_count_one_day)
+   logger.debug('daum tv len(entity.episode_list) : %s %s %s',H(items),H(entity.episode_list),entity.episode_count_one_day)
    return entity 
-  except X as exception:
+  except x as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @t
+ @C
  def db_list(req):
   try:
    ret={}
@@ -329,7 +329,7 @@ class Logic(G):
    job_id=''
    search=''
    if 'page' in req.form:
-    page=R(req.form['page'])
+    page=a(req.form['page'])
    if 'search_word' in req.form:
     search=req.form['search_word']
    query=db.session.query(ModelDaumTVShow)
@@ -342,7 +342,7 @@ class Logic(G):
    ret['list']=[item.as_dict()for item in lists]
    ret['paging']=Util.get_paging_info(count,page,page_size)
    return ret
-  except X as exception:
+  except x as exception:
    logger.debug('Exception:%s',exception)
    logger.debug(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

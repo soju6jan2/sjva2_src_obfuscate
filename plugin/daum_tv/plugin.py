@@ -1,5 +1,5 @@
 import os
-X=Exception
+x=Exception
 import traceback
 import time
 from datetime import datetime
@@ -23,14 +23,14 @@ def plugin_load():
  try:
   logger.debug('plugin_load:%s',package_name)
   Logic.plugin_load()
- except X as exception:
+ except x as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def plugin_unload():
  try:
   logger.debug('plugin_unload:%s',package_name)
   Logic.plugin_unload()
- except X as exception:
+ except x as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 @blueprint.route('/')
@@ -53,14 +53,14 @@ def ajax(sub):
   try:
    ret=Logic.db_list(request)
    return jsonify(ret)
-  except X as exception:
+  except x as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  elif sub=='refresh':
   try:
    ret=Logic.refresh(request)
    return jsonify(ret)
-  except X as exception:
+  except x as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
