@@ -1,15 +1,15 @@
 import os
-V=object
-a=None
-O=staticmethod
-K=Exception
-n=str
-p=getattr
-i=ImportError
-l=True
-F=len
-k=enumerate
-o=False
+L=object
+j=None
+d=staticmethod
+b=Exception
+e=str
+G=getattr
+m=ImportError
+O=True
+X=len
+v=enumerate
+n=False
 import traceback
 import json
 import datetime
@@ -20,16 +20,16 @@ from framework import app
 from framework.common.telegram_bot import logger
 from framework.common.util import AESCipher
 from system.model import ModelSetting as SystemModelSetting
-class TelegramBot(V):
- bot=a
- message_loop=a
+class TelegramBot(L):
+ bot=j
+ message_loop=j
  SUPER_TOKEN='817624975:AAH4zRESDTWwYL4xmmks-ohl9LkC3qYiWV0'
- SUPER_BOT=a
+ SUPER_BOT=j
  SJVA_BOT_CHANNEL_CHAT_ID=['-1001424350090','-1001290967798','-1001428878939','-1001478260118','-1001276582768','-1001287732044','-1001185127926','-1001236433271','-1001241700529','-1001231080344','-1001176084443','-1001338380585','-1001107581425','-1001374760690','-1001195790611','-1001239823262','-1001300536937','-1001417416651','-1001411726438','-1001312832402','-1001473554220','-1001214198736','-1001366983815','-1001336003806','-1001229313654','-1001403657137','-1001368328507','-1001197617982','-1001256559181','-1001202840141']
- @O
+ @d
  def start(bot_token):
   try:
-   if TelegramBot.message_loop is a:
+   if TelegramBot.message_loop is j:
     TelegramBot.bot=Bot(bot_token)
     me=TelegramBot.bot.getMe()
     logger.debug('TelegramBot bot : %s',me)
@@ -41,12 +41,12 @@ class TelegramBot(V):
     if SystemModelSetting.get('ddns')=='https://sjva-server.soju6jan.com':
      MessageLoop(TelegramBot.SUPER_BOT,TelegramBot.super_receive_callback).run_as_thread()
      pass
-    while TelegramBot.message_loop is not a:
+    while TelegramBot.message_loop is not j:
      time.sleep(60*60)
-  except K as exception:
+  except b as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @O
+ @d
  def receive_callback(msg):
   try:
    content_type,chat_type,chat_id=glance(msg)
@@ -54,11 +54,11 @@ class TelegramBot(V):
     if content_type=='text' and msg['text'][0]=='^':
      if SystemModelSetting.get_bool('telegram_resend'):
       chat_list=SystemModelSetting.get_list('telegram_resend_chat_id')
-      if n(chat_id)not in chat_list:
+      if e(chat_id)not in chat_list:
        for c in chat_list:
         import framework.common.notify as Notify
         Notify.send_telegram_message(msg['text'],SystemModelSetting.get('telegram_bot_token'),chat_id=c)
-   except K as exception:
+   except b as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
    if content_type=='text':
@@ -78,10 +78,10 @@ class TelegramBot(V):
      TelegramBot.bot.sendMessage(chat_id,text)
     elif msg['text'].startswith('call'):
      logger.debug(msg['text'])
-  except K as exception:
+  except b as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @O
+ @d
  def process_receive_data(text):
   try:
    text=AESCipher.decrypt(text)
@@ -90,7 +90,7 @@ class TelegramBot(V):
    if 'plugin' in data:
     try:
      plugin_name=data['plugin']
-     target=a
+     target=j
      if 'policy_level' in data:
       logger.debug(data)
       if data['policy_level']>app.config['config']['level']:
@@ -98,23 +98,23 @@ class TelegramBot(V):
      if 'target' in data:
       target=data['target']
      mod=__import__('%s'%(plugin_name),fromlist=[])
-     mod_process_telegram_data=p(mod,'process_telegram_data')
+     mod_process_telegram_data=G(mod,'process_telegram_data')
      if mod_process_telegram_data:
       try:
        mod.process_telegram_data(data['data'],target=target)
       except:
        mod.process_telegram_data(data['data'])
      return
-    except i:
+    except m:
      pass
-    except K as exception:
+    except b as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc())
     return
-  except K as exception:
+  except b as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @O
+ @d
  def super_receive_callback(msg):
   try:
    content_type,chat_type,chat_id=glance(msg)
@@ -128,12 +128,12 @@ class TelegramBot(V):
      logger.debug('user_id:%s',user_id)
      try:
       name=msg['from']['first_name']
-     except K as exception:
+     except b as exception:
       name=''
      try:
-      TelegramBot.SUPER_BOT.promoteChatMember(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID[-1],user_id,can_post_messages=l,can_invite_users=l,can_promote_members=l)
+      TelegramBot.SUPER_BOT.promoteChatMember(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID[-1],user_id,can_post_messages=O,can_invite_users=O,can_promote_members=O)
       text='%s님을 SJVA Bot Group 채널에 관리자로 추가하였습니다.\n채널에서 봇을 추가하시고 나가주세요.'%name
-     except K as exception:
+     except b as exception:
       logger.error('Exception:%s',exception)
       logger.error(traceback.format_exc())
       text='%s님이 봇 채널에 입장해 있지 않은 것 같습니다.\n%s'%(name,'https://t.me/sjva_bot_channel')
@@ -142,39 +142,39 @@ class TelegramBot(V):
      try:
       tmp=msg['text'].split(' ')
       logger.debug(tmp)
-      if F(tmp)==2:
+      if X(tmp)==2:
        user_id=tmp[1]
        logger.debug('/where : %s',user_id)
-       data=a
+       data=j
        text='입장한 방이 없습니다.'
-       for idx,c in k(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID):
+       for idx,c in v(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID):
         try:
          data=TelegramBot.SUPER_BOT.getChatMember(c,user_id)
-         if data is not a:
+         if data is not j:
           if data['status']=='administrator':
            logger.debug('getChatMemner result : %s',data)
-           text=json.dumps(data,indent=2)+'\n'+'%s번 방에 있습니다. 32번=%s, 33번=%s'%((idx+1),F(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID)-1,F(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID))
+           text=json.dumps(data,indent=2)+'\n'+'%s번 방에 있습니다. 32번=%s, 33번=%s'%((idx+1),X(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID)-1,X(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID))
            break
-        except K as exception:
+        except b as exception:
          logger.error('Exception:%s',exception)
          logger.error(traceback.format_exc())
       else:
        text='/where 봇ID(숫자형식) 를 입력하세요.'
       TelegramBot.SUPER_BOT.sendMessage(chat_id,text)
-     except K as exception:
+     except b as exception:
       logger.error('Exception:%s',exception)
       logger.error(traceback.format_exc())
-      TelegramBot.SUPER_BOT.sendMessage(chat_id,n(e)) 
+      TelegramBot.SUPER_BOT.sendMessage(chat_id,e(e)) 
     else:
      text='Your ID : %s'%(user_id)
      TelegramBot.SUPER_BOT.sendMessage(chat_id,text)
-  except K as exception:
+  except b as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @O
- def super_send_message(text,encryped=l,only_last=o):
+ @d
+ def super_send_message(text,encryped=O,only_last=n):
   try:
-   if TelegramBot.SUPER_BOT is a:
+   if TelegramBot.SUPER_BOT is j:
     TelegramBot.SUPER_BOT=Bot(TelegramBot.SUPER_TOKEN)
    if encryped:
     text='^'+AESCipher.encrypt(text)
@@ -184,13 +184,13 @@ class TelegramBot(V):
     for c_id in TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID:
      try:
       TelegramBot.SUPER_BOT.sendMessage(c_id,text)
-     except K as exception:
+     except b as exception:
       logger.error('Exception:%s',exception)
       logger.error('Chat ID : %s',c_id)
       logger.error(traceback.format_exc()) 
-   return l
-  except K as exception:
+   return O
+  except b as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return o
+   return n
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

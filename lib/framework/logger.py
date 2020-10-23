@@ -1,7 +1,7 @@
 import os
 T=int
-A=None
-n=True
+t=None
+K=True
 import logging
 import logging.handlers
 from datetime import datetime
@@ -24,10 +24,10 @@ def get_logger(name):
      level=T(level)
     except:
      level=logging.DEBUG
-    if level_unset_logger_list is not A:
+    if level_unset_logger_list is not t:
      for item in level_unset_logger_list:
       item.setLevel(level)
-     level_unset_logger_list=A
+     level_unset_logger_list=t
    else:
     level_unset_logger_list.append(logger)
   except:
@@ -41,7 +41,7 @@ def get_logger(name):
    return converted.timetuple()
   formatter.converter=customTime
   file_max_bytes=1*1024*1024 
-  fileHandler=logging.handlers.RotatingFileHandler(filename=os.path.join(path_data,'log','%s.log'%name),maxBytes=file_max_bytes,backupCount=5,encoding='utf8',delay=n)
+  fileHandler=logging.handlers.RotatingFileHandler(filename=os.path.join(path_data,'log','%s.log'%name),maxBytes=file_max_bytes,backupCount=5,encoding='utf8',delay=K)
   streamHandler=logging.StreamHandler()
   fileHandler.setFormatter(formatter)
   streamHandler.setFormatter(formatter)

@@ -1,7 +1,7 @@
 import traceback
-B=None
+H=None
 z=Exception
-v=True
+Q=True
 import json
 from flask import Blueprint,request,render_template,redirect,jsonify
 from flask_login import login_required
@@ -11,9 +11,9 @@ from framework.util import AlchemyEncoder
 def default_route(P):
  @P.blueprint.route('/')
  def home():
-  if P.ModelSetting is not B:
+  if P.ModelSetting is not H:
    tmp=P.ModelSetting.get('recent_menu_plugin')
-   if tmp is not B and tmp!='':
+   if tmp is not H and tmp!='':
     tmps=tmp.split('|')
     return redirect('/{package_name}/{sub}/{sub2}'.format(package_name=P.package_name,sub=tmps[0],sub2=tmps[1]))
   return redirect('/{package_name}/{home_module}'.format(package_name=P.package_name,home_module=P.home_module))
@@ -33,7 +33,7 @@ def default_route(P):
  @P.blueprint.route('/<sub>/<sub2>',methods=['GET','POST'])
  @login_required
  def second_menu(sub,sub2):
-  if P.ModelSetting is not B:
+  if P.ModelSetting is not H:
    P.ModelSetting.set('recent_menu_plugin','{}|{}'.format(sub,sub2))
   try:
    for module in P.module_list:
@@ -161,7 +161,7 @@ def default_route_single_module(P):
    P.logger.error('Exception:%s',exception)
    P.logger.error(traceback.format_exc()) 
 def default_route_socketio(P,instance):
- if instance.socketio_list is B:
+ if instance.socketio_list is H:
   instance.socketio_list=[]
  @socketio.on('connect',namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name))
  def connect():
@@ -180,11 +180,11 @@ def default_route_socketio(P,instance):
   except z as exception:
    P.logger.error('Exception:%s',exception)
    P.logger.error(traceback.format_exc())
- def socketio_callback(cmd,data,encoding=v):
+ def socketio_callback(cmd,data,encoding=Q):
   if instance.socketio_list:
    if encoding:
     data=json.dumps(data,cls=AlchemyEncoder)
     data=json.loads(data)
-   socketio.emit(cmd,data,namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name),broadcast=v)
+   socketio.emit(cmd,data,namespace='/{package_name}/{sub}'.format(package_name=P.package_name,sub=instance.name),broadcast=Q)
  instance.socketio_callback=socketio_callback
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

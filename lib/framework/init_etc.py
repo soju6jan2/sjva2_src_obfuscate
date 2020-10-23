@@ -1,7 +1,7 @@
 import os
-A=None
+t=None
 D=Exception
-m=print
+B=print
 from datetime import datetime,timedelta
 from flask import request,abort
 from functools import wraps
@@ -17,15 +17,15 @@ def check_api(original_function):
      apikey=request.form['apikey']
     else:
      apikey=request.args.get('apikey')
-    if apikey is A or apikey!=SystemModelSetting.get('auth_apikey'):
+    if apikey is t or apikey!=SystemModelSetting.get('auth_apikey'):
      logger.debug('CHECK API : ABORT no match ({})'.format(apikey))
      logger.debug(request.environ.get('HTTP_X_REAL_IP',request.remote_addr))
      abort(403)
      return 
   except D as exception:
-   m('Exception:%s',exception)
+   B('Exception:%s',exception)
    import traceback
-   m(traceback.format_exc())
+   B(traceback.format_exc())
    logger.debug('CHECK API : ABORT exception')
    abort(403)
    return 
@@ -48,20 +48,20 @@ def make_default_dir(path_data):
    if not os.path.exists(tmp):
     os.mkdir(tmp)
  except D as exception:
-  m('Exception:%s',exception)
+  B('Exception:%s',exception)
   import traceback
-  m(traceback.format_exc())
+  B(traceback.format_exc())
 def pip_install():
  from framework import app
- m('pip_install start')
+ B('pip_install start')
  try:
   import discord_webhook
-  m('discord_webhook already installed..')
+  B('discord_webhook already installed..')
  except:
   try:
    os.system("{} install discord-webhook".format(app.config['config']['pip']))
-   m('discord-webhook install..')
+   B('discord-webhook install..')
   except:
-   m('discord-webhook fail..')
- m('pip_install end')
+   B('discord-webhook fail..')
+ B('pip_install end')
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

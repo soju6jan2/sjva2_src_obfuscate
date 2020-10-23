@@ -1,11 +1,11 @@
 import os
-A=None
+t=None
 D=Exception
-d=super
-b=False
-n=True
-z=open
-t=classmethod
+A=super
+o=False
+K=True
+P=open
+v=classmethod
 import traceback
 import time
 import threading
@@ -21,7 +21,7 @@ def socket_connect():
 @socketio.on('start',namespace='/%s'%namespace)
 def socket_file(data):
  try:
-  package=filename=A
+  package=filename=t
   if 'package' in data:
    package=data['package']
   else:
@@ -41,16 +41,16 @@ def disconnect():
   logger.error(traceback.format_exc())
 class WatchThread(threading.Thread):
  def __init__(self,package,filename):
-  d(WatchThread,self).__init__()
-  self.stop_flag=b
+  A(WatchThread,self).__init__()
+  self.stop_flag=o
   self.package=package
   self.filename=filename
-  self.daemon=n
+  self.daemon=K
  def stop(self):
-  self.stop_flag=n
+  self.stop_flag=K
  def run(self):
   logger.debug('WatchThread.. Start %s',self.package)
-  if self.package is not A:
+  if self.package is not t:
    logfile=os.path.join(path_data,'log','%s.log'%self.package)
    key='package'
    value=self.package
@@ -59,39 +59,39 @@ class WatchThread(threading.Thread):
    key='filename'
    value=self.filename
   if os.path.exists(logfile):
-   with z(logfile,'r')as f:
+   with P(logfile,'r')as f:
     f.seek(0,os.SEEK_END)
     while not self.stop_flag:
      line=f.readline()
      if not line:
       time.sleep(0.1)
       continue
-     socketio.emit("add",{key:value,'data':line},namespace='/log',broadcast=n)
+     socketio.emit("add",{key:value,'data':line},namespace='/log',broadcast=K)
    logger.debug('WatchThread.. End %s',value)
   else:
-   socketio.emit("add",{key:value,'data':'not exist logfile'},namespace='/log',broadcast=n)
+   socketio.emit("add",{key:value,'data':'not exist logfile'},namespace='/log',broadcast=K)
 class LogViewer(SingletonClass):
  watch_list={}
- @t
+ @v
  def start(cls,package,filename,sid):
   def thread_function():
-   if package is not A:
+   if package is not t:
     logfile=os.path.join(path_data,'log','%s.log'%package)
    else:
     logfile=os.path.join(path_data,'log',filename)
    if os.path.exists(logfile):
-    ins_file=z(logfile,'r') 
+    ins_file=P(logfile,'r') 
     line=ins_file.read()
     socketio.emit("on_start",{'data':line},namespace='/log')
     logger.debug('on_start end')
    else:
     socketio.emit("on_start",{'data':'not exist logfile'},namespace='/log')
-  if package is not A:
+  if package is not t:
    key=package
   else:
    key=filename
   thread=threading.Thread(target=thread_function,args=())
-  thread.daemon=n
+  thread.daemon=K
   thread.start()
   if key not in cls.watch_list:
    cls.watch_list[key]={}
@@ -99,15 +99,15 @@ class LogViewer(SingletonClass):
    cls.watch_list[key]['thread']=WatchThread(package,filename)
    cls.watch_list[key]['thread'].start()
   cls.watch_list[key]['sid'].append(sid)
- @t
+ @v
  def disconnect(cls,sid):
-  find=b
-  find_key=A
+  find=o
+  find_key=t
   for key,value in cls.watch_list.items():
    logger.debug('key:%s value:%s',key,value)
    for s in value['sid']:
     if sid==s:
-     find=n
+     find=K
      find_key=key
      value['sid'].remove(s)
      break

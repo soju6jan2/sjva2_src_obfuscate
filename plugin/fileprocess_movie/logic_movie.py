@@ -1,12 +1,12 @@
 import os
-v=object
-X=staticmethod
-M=Exception
-Y=None
-p=OSError
-O=len
-A=True
-k=False
+S=object
+C=staticmethod
+f=Exception
+q=None
+M=OSError
+x=len
+I=True
+H=False
 import sys
 import traceback
 import logging
@@ -24,8 +24,8 @@ from framework.common.daum import MovieSearch
 from.model import ModelSetting,ModelFileprocessMovieItem
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class LogicMovie(v):
- @X
+class LogicMovie(S):
+ @C
  def set_movie(data,movie):
   try:
    data['movie']=movie
@@ -36,21 +36,21 @@ class LogicMovie(v):
     tmp=folder_rule.replace('%TITLE%',movie['title']).replace('%YEAR%',movie['year']).replace('%ENG_TITLE%',movie['more']['eng_title']).replace('%COUNTRY%',movie['more']['country']).replace('%GENRE%',movie['more']['genre']).replace('%DATE%',movie['more']['date']).replace('%RATE%',movie['more']['rate']).replace('%DURING%',movie['more']['during'])
     tmp=re.sub('[\\/:*?\"<>|]','',tmp).replace('  ',' ').replace('[]','')
     data['dest_folder_name']=tmp
-  except M as exception:
+  except f as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @C
  def set_no_movie(data):
   try:
-   data['movie']=Y
+   data['movie']=q
    if data['is_file']:
     data['dest_folder_name']='%s'%re.sub('[\\/:*?\"<>|]','',os.path.splitext(data['name'])[0].replace('  ',' '))
    else:
     data['dest_folder_name']=data['name']
-  except M as exception:
+  except f as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @C
  def clear_folder(target):
   try:
    datas=os.listdir(target)
@@ -60,8 +60,8 @@ class LogicMovie(v):
      if data.lower()in['subs','sample']:
       try:
        shutil.rmtree(p)
-      except p as exception:
-       if e.errno==2:
+      except M as exception:
+       if exception.errno==2:
         pass
        else:
         raise
@@ -76,10 +76,10 @@ class LogicMovie(v):
    datas=os.listdir(target)
    if not datas:
     os.rmdir(target)
-  except M as exception:
+  except f as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @C
  def move_dir_to_dir(src,dest):
   logger.debug('move_dir_to_dir : %s %s',src,dest)
   try:
@@ -98,16 +98,16 @@ class LogicMovie(v):
         os.remove(os.path.join(src,t))
        else:
         shutil.move(os.path.join(src,t),dest)
-     except M as exception:
+     except f as exception:
       logger.error('Exxception:%s',exception)
       logger.error(traceback.format_exc())
-    if os.path.exists(src)and O(os.listdir(src))==0:
+    if os.path.exists(src)and x(os.listdir(src))==0:
      os.rmdir(src)
-  except M as exception:
+  except f as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
   logger.debug('move_dir_to_dir end: %s %s',src,dest)
- @X
+ @C
  def move(data,target_path):
   try:
    if data['is_file']:
@@ -122,10 +122,10 @@ class LogicMovie(v):
     LogicMovie.clear_folder(data['fullpath'])
     dest_folder_path=os.path.join(target_path,data['target'],data['dest_folder_name'])
     LogicMovie.move_dir_to_dir(data['fullpath'],dest_folder_path)
-  except M as exception:
+  except f as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @C
  def process_sub_file_and_trash_file(filelist,target):
   try:
    for item in filelist:
@@ -146,15 +146,15 @@ class LogicMovie(v):
        item['dest_folder_name']=''
        item['target']=os.path.join('no_movie','unknown')
        LogicMovie.move(item,target)
-       item['flag_move']=A
-     except M as exception:
+       item['flag_move']=I
+     except f as exception:
       logger.error('Exxception:%s',exception)
       logger.error(traceback.format_exc())
       logger.error(item)
-  except M as exception:
+  except f as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @C
  def prepare_target(target_path):
   try:
    child=['kor','kor_vod','vod','sub_o','sub_x','no_movie']
@@ -165,10 +165,10 @@ class LogicMovie(v):
       os.mkdir(t)
      except:
       pass
-  except M as exception:
+  except f as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @C
  def make_list(source_path):
   try:
    filelist=[]
@@ -178,32 +178,32 @@ class LogicMovie(v):
     for f in lists:
      try:
       item={}
-      item['flag_move']=k
+      item['flag_move']=H
       item['path']=path
       item['name']=f
       item['fullpath']=os.path.join(path,f)
-      item['is_file']=A if os.path.isfile(item['fullpath'])else k
+      item['is_file']=I if os.path.isfile(item['fullpath'])else H
       item['is_folder']=not item['is_file']
       item['guessit']=guessit(f)
       item['ext']=os.path.splitext(f)[1].lower()
-      item['search_name']=Y
+      item['search_name']=q
       match=re.compile(r'^(?P<name>.*?)[\s\.\[\_\(]\d{4}').match(item['name'])
       if match:
        item['search_name']=match.group('name').replace('.',' ').strip()
        item['search_name']=re.sub(r'\[(.*?)\]','',item['search_name'])
       filelist.append(item)
-     except M as exception:
+     except f as exception:
       logger.error('Exxception:%s',exception)
       logger.error(traceback.format_exc())
    return filelist
-  except M as exception:
+  except f as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @C
  def get_info_from_rss(f):
   try:
    item={}
-   item['flag_move']=k
+   item['flag_move']=H
    item['name']=f
    item['guessit']=guessit(f)
    if 'language' in item['guessit']:
@@ -212,8 +212,8 @@ class LogicMovie(v):
     item['guessit']['screen_size']='--'
    if 'source' not in item['guessit']:
     item['guessit']['source']='--'
-   item['search_name']=Y
-   item['movie']=Y
+   item['search_name']=q
+   item['movie']=q
    match=re.compile(r'^(?P<name>.*?)[\s\.\[\_\(]\d{4}').match(item['name'])
    if match:
     item['search_name']=match.group('name').replace('.',' ').strip()
@@ -234,23 +234,23 @@ class LogicMovie(v):
        item['target']='vod'
       else:
        item['target']='sub_x'
-     item['flag_move']=A
+     item['flag_move']=I
     else:
      logger.debug('NO META!!!!!!!!!!')
-     if item['is_include_kor']==k:
+     if item['is_include_kor']==H:
       logger.debug('imdb search %s %s ',item['search_name'].lower(),item['guessit']['year'])
       movie=MovieSearch.search_imdb(item['search_name'].lower(),item['guessit']['year'])
-      if movie is not Y:
+      if movie is not q:
        logger.debug('IMDB TITLE:[%s][%s]',movie['title'],movie['year'])
        item['movie']=movie
        item['target']='imdb'
-       item['flag_move']=A
+       item['flag_move']=I
    item['guessit']=''
    return item
-  except M as exception:
+  except f as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @C
  def save_db(arg):
   try:
    logger.debug('FOR save_db : %s'%arg)
@@ -259,15 +259,15 @@ class LogicMovie(v):
     logger.debug('DB SAVE 3')
     ModelFileprocessMovieItem.save(item)
     logger.debug('DB SAVE 4')
-  except M as exception:
+  except f as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @X
+ @C
  def start(source_path,target_path):
   if app.config['config']['use_celery']:
    result=LogicMovie.start_task.apply_async((source_path,target_path))
    try:
-    result.get(on_message=LogicMovie.save_db,propagate=A)
+    result.get(on_message=LogicMovie.save_db,propagate=I)
    except:
     logger.debug('CELERY on_message not process.. only get() start')
     try:
@@ -276,8 +276,8 @@ class LogicMovie(v):
      pass
   else:
    LogicMovie.start_task(source_path,target_path)
- @X
- @celery.task(bind=A)
+ @C
+ @celery.task(bind=I)
  def start_task(self,source_path,target_path):
   logger.debug('movie %s, %s',source_path,target_path)
   LogicMovie.prepare_target(target_path)
@@ -303,19 +303,19 @@ class LogicMovie(v):
         else:
          item['target']='sub_x'
        LogicMovie.move(item,target_path)
-       item['flag_move']=A
+       item['flag_move']=I
       else:
        logger.debug('NO META!!!!!!!!!!')
        logger.debug(item)
        logger.debug(item['search_name'])
-       if item['is_include_kor']==k and item['search_name']is not Y:
+       if item['is_include_kor']==H and item['search_name']is not q:
         movie=MovieSearch.search_imdb(item['search_name'].lower(),item['guessit']['year'])
-        if movie is not Y:
+        if movie is not q:
          logger.debug('IMDB TITLE:[%s][%s]',movie['title'],movie['year'])
          LogicMovie.set_movie(item,movie)
          item['target']='imdb'
          LogicMovie.move(item,target_path)
-         item['flag_move']=A
+         item['flag_move']=I
      if not item['flag_move']:
       logger.debug('NOT MOVE!!!!!!!!!!!')
       if item['ext']=='.smi' or item['ext']=='.srt':
@@ -323,7 +323,7 @@ class LogicMovie(v):
        item['dest_folder_name']=''
        item['target']=os.path.join('no_movie','sub')
        LogicMovie.move(item,target_path)
-       item['flag_move']=A
+       item['flag_move']=I
       else:
        LogicMovie.set_no_movie(item)
        if 'year' not in item['guessit']:
@@ -331,21 +331,21 @@ class LogicMovie(v):
        else:
         item['target']=os.path.join('no_movie','no_meta')
        LogicMovie.move(item,target_path)
-       item['flag_move']=A
+       item['flag_move']=I
      if 'guessit' in item:
       del item['guessit']
      logger.debug('DB SAVE 1')
      ModelFileprocessMovieItem.save(item)
      logger.debug('DB SAVE 2')
      time.sleep(1)
-    except M as exception:
+    except f as exception:
      logger.error('Exxception:%s',exception)
      logger.error(traceback.format_exc())
-  except M as exception:
+  except f as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
   LogicMovie.process_smi(target_path)
- @X
+ @C
  def process_smi(target):
   try:
    sub_x_path=os.path.join(target,'sub_x')
@@ -355,9 +355,9 @@ class LogicMovie(v):
     movie_path=os.path.join(sub_x_path,movie)
     smi_count=0
     srt_count=0
-    srt_file=Y
+    srt_file=q
     video_count=0
-    video_file=Y
+    video_file=q
     for f in os.listdir(movie_path):
      tmp=os.path.splitext(f.lower())
      if tmp[1]in['.smi']:
@@ -379,7 +379,7 @@ class LogicMovie(v):
       if srt_split[0]!=new:
        shutil.move(os.path.join(movie_path,srt_file),os.path.join(movie_path,'%s%s'%(new,srt_split[1])))
      LogicMovie.move_dir_to_dir(movie_path,os.path.join(sub_o_path,movie))
-  except M as exception:
+  except f as exception:
    logger.error('Exxception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
