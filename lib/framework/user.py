@@ -1,25 +1,25 @@
 import os
-S=None
-E=False
-a=str
-U=True
+Y=None
+W=False
+p=str
+B=True
 class User:
- def __init__(self,user_id,email=S,passwd_hash=S,authenticated=E):
+ def __init__(self,user_id,email=Y,passwd_hash=Y,authenticated=W):
   self.user_id=user_id
   self.email=email
   self.passwd_hash=passwd_hash
   self.authenticated=authenticated
  def __repr__(self):
   r={'user_id':self.user_id,'email':self.email,'passwd_hash':self.passwd_hash,'authenticated':self.authenticated,}
-  return a(r)
+  return p(r)
  def can_login(self,passwd_hash):
   return self.passwd_hash==passwd_hash
  def is_active(self):
-  return U
+  return B
  def get_id(self):
   return self.user_id
  def is_authenticated(self):
   return self.authenticated
  def is_anonymous(self):
-  return E
+  return W
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

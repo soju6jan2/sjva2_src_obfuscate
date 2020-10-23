@@ -1,17 +1,17 @@
 import re
-G=None
-M=str
+g=None
+w=str
 def convert_vtt_to_srt(fileContents):
  data=_step1(fileContents).strip()
  regex=re.compile(r'\d{2}:\d{2}(:\d{2})?(,\d{3})?\s-->\s\d{2}:\d{2}(:\d{2})?(,\d{3})?')
  ret=[]
  idx=1
- pre_line=G
+ pre_line=g
  for tmp in data.split('\n'):
   match=regex.match(tmp)
   if match:
-   if pre_line is not G and pre_line!=M(idx):
-    ret.append(M(idx))
+   if pre_line is not g and pre_line!=w(idx):
+    ret.append(w(idx))
    idx+=1
   ret.append(tmp.strip())
   pre_line=tmp.strip()
