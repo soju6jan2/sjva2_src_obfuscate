@@ -1,6 +1,6 @@
 from.file import*
-l=None
-k=len
+g=None
+H=len
 from.env import*
 from.aes_cipher import AESCipher
 from.sjva_support_handle import SJVASupportControl
@@ -10,9 +10,9 @@ from.requests_util import get_json_with_auth_session
 def get_filename_from_cd(cd):
  import re
  if not cd:
-  return l
+  return g
  fname=re.findall('filename=(.+)',cd)
- if k(fname)==0:
-  return l
+ if H(fname)==0:
+  return g
  return fname[0].replace('"','')
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
