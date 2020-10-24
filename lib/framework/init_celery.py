@@ -1,5 +1,4 @@
 import os
-I=False
 import sys
 from framework import app,logger,path_app_root
 from celery import Celery
@@ -10,6 +9,6 @@ except:
 app.config['CELERY_BROKER_URL']='redis://localhost:%s/0'%redis_port
 app.config['CELERY_RESULT_BACKEND']='redis://localhost:%s/0'%redis_port
 celery=Celery(app.name,broker=app.config['CELERY_BROKER_URL'],backend=app.config['CELERY_RESULT_BACKEND'])
-celery.conf['CELERY_ENABLE_UTC']=I
+celery.conf['CELERY_ENABLE_UTC']=False
 celery.conf.update(task_serializer='pickle',result_serializer='pickle',accept_content=['pickle'],timezone='Asia/Seoul')
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

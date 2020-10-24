@@ -1,18 +1,4 @@
 import os
-R=object
-J=staticmethod
-v=False
-D=enumerate
-r=ord
-H=True
-W=None
-o=range
-N=len
-P=Exception
-I=list
-y=reversed
-T=sorted
-K=int
 import sys
 import re
 import traceback
@@ -21,33 +7,33 @@ import urllib
 import lxml
 import requests
 from framework import logger,py_urllib,app
-class MovieSearch(R):
- @J
+class MovieSearch(object):
+ @staticmethod
  def search_movie(movie_name,movie_year):
   try:
    movie_year='%s'%movie_year
    movie_list=[]
    split_index=-1
-   is_include_kor=v
-   for index,c in D(movie_name):
+   is_include_kor=False
+   for index,c in enumerate(movie_name):
     if app.config['config']['is_py2']:
-     if r(u'가')<=r(c)<=r(u'힣'):
-      is_include_kor=H
+     if ord(u'가')<=ord(c)<=ord(u'힣'):
+      is_include_kor=True
       split_index=-1
-     elif r('a')<=r(c.lower())<=r('z'):
-      is_include_eng=H
+     elif ord('a')<=ord(c.lower())<=ord('z'):
+      is_include_eng=True
       if split_index==-1:
        split_index=index
-     elif r('0')<=r(c.lower())<=r('9')or r(' '):
+     elif ord('0')<=ord(c.lower())<=ord('9')or ord(' '):
       pass
      else:
       split_index=-1
     else:
      if(u'가')<=(c)<=(u'힣'):
-      is_include_kor=H
+      is_include_kor=True
       split_index=-1
      elif('a')<=(c.lower())<=('z'):
-      is_include_eng=H
+      is_include_eng=True
       if split_index==-1:
        split_index=index
      elif('0')<=(c.lower())<=('9')or(' '):
@@ -58,29 +44,29 @@ class MovieSearch(R):
     kor=movie_name[:split_index].strip()
     eng=movie_name[split_index:].strip()
    else:
-    kor=W
-    eng=W
+    kor=None
+    eng=None
    logger.debug('SEARCH_MOVIE : [%s] [%s] [%s] [%s]'%(movie_name,is_include_kor,kor,eng))
    movie_list=MovieSearch.search_movie_web(movie_list,movie_name,movie_year)
    if movie_list and movie_list[0]['score']==100:
     logger.debug('SEARCH_MOVIE STEP 1 : %s'%movie_list)
     return is_include_kor,movie_list
-   if kor is not W:
+   if kor is not None:
     movie_list=MovieSearch.search_movie_web(movie_list,kor,movie_year)
     if movie_list and movie_list[0]['score']==100:
      logger.debug('SEARCH_MOVIE STEP 2 : %s'%movie_list)
      return is_include_kor,movie_list
-   if eng is not W:
+   if eng is not None:
     movie_list=MovieSearch.search_movie_web(movie_list,eng,movie_year)
     if movie_list and movie_list[0]['score']==100:
      logger.debug('SEARCH_MOVIE STEP 3 : %s'%movie_list)
      return is_include_kor,movie_list
-   if kor is not W:
+   if kor is not None:
     tmps=kor.split(' ')
     index=-1
-    for i in o(N(tmps)):
+    for i in range(len(tmps)):
      if app.config['config']['is_py2']:
-      if r(u'가')<=r(tmps[i][0])<=r(u'힣')or r('0')<=r(tmps[i][0])<=r('9'):
+      if ord(u'가')<=ord(tmps[i][0])<=ord(u'힣')or ord('0')<=ord(tmps[i][0])<=ord('9'):
        pass
       else:
        index=i
@@ -96,39 +82,39 @@ class MovieSearch(R):
      if movie_list and movie_list[0]['score']==100:
       logger.debug('SEARCH_MOVIE STEP 4 : %s'%movie_list)
       return is_include_kor,movie_list
-   if H:
+   if True:
     if movie_list and movie_list[0]['score']==95:
      movie_list=MovieSearch.search_movie_web(movie_list,movie_list[0]['title'],movie_year)
      if movie_list and movie_list[0]['score']==100:
       logger.debug('SEARCH_MOVIE STEP 5 : %s'%movie_list)
       return is_include_kor,movie_list
-   if is_include_kor==v:
+   if is_include_kor==False:
     movie=MovieSearch.search_imdb(movie_name.lower(),movie_year)
-    if movie is not W:
+    if movie is not None:
      movie_list=MovieSearch.search_movie_web(movie_list,movie['title'],movie_year)
      if movie_list and movie_list[0]['score']==100:
       logger.debug('SEARCH_MOVIE STEP IMDB : %s'%movie_list)
       return is_include_kor,movie_list
    logger.debug('SEARCH_MOVIE STEP LAST : %s'%movie_list)
-  except P as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
   return is_include_kor,movie_list
- @J
+ @staticmethod
  def movie_append(movie_list,data):
   try:
-   exist_data=W
+   exist_data=None
    for tmp in movie_list:
     if tmp['id']==data['id']:
      exist_data=tmp
      break
-   if exist_data is not W:
+   if exist_data is not None:
     movie_list.remove(exist_data)
    movie_list.append(data)
-  except P as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @J
+ @staticmethod
  def get_movie_info_from_home(url):
   try:
    from framework.common.daum import headers,session
@@ -136,13 +122,13 @@ class MovieSearch(R):
    res=session.get(url,headers=headers,cookies=SystemLogicSite.get_daum_cookies())
    data=res.text
    html=lxml.html.document_fromstring(data)
-   movie=W
+   movie=None
    try:
     movie=html.get_element_by_id('movieEColl')
-   except P as exception:
+   except Exception as exception:
     pass
-   if movie is W:
-    return W
+   if movie is None:
+    return None
    title_tag=movie.get_element_by_id('movieTitle')
    a_tag=title_tag.find('a')
    href=a_tag.attrib['href']
@@ -166,19 +152,19 @@ class MovieSearch(R):
    more['info'].append(country_tag[0].text_content().strip())
    logger.debug(more['info'][0])
    tmp=more['info'][0].split('|')
-   if N(tmp)==5:
+   if len(tmp)==5:
     more['country']=tmp[0].replace(u'외','').strip()
     more['genre']=tmp[1].replace(u'외','').strip()
     more['date']=tmp[2].replace(u'개봉','').strip()
     more['rate']=tmp[3].strip()
     more['during']=tmp[4].strip()
-   elif N(tmp)==4:
+   elif len(tmp)==4:
     more['country']=tmp[0].replace(u'외','').strip()
     more['genre']=tmp[1].replace(u'외','').strip()
     more['date']=''
     more['rate']=tmp[2].strip()
     more['during']=tmp[3].strip()
-   elif N(tmp)==3:
+   elif len(tmp)==3:
     more['country']=tmp[0].replace(u'외','').strip()
     more['genre']=tmp[1].replace(u'외','').strip()
     more['date']=''
@@ -186,10 +172,10 @@ class MovieSearch(R):
     more['during']=tmp[2].strip()
    daum_id=href.split('=')[1]
    return{'movie':movie,'title':title,'daum_id':daum_id,'year':tmp_year,'country':country,'more':more}
-  except P as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
- @J
+ @staticmethod
  def search_movie_web(movie_list,movie_name,movie_year):
   try:
    url='https://suggest-bar.daum.net/suggest?id=movie&cate=movie&multiple=1&mod=json&code=utf_in_out&q=%s'%(py_urllib.quote(movie_name.encode('utf8')))
@@ -197,7 +183,7 @@ class MovieSearch(R):
    from system.logic_site import SystemLogicSite
    res=session.get(url,headers=headers,cookies=SystemLogicSite.get_daum_cookies())
    data=res.json()
-   for index,item in D(data['items']['movie']):
+   for index,item in enumerate(data['items']['movie']):
     tmps=item.split('|')
     score=85-(index*5)
     if tmps[0].find(movie_name)!=-1 and tmps[3]==movie_year:
@@ -207,27 +193,27 @@ class MovieSearch(R):
     if score<10:
      score=10
     MovieSearch.movie_append(movie_list,{'id':tmps[1],'title':tmps[0],'year':tmps[3],'score':score})
-  except P as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
   try:
    url='https://search.daum.net/search?nil_suggest=btn&w=tot&DA=SBC&q=%s%s'%('%EC%98%81%ED%99%94+',py_urllib.quote(movie_name.encode('utf8')))
    ret=MovieSearch.get_movie_info_from_home(url)
-   if ret is not W:
+   if ret is not None:
     if ret['year']==movie_year:
      score=100
-     need_another_search=v
+     need_another_search=False
     else:
      score=90
-     need_another_search=H
+     need_another_search=True
     MovieSearch.movie_append(movie_list,{'id':ret['daum_id'],'title':ret['title'],'year':ret['year'],'score':score,'country':ret['country'],'more':ret['more']})
     logger.debug('need_another_search : %s'%need_another_search)
     movie=ret['movie']
     if need_another_search:
      tmp=movie.find('div[@class="coll_etc"]')
-     if tmp is not W:
+     if tmp is not None:
       tag_list=tmp.findall('.//a')
-      first_url=W
+      first_url=None
       for tag in tag_list:
        match=re.compile(r'(.*?)\((.*?)\)').search(tag.text_content())
        if match:
@@ -235,18 +221,18 @@ class MovieSearch(R):
         score=80
         if match.group(1)==movie_name and match.group(2)==movie_year:
          first_url='https://search.daum.net/search?%s'%tag.attrib['href']
-        elif match.group(2)==movie_year and first_url is not W:
+        elif match.group(2)==movie_year and first_url is not None:
          first_url='https://search.daum.net/search?%s'%tag.attrib['href']
         MovieSearch.movie_append(movie_list,{'id':daum_id,'title':match.group(1),'year':match.group(2),'score':score})
       logger.debug('first_url : %s'%first_url)
-      if need_another_search and first_url is not W:
+      if need_another_search and first_url is not None:
        new_ret=MovieSearch.get_movie_info_from_home(first_url)
        MovieSearch.movie_append(movie_list,{'id':new_ret['daum_id'],'title':new_ret['title'],'year':new_ret['year'],'score':100,'country':new_ret['country'],'more':new_ret['more']})
      tmp=movie.find('.//ul[@class="list_thumb list_few"]')
      logger.debug('SERIES:%s'%tmp)
-     if tmp is not W:
+     if tmp is not None:
       tag_list=tmp.findall('.//div[@class="wrap_cont"]')
-      first_url=W
+      first_url=None
       score=80
       for tag in tag_list:
        a_tag=tag.find('a')
@@ -257,22 +243,22 @@ class MovieSearch(R):
        logger.debug('daum_id:%s %s %s'%(daum_id,year,daum_name))
        if daum_name==movie_name and year==movie_year:
         first_url='https://search.daum.net/search?%s'%a_tag.attrib['href']
-       elif year==movie_year and first_url is not W:
+       elif year==movie_year and first_url is not None:
         first_url='https://search.daum.net/search?%s'%tag.attrib['href']
        MovieSearch.movie_append(movie_list,{'id':daum_id,'title':daum_name,'year':year,'score':score})
        logger.debug('first_url : %s'%first_url)
-      if need_another_search and first_url is not W:
+      if need_another_search and first_url is not None:
        new_ret=MovieSearch.get_movie_info_from_home(first_url)
        MovieSearch.movie_append(movie_list,{'id':new_ret['daum_id'],'title':new_ret['title'],'year':new_ret['year'],'score':100,'country':new_ret['country'],'more':new_ret['more']})
-  except P as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  movie_list=I(y(T(movie_list,key=lambda k:k['score'])))
+  movie_list=list(reversed(sorted(movie_list,key=lambda k:k['score'])))
   return movie_list
- @J
+ @staticmethod
  def search_imdb(title,year):
   try:
-   year=K(year)
+   year=int(year)
    title=title.replace(' ','_')
    url='https://v2.sg.media-imdb.com/suggestion/%s/%s.json'%(title[0],title)
    tmp=requests.get(url).json()
@@ -281,7 +267,7 @@ class MovieSearch(R):
      title_imdb=t['l'].lower().replace("'",'').replace(':','').replace('&','and').replace('?','')
      if title.lower().replace("'",'').replace('.',' ').replace('_',' ')==title_imdb and 'y' in t and t['y']==year:
       return{'id':t['id'],'title':t['l'],'year':year,'score':100}
-  except P as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

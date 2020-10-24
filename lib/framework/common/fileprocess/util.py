@@ -1,27 +1,22 @@
 import os
-T=None
-S=False
-A=True
-x=UnicodeDecodeError
-K=Exception
 import traceback
 import time
 import threading
 import shutil
 from framework.common.fileprocess import logger
-def remove_small_file_and_move_target(path,size,target=T,except_ext=T):
+def remove_small_file_and_move_target(path,size,target=None,except_ext=None):
  try:
-  if target is T:
+  if target is None:
    target=path
-  if except_ext is T:
+  if except_ext is None:
    except_ext=['.smi','.srt','ass']
   lists=os.listdir(path)
   for f in lists:
    try:
     file_path=os.path.join(path,f)
-    except_file=S
+    except_file=False
     if os.path.splitext(file_path.lower())[1]in except_ext:
-     except_file=A
+     except_file=True
     if os.path.isdir(file_path):
      remove_small_file_and_move_target(file_path,size,target=target,except_ext=except_ext)
      if not os.listdir(file_path):
@@ -46,12 +41,12 @@ def remove_small_file_and_move_target(path,size,target=T,except_ext=T):
       except:
        logger.info(u'FILE REMOVE')
       os.remove(file_path)
-   except x:
+   except UnicodeDecodeError:
     pass
-   except K as exception:
+   except Exception as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
- except K as exception:
+ except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def remove_match_ext(path,ext_list):
@@ -66,12 +61,12 @@ def remove_match_ext(path,ext_list):
      if os.path.splitext(file_path.lower())[1][1:]in ext_list:
       logger.info(u'REMOVE : %s',file_path)
       os.remove(file_path)
-   except x:
+   except UnicodeDecodeError:
     pass
-   except K as exception:
+   except Exception as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
- except K as exception:
+ except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

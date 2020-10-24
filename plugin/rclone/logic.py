@@ -1,17 +1,4 @@
 import os
-P=object
-x=None
-w=staticmethod
-T=Exception
-q=str
-J=True
-Q=iter
-M=open
-A=False
-X=type
-C=len
-a=isinstance
-o=int
 from datetime import datetime
 import traceback
 import logging
@@ -32,21 +19,21 @@ from.model import ModelSetting,ModelRcloneJob,ModelRcloneFile,ModelRcloneMount,M
 import plugin
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Logic(P):
+class Logic(object):
  db_default={'auto_start':'False','interval':'10','web_page_size':'30','auro_start_rcd':'False','rclone_bin_path':'','rclone_config_path':'',}
- path_bin=path_rclone=path_config=x
+ path_bin=path_rclone=path_config=None
  default_rclone_setting={'static':'--config %s --log-level INFO --stats 1s --stats-file-name-length 0','user':'--transfers=4 --checkers=8','move':'--delete-empty-src-dirs --create-empty-src-dirs --delete-after --drive-chunk-size=256M','copy':'--create-empty-src-dirs --delete-after --drive-chunk-size=256M','sync':'--create-empty-src-dirs --delete-after --drive-chunk-size=256M',}
- @w
+ @staticmethod
  def db_init():
   try:
    for key,value in Logic.db_default.items():
     if db.session.query(ModelSetting).filter_by(key=key).count()==0:
      db.session.add(ModelSetting(key,value))
    db.session.commit()
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @w
+ @staticmethod
  def plugin_load():
   try:
    import platform
@@ -77,51 +64,51 @@ class Logic(P):
    mount_list=db.session.query(ModelRcloneMount).filter_by().all()
    for m in mount_list:
     if m.auto_start:
-     Logic.mount_execute(q(m.id))
+     Logic.mount_execute(str(m.id))
    serve_list=db.session.query(ModelRcloneServe).filter_by().all()
    from.logic_serve import LogicServe
    for s in serve_list:
     if s.auto_start:
-     LogicServe.serve_execute(q(s.id))
-  except T as exception:
+     LogicServe.serve_execute(str(s.id))
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @w
+ @staticmethod
  def plugin_unload():
   try:
    for key,value in Logic.mount_process.items():
-    if value is not x:
+    if value is not None:
      Logic.mount_kill(key)
    from.logic_serve import LogicServe
    for key,value in LogicServe.serve_process.items():
-    if value is not x:
+    if value is not None:
      LogicServe.serve_kill(key)
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @w
+ @staticmethod
  def rclone_version():
   try:
    command=u'%s version'%(Logic.path_rclone)
    command=command.split(' ')
    logger.debug(command)
-   process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=J,bufsize=1)
+   process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
    ret=[]
    with process.stdout:
-    for line in Q(process.stdout.readline,b''):
+    for line in iter(process.stdout.readline,b''):
      ret.append(line)
     process.wait()
    return ret
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @w
+ @staticmethod
  def load_remotes():
   try:
-   f=M(Logic.path_config,'r')
+   f=open(Logic.path_config,'r')
    ret=[]
-   entity=x
-   while J:
+   entity=None
+   while True:
     line=f.readline()
     if not line:
      break
@@ -130,23 +117,23 @@ class Logic(P):
      continue
     match=re.compile(r'\[(?P<name>.*?)\]').search(line)
     if match:
-     if entity is not x:
+     if entity is not None:
       ret.append(entity)
-      entity=x
+      entity=None
      entity={}
      entity['name']=match.group('name')
     match=re.compile(r'(?P<key>.*?)\s\=\s(?P<value>.*?)$').search(line)
     if match:
-     if entity is not x:
+     if entity is not None:
       entity[match.group('key')]=match.group('value')
    f.close()
-   if entity is not x:
+   if entity is not None:
     ret.append(entity)
    return ret
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @w
+ @staticmethod
  def job_save(req):
   try:
    job_id=req.form['id']
@@ -167,11 +154,11 @@ class Logic(P):
    db.session.add(job)
    db.session.commit()
    return 'success'
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @w
+ @staticmethod
  def setting_save(req):
   try:
    for key,value in req.form.items():
@@ -179,51 +166,51 @@ class Logic(P):
     entity=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
     entity.value=value
    db.session.commit()
-   return J 
-  except T as exception:
+   return True 
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return A
- @w
+   return False
+ @staticmethod
  def get_setting_value(key):
   try:
    return db.session.query(ModelSetting).filter_by(key=key).first().value
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s %s',key,exception)
    logger.error(traceback.format_exc())
- @w
+ @staticmethod
  def scheduler_start():
   try:
    interval=ModelSetting.query.filter_by(key='interval').first().value
-   job=Job(package_name,package_name,interval,Logic.scheduler_function,u"Rclone 스케쥴링",J)
+   job=Job(package_name,package_name,interval,Logic.scheduler_function,u"Rclone 스케쥴링",True)
    scheduler.add_job_instance(job)
    logger.debug('Rclone scheduler_start %s',interval)
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @w
+ @staticmethod
  def scheduler_stop():
   try:
    logger.debug('auto scheduler_stop')
    Logic.kill() 
    scheduler.remove_job(package_name)
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @w
+ @staticmethod
  def get_jobs():
   try:
    job_list=db.session.query(ModelRcloneJob).filter_by().all()
    ret=[x.as_dict()for x in job_list]
    return ret
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- current_process=x
- current_log_thread=x
- current_data=x
- running_status=A 
- @w
+ current_process=None
+ current_log_thread=None
+ current_data=None
+ running_status=False 
+ @staticmethod
  def scheduler_function():
   try:
    logger.debug('rclone scheduler_function')
@@ -235,27 +222,27 @@ class Logic(P):
     return
    else:
     logger.debug('Logic.running_status is FALSE!!!!')
-   job_list=db.session.query(ModelRcloneJob).filter_by(is_scheduling=J).with_for_update().all()
-   Logic.running_status=J
+   job_list=db.session.query(ModelRcloneJob).filter_by(is_scheduling=True).with_for_update().all()
+   Logic.running_status=True
    for job in job_list:
     Logic.execute(job)
     if not scheduler.is_include(package_name):
      logger.debug('scheduler is stopped by user button')
      break
-   Logic.current_process=x 
-  except T as exception:
+   Logic.current_process=None 
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
   finally:
-   Logic.running_status=A
- @w
+   Logic.running_status=False
+ @staticmethod
  def get_user_command_list(data):
   ret=[]
   one=''
-  flag=A
+  flag=False
   for d in data:
    if d==' ':
-    if flag==A:
+    if flag==False:
      ret.append(one)
      one=''
      continue
@@ -266,7 +253,7 @@ class Logic(P):
    one+=d
   ret.append(one)
   return ret
- @w 
+ @staticmethod 
  def execute(job):
   try:
    logger.debug(job)
@@ -277,9 +264,9 @@ class Logic(P):
     tmp=command.encode('cp949')
    else:
     tmp=[Logic.path_rclone,job.command,job.local_path,'%s:%s'%(job.remote,job.remote_path)]+job.option_static.split(' ')+Logic.get_user_command_list(job.option_user)
-   logger.debug('type : %s',X(tmp))
+   logger.debug('type : %s',type(tmp))
    logger.debug('tmp : %s',tmp)
-   Logic.current_process=subprocess.Popen(tmp,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=J,bufsize=1)
+   Logic.current_process=subprocess.Popen(tmp,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
    Logic.current_data={}
    Logic.current_data['job']=job.as_dict()
    Logic.current_data['command']=command
@@ -292,37 +279,37 @@ class Logic(P):
    Logic.current_data['return_code']=Logic.current_process.wait()
    Logic.trans_callback('finish')
    job.last_run_time=datetime.now()
-   job.last_file_count=C(Logic.current_data['files'])
+   job.last_file_count=len(Logic.current_data['files'])
    db.session.commit()
   except OperationalError as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    db.session.rollback()
    logger.debug('ROLLBACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @w
+ @staticmethod
  def execute_job(req):
   try:
    job_id=req.form['id']
    return Logic.execute_by_job_id(job_id)
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
    return 'fail'
- @w
+ @staticmethod
  def execute_by_job_id(job_id):
   try:
    job=db.session.query(ModelRcloneJob).filter_by(id=job_id).with_for_update().first()
    thread=threading.Thread(target=Logic.execute,args=(job,))
    thread.start()
    return 'success'
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
    return 'fail'
- @w
+ @staticmethod
  def remove_job(req):
   try:
    job_id=req.form['id']
@@ -331,24 +318,24 @@ class Logic(P):
    db.session.delete(job)
    db.session.commit()
    return 'success'
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
    return 'fail'
  trans_regexes=[r'Transferred\:\s*(?P<trans_data_current>\d.*?)\s\/\s(?P<trans_total_size>\d.*?)\,\s*((?P<trans_percent>\d+)\%)?\-?\,\s*(?P<trans_speed>\d.*?)\,\sETA\s(((?P<rt_hour>\d+)h)*((?P<rt_min>\d+)m)*((?P<rt_sec>.*?)s)*)?\-?',r'Errors\:\s*(?P<error>\d+)',r'Checks\:\s*(?P<check_1>\d+)\s\/\s(?P<check_2>\d+)\,\s*(?P<check_percent>\d+)?\-?',r'Transferred\:\s*(?P<file_1>\d+)\s\/\s(?P<file_2>\d+)\,\s*((?P<file_percent>\d+)\%)?\-?',r'Elapsed\stime\:\s*((?P<r_hour>\d+)h)*((?P<r_min>\d+)m)*((?P<r_sec>.*?)s)*',r'\s*\*\s((?P<folder>.*)\/)?(?P<name>.*?)\:\s*(?P<percent>\d+)\%\s*\/(?P<size>\d.*?)\,\s*(?P<speed>\d.*?)\,\s*((?P<rt_hour>\d+)h)*((?P<rt_min>\d+)m)*((?P<rt_sec>.*?)s)*',r'INFO\s*\:\s*((?P<folder>.*)\/)?(?P<name>.*?)\:\s*(?P<status>.*)']
- @w
+ @staticmethod
  def log_thread_fuction():
   with Logic.current_process.stdout:
-   ts=x
-   for line in Q(Logic.current_process.stdout.readline,b''):
+   ts=None
+   for line in iter(Logic.current_process.stdout.readline,b''):
     line=line.strip()
     try:
      try:
       line=line.decode('utf-8')
-     except T as exception:
+     except Exception as exception:
       try:
        line=line.decode('cp949')
-      except T as exception:
+      except Exception as exception:
        pass
      if line=='' or line.startswith('Checking'):
       continue
@@ -361,7 +348,7 @@ class Logic(P):
       continue
      match=re.compile(Logic.trans_regexes[0]).search(line)
      if match:
-      if ts is not x:
+      if ts is not None:
        Logic.trans_callback('status',ts)
       ts=TransStatus()
       ts.trans_data_current=match.group('trans_data_current')
@@ -408,83 +395,83 @@ class Logic(P):
       Logic.trans_callback('files',FileFinished(match))
       continue
      logger.debug('NOT PROCESS : %s',line) 
-    except T as exception:
+    except Exception as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc())
    logger.debug('rclone log thread end')
   Logic.trans_callback('status',ts)
- @w
+ @staticmethod
  def kill():
   try:
-   if Logic.current_process is not x and Logic.current_process.poll()is x:
+   if Logic.current_process is not None and Logic.current_process.poll()is None:
     import psutil
     process=psutil.Process(Logic.current_process.pid)
-    for proc in process.children(recursive=J):
+    for proc in process.children(recursive=True):
      proc.kill()
     process.kill()
     return 'success'
    return 'not_running'
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @w
- def trans_callback(cmd,data=x):
+ @staticmethod
+ def trans_callback(cmd,data=None):
   try:
-   if data is not x:
-    if a(data,FileFinished):
+   if data is not None:
+    if isinstance(data,FileFinished):
      f=Logic.get_by_name(data.folder,data.name)
-     if f is not x:
+     if f is not None:
       if f.log!='':
        f.log='%s,%s'%(f.log,data.status)
       else:
        f.log=data.status
-      f.finish_time=datetime.now()if f.finish_time is x else f.finish_time
+      f.finish_time=datetime.now()if f.finish_time is None else f.finish_time
       db.session.add(f)
       db.session.commit()
      pass
-    elif a(data,TransStatus):
+    elif isinstance(data,TransStatus):
      Logic.current_data['ts']=data.__dict__
    plugin.socketio_callback(cmd,Logic.current_data)
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @w
+ @staticmethod
  def set_file(match):
   folder=match.group('folder')if 'folder' in match.groupdict()else ''
   name=match.group('name')
   instance=Logic.get_by_name(folder,name)
-  if instance is x:
+  if instance is None:
    instance=ModelRcloneFile(Logic.current_data['job']['id'],folder,name)
    Logic.current_data['files'].append(instance)
-  instance.percent=o(match.group('percent'))
+  instance.percent=int(match.group('percent'))
   instance.size=match.group('size')
   instance.speed=match.group('speed')
   instance.rt_hour=match.group('rt_hour')if 'rt_hour' in match.groupdict()else '0'
   instance.rt_min=match.group('rt_min')if 'rt_min' in match.groupdict()else '0'
   instance.rt_sec=match.group('rt_sec')if 'rt_sec' in match.groupdict()else '0'
   return instance
- @w
+ @staticmethod
  def get_by_name(folder,name):
-  instance=x
+  instance=None
   for item in Logic.current_data['files']:
    if item.folder==folder and item.name==name:
     instance=item
     break
   return instance
- @w
+ @staticmethod
  def filelist(req):
   try:
    ret={}
    page=1
-   page_size=o(db.session.query(ModelSetting).filter_by(key='web_page_size').first().value)
+   page_size=int(db.session.query(ModelSetting).filter_by(key='web_page_size').first().value)
    job_id=''
    search=''
    if 'page' in req.form:
-    page=o(req.form['page'])
+    page=int(req.form['page'])
    if 'job_select' in req.form:
     if req.form['job_select']!='all':
-     job_id=o(req.form['job_select'])
+     job_id=int(req.form['job_select'])
    if 'search_word' in req.form:
     search=req.form['search_word']
    query=db.session.query(ModelRcloneFile)
@@ -499,11 +486,11 @@ class Logic(P):
    ret['list']=[item.as_dict()for item in lists]
    ret['paging']=Util.get_paging_info(count,page,page_size)
    return ret
-  except T as exception:
+  except Exception as exception:
    logger.debug('Exception:%s',exception)
    logger.debug(traceback.format_exc())
- @w
- def rclone_job_by_ktv(local,remote,remove=A):
+ @staticmethod
+ def rclone_job_by_ktv(local,remote,remove=False):
   try:
    logger.debug('job_save_by_ktv:%s %s %s',local,remote,remove)
    job=db.session.query(ModelRcloneJob) .filter(ModelRcloneJob.local_path==local) .filter(ModelRcloneJob.remote==remote.split(':')[0]) .filter(ModelRcloneJob.remote_path==remote.split(':')[1]).first()
@@ -526,35 +513,35 @@ class Logic(P):
      job.local_path=local
      job.option_user=Logic.default_rclone_setting['user']+' '+Logic.default_rclone_setting['move']
      job.option_static=Logic.default_rclone_setting['static']
-     job.is_scheduling=J
+     job.is_scheduling=True
      db.session.add(job)
      db.session.commit()
    return 'success'
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @w
+ @staticmethod
  def reset_db():
   try:
    db.session.query(ModelRcloneFile).delete()
    db.session.commit()
-   return J
-  except T as exception:
+   return True
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return A
- @w
+   return False
+ @staticmethod
  def get_log(req):
   try:
    ret={}
-   ret['ret']=A
+   ret['ret']=False
    where=req.form['type']
    db_id=req.form['id']
-   log_filename=x
+   log_filename=None
    if where=='serve':
     item=db.session.query(ModelRcloneServe).filter_by(id=db_id).first()
-    if item is not x:
+    if item is not None:
      if item.name=='':
       log_filename='serve_%s'%item.id
      else:
@@ -564,7 +551,7 @@ class Logic(P):
      ret['ret']='fail'
    elif where=='mount':
     item=db.session.query(ModelRcloneMount).filter_by(id=db_id).first()
-    if item is not x:
+    if item is not None:
      if item.name=='':
       log_filename='mount_%s'%item.id
      else:
@@ -572,29 +559,29 @@ class Logic(P):
      log_filename=os.path.join(path_app_root,'data','log','%s.log'%log_filename)
     else:
      ret['ret']='fail'
-   if log_filename is not x:
+   if log_filename is not None:
     logger.debug(log_filename)
     import codecs
-    f=codecs.M(log_filename,'r',encoding='utf8')
+    f=codecs.open(log_filename,'r',encoding='utf8')
     ret['data']=[]
     for line in f:
      ret['data'].append(line)
     f.close()
     ret['ret']='success'
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   ret['data']=q(exception)
+   ret['data']=str(exception)
   return ret
  mount_process={}
- @w
+ @staticmethod
  def mount_save(req):
   try:
    mount_id=req.form['id']
    if mount_id=='-1':
     item=ModelRcloneMount()
    else:
-    item=db.session.query(ModelRcloneMount).filter_by(id=o(mount_id)).with_for_update().first()
+    item=db.session.query(ModelRcloneMount).filter_by(id=int(mount_id)).with_for_update().first()
    item.name=req.form['mount_name'].strip()
    item.remote=req.form['mount_remote']
    item.remote_path=req.form['mount_remote_path'].strip()
@@ -604,25 +591,25 @@ class Logic(P):
    db.session.add(item)
    db.session.commit()
    return 'success'
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @w
+ @staticmethod
  def mount_list():
   try:
    job_list=db.session.query(ModelRcloneMount).filter_by().all()
    ret=[x.as_dict()for x in job_list]
    for t in ret:
-    t['current_status']=(q(t['id'])in Logic.mount_process and Logic.mount_process[q(t['id'])]is not x)
+    t['current_status']=(str(t['id'])in Logic.mount_process and Logic.mount_process[str(t['id'])]is not None)
    return ret
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @w
+ @staticmethod
  def mount_execute(mount_id):
   try:
-   item=db.session.query(ModelRcloneMount).filter_by(id=o(mount_id)).with_for_update().first()
+   item=db.session.query(ModelRcloneMount).filter_by(id=int(mount_id)).with_for_update().first()
    remote_path='%s:%s'%(item.remote,item.remote_path)
    local_path=item.local_path
    if platform.system()=='Windows':
@@ -644,36 +631,36 @@ class Logic(P):
      fuse_unmount_command=['fusermount','-uz',local_path]
      p1=subprocess.Popen(fuse_unmount_command)
      p1.wait()
-   except T as exception:
+   except Exception as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
    process=subprocess.Popen(command)
    logger.debug('process.pid:%s',process)
    Logic.mount_process[mount_id]=process
    return 'success'
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
- @w
+ @staticmethod
  def mount_stop(req):
   mount_id=req.form['id']
   logger.debug('mount stop:%s'%mount_id)
   return Logic.mount_kill(mount_id)
- @w
+ @staticmethod
  def mount_kill(mount_id):
   try:
    if mount_id in Logic.mount_process:
     process=Logic.mount_process[mount_id]
     logger.debug('process:%s,%s',process,process.poll())
-    if process is not x and process.poll()is x:
+    if process is not None and process.poll()is None:
      import psutil
      p=psutil.Process(process.pid)
-     for proc in p.children(recursive=J):
+     for proc in p.children(recursive=True):
       proc.kill()
      p.kill()
      try:
-      job=db.session.query(ModelRcloneMount).filter_by(id=o(mount_id)).first()
+      job=db.session.query(ModelRcloneMount).filter_by(id=int(mount_id)).first()
       import platform
       if platform.system()!='Windows':
        tmp=['fusermount','-uz',job.local_path]
@@ -686,28 +673,28 @@ class Logic(P):
      return 'already_stop'
    else:
     return 'not_running'
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return 'fail'
   finally:
-   Logic.mount_process[mount_id]=x
- @w
+   Logic.mount_process[mount_id]=None
+ @staticmethod
  def mount_remove(mount_id):
   try:
    logger.debug('remove_job id:%s',mount_id)
-   job=db.session.query(ModelRcloneMount).filter_by(id=o(mount_id)).first()
+   job=db.session.query(ModelRcloneMount).filter_by(id=int(mount_id)).first()
    db.session.delete(job)
    db.session.commit()
    return 'success'
-  except T as exception:
+  except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 
    return 'fail'
-class TransStatus(P):
+class TransStatus(object):
  def __init__(self):
   self.trans_data_current= self.trans_total_size= self.trans_percent= self.trans_speed= self.rt_hour=self.rt_min=self.rt_sec= self.error= self.check_1= self.check_2= self.check_percent= self.file_1= self.file_2= self.file_percent= self.r_hour=self.r_min=self.r_sec=""
-class FileFinished(P):
+class FileFinished(object):
  def __init__(self,match):
   self.folder=match.group('folder')if 'folder' in match.groupdict()else ''
   self.name=match.group('name')
