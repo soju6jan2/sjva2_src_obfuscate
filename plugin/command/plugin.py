@@ -1,9 +1,9 @@
 import os
 N=Exception
-B=True
-r=int
-s=False
-t=str
+y=True
+b=int
+C=False
+d=str
 import traceback
 import time
 from datetime import datetime
@@ -96,7 +96,7 @@ def ajax(sub):
    job=ModelCommand.get_job_by_id(job_id)
    import framework.common.util as CommonUtil
    ret['data']=CommonUtil.read_file(job.filename)
-   ret['ret']=B
+   ret['ret']=y
    return jsonify(ret)
   elif sub=='file_save':
    ret={}
@@ -107,7 +107,7 @@ def ajax(sub):
    import framework.common.util as CommonUtil
    logger.debug(job.filename)
    CommonUtil.write_file(data,job.filename)
-   ret['ret']=B
+   ret['ret']=y
    return jsonify(ret)
   elif sub=='foreground_command_by_job':
    ret={}
@@ -118,7 +118,7 @@ def ajax(sub):
   elif sub=='process_close':
    ret={'ret':'fail'}
    job_id=request.form['job_id']
-   if LogicNormal.process_close(LogicNormal.process_list[r(job_id)]):
+   if LogicNormal.process_close(LogicNormal.process_list[b(job_id)]):
     ret['ret']='success'
    return jsonify(ret)
   elif sub=='send_process_command':
@@ -167,10 +167,10 @@ def api(sub):
    logger.debug(file_url)
    r=requests.get(file_url)
    download_path=os.path.join(path_data,'command',filename)
-   update=s
+   update=C
    if os.path.exists(download_path):
     os.remove(download_path)
-    update=B
+    update=y
    import framework.common.util as CommonUtil
    CommonUtil.write_file(r.text,download_path)
    ret['ret']='success'
@@ -182,7 +182,7 @@ def api(sub):
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc()) 
   ret['ret']='exception'
-  ret['log']=t(exception)
+  ret['log']=d(exception)
  return jsonify(ret)
 @socketio.on('connect',namespace='/%s'%package_name)
 def connect():

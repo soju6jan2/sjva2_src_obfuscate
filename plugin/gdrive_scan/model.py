@@ -1,9 +1,9 @@
 import os
 q=True
-W=repr
-F=getattr
-h=None
-l=staticmethod
+X=repr
+T=getattr
+x=None
+n=staticmethod
 from datetime import datetime
 from framework import db,app,path_data
 from.plugin import logger,package_name
@@ -19,9 +19,9 @@ class ModelGDriveScanJob(db.Model):
  gdrive_path=db.Column(db.String)
  plex_path=db.Column(db.String)
  def __repr__(self):
-  return W(self.as_dict())
+  return X(self.as_dict())
  def as_dict(self):
-  return{x.name:F(self,x.name)for x in self.__table__.columns}
+  return{x.name:T(self,x.name)for x in self.__table__.columns}
 class ModelGDriveScanFile(db.Model):
  __tablename__='%s_file'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
@@ -42,13 +42,13 @@ class ModelGDriveScanFile(db.Model):
   self.is_add=is_add
   self.created_time=datetime.now()
  def __repr__(self):
-  return W(self.as_dict())
+  return X(self.as_dict())
  def as_dict(self):
-  ret={x.name:F(self,x.name)for x in self.__table__.columns}
-  ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')if self.created_time is not h else ''
-  ret['scan_time']=self.scan_time.strftime('%m-%d %H:%M:%S')if self.scan_time is not h else ''
+  ret={x.name:T(self,x.name)for x in self.__table__.columns}
+  ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')if self.created_time is not x else ''
+  ret['scan_time']=self.scan_time.strftime('%m-%d %H:%M:%S')if self.scan_time is not x else ''
   return ret
- @l
+ @n
  def add(gdrive_name,name,section_id,is_file,is_add):
   item=ModelGDriveScanFile(gdrive_name,name,section_id,is_file,is_add)
   db.session.add(item)

@@ -1,6 +1,6 @@
 import re
 u=None
-a=False
+C=False
 from flask_login import current_user
 def get_menu(full_query):
  match=re.compile(r'\/(?P<menu>.*?)\/(?P<sub>.*?)\/(?P<sub2>.*?)($|\/|\?)').match(full_query)
@@ -20,7 +20,7 @@ def get_theme():
  return[theme,theme_list[theme]]
 def get_login_status():
  if current_user is u:
-  return a
+  return C
  return current_user.is_authenticated
 def get_web_title():
  try:

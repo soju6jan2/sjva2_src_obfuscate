@@ -1,9 +1,9 @@
 import traceback
-a=False
-b=object
+C=False
+z=object
 u=None
-D=True
-L=Exception
+h=True
+y=Exception
 from pytz import timezone
 from datetime import datetime,timedelta
 from random import randint
@@ -17,11 +17,11 @@ from apscheduler.executors.pool import ThreadPoolExecutor,ProcessPoolExecutor
 from apscheduler.triggers.cron import CronTrigger
 jobstores={'default':SQLAlchemyJobStore(url='sqlite:///data/db/sjva.db')}
 executors={'default':ThreadPoolExecutor(20),}
-job_defaults={'coalesce':a,'max_instances':1}
+job_defaults={'coalesce':C,'max_instances':1}
 from framework.logger import get_logger
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class Scheduler(b):
+class Scheduler(z):
  job_list=[]
  first_run_check_thread=u
  def __init__(self):
@@ -36,7 +36,7 @@ class Scheduler(b):
  def first_run_check_thread_function(self):
   logger.warning('XX first_run_check_thread_function')
   try:
-   flag_exit=D
+   flag_exit=h
    for job_instance in self.job_list:
     if not job_instance.run:
      continue
@@ -45,7 +45,7 @@ class Scheduler(b):
      if job is not u:
       logger.warning('job_instance : %s',job_instance.plugin)
       logger.warning('XX job re-sched:%s',job)
-      flag_exit=a
+      flag_exit=C
       tmp=randint(1,20)
       job.modify(next_run_time=datetime.now(timezone('Asia/Seoul'))+timedelta(seconds=tmp))
      else:
@@ -53,7 +53,7 @@ class Scheduler(b):
    if flag_exit:
     self.remove_job("scheduler_check")
    logger.warning('first_run_check_thread_function end!!')
-  except L as exception:
+  except y as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  def shutdown(self):
@@ -72,7 +72,7 @@ class Scheduler(b):
             job = self.sched.get_job(job_id) 
             job.modify(next_run_time=datetime.now(timezone('Asia/Seoul')) + timedelta(seconds=5))
     """ 
- def add_job_instance(self,job_instance,run=D):
+ def add_job_instance(self,job_instance,run=h):
   from framework import app
   if app.config['config']['run_by_real']and app.config['config']['auth_status']:
    if not self.is_include(job_instance.job_id):
@@ -102,11 +102,11 @@ class Scheduler(b):
     if not job.is_running:
      self.remove_job_instance(job_id)
     logger.debug('remove job_id:%s',job_id)
-   return D
+   return h
   except JobLookupError as err:
    logger.debug("fail to remove Scheduler: {err}".format(err=err))
    logger.debug(traceback.format_exc())
-   return a
+   return C
  def get_job_instance(self,job_id):
   for job in Scheduler.job_list:
    if job.job_id==job_id:
@@ -114,7 +114,7 @@ class Scheduler(b):
  def is_running(self,job_id):
   job=self.get_job_instance(job_id)
   if job is u:
-   return a
+   return C
   else:
    return job.is_running
  def remove_job_instance(self,job_id):
@@ -169,7 +169,7 @@ class Scheduler(b):
     entity['description']=''
     entity['running_timedelta']=''
     entity['make_time']=''
-    entity['run']=D
+    entity['run']=h
    ret.append(entity)
   return ret
 """
