@@ -1,18 +1,18 @@
 import os
-F=False
-X=Exception
-t=True
+W=False
+c=Exception
+G=True
 import traceback
 import shutil
 from framework import app,celery,logger
-def move(source_path,target_path,run_in_celery=F):
+def move(source_path,target_path,run_in_celery=W):
  try:
-  if app.config['config']['use_celery']and run_in_celery==F:
+  if app.config['config']['use_celery']and run_in_celery==W:
    result=_move_task.apply_async((source_path,target_path))
    return result.get()
   else:
    return _move_task(source_path,target_path)
- except X as exception:
+ except c as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
   return _move_task(source_path,target_path)
@@ -22,19 +22,19 @@ def _move_task(source_path,target_path):
   logger.debug('_move_task:%s %s',source_path,target_path)
   shutil.move(source_path,target_path)
   logger.debug('_move_task end')
-  return t
- except X as exception:
+  return G
+ except c as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-  return F
-def move_exist_remove(source_path,target_path,run_in_celery=F):
+  return W
+def move_exist_remove(source_path,target_path,run_in_celery=W):
  try:
-  if app.config['config']['use_celery']and run_in_celery==F:
+  if app.config['config']['use_celery']and run_in_celery==W:
    result=_move_exist_remove_task.apply_async((source_path,target_path))
    return result.get()
   else:
    return _move_exist_remove_task(source_path,target_path)
- except X as exception:
+ except c as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
   return _move_exist_remove_task(source_path,target_path)
@@ -44,15 +44,15 @@ def _move_exist_remove_task(source_path,target_path):
   target_file_path=os.path.join(target_path,os.path.basename(source_path))
   if os.path.exists(target_file_path):
    os.remove(source_path)
-   return t
+   return G
   logger.debug('_move_exist_remove:%s %s',source_path,target_path)
   shutil.move(source_path,target_path)
   logger.debug('_move_exist_remove end')
-  return t
- except X as exception:
+  return G
+ except c as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-  return F
+  return W
 def copytree(source_path,target_path):
  try:
   if app.config['config']['use_celery']:
@@ -60,7 +60,7 @@ def copytree(source_path,target_path):
    return result.get()
   else:
    return _copytree_task(source_path,target_path)
- except X as exception:
+ except c as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
   return _copytree_task(source_path,target_path)
@@ -68,11 +68,11 @@ def copytree(source_path,target_path):
 def _copytree_task(source_path,target_path):
  try:
   shutil.copytree(source_path,target_path)
-  return t
- except X as exception:
+  return G
+ except c as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-  return F
+  return W
 def copy(source_path,target_path):
  try:
   if app.config['config']['use_celery']:
@@ -80,7 +80,7 @@ def copy(source_path,target_path):
    return result.get()
   else:
    return _copy_task(source_path,target_path)
- except X as exception:
+ except c as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
   return _copy_task(source_path,target_path)
@@ -88,11 +88,11 @@ def copy(source_path,target_path):
 def _copy_task(source_path,target_path):
  try:
   shutil.copy(source_path,target_path)
-  return t
- except X as exception:
+  return G
+ except c as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-  return F
+  return W
 def rmtree(source_path):
  try:
   if app.config['config']['use_celery']:
@@ -100,7 +100,7 @@ def rmtree(source_path):
    return result.get()
   else:
    return _rmtree_task(source_path)
- except X as exception:
+ except c as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
   return _rmtree_task(source_path)
@@ -108,11 +108,11 @@ def rmtree(source_path):
 def _rmtree_task(source_path):
  try:
   shutil.rmtree(source_path)
-  return t
- except X as exception:
+  return G
+ except c as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-  return F 
+  return W 
 def remove(remove_path):
  try:
   logger.debug('CELERY os.remove start : %s',remove_path)
@@ -121,7 +121,7 @@ def remove(remove_path):
    return result.get()
   else:
    return _remove_task(remove_path)
- except X as exception:
+ except c as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
   return _remove_task(remove_path)
@@ -131,9 +131,9 @@ def remove(remove_path):
 def _remove_task(remove_path):
  try:
   os.remove(remove_path)
-  return t
- except X as exception:
+  return G
+ except c as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-  return F 
+  return W 
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

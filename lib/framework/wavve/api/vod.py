@@ -1,9 +1,9 @@
 import traceback
-V=int
-b=type
-D=Exception
-H=False
-j=None
+m=int
+D=type
+R=Exception
+n=False
+W=None
 v=len
 import json
 from framework.wavve.api import session,get_baseparameter,config,logger
@@ -11,7 +11,7 @@ from framework.util import Util
 from framework import py_urllib
 def vod_newcontents(page=1,limit=20,genre='all'):
  try:
-  page=V(page)if b(page)!=V else page
+  page=m(page)if D(page)!=m else page
   param=get_baseparameter()
   param['genre']='all'
   param['channel']='all'
@@ -28,12 +28,12 @@ def vod_newcontents(page=1,limit=20,genre='all'):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except D as exception:
+ except R as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def vod_contents(page=1,limit=20,content_type='newcontents',genre='all',orderby='new',is_cf=H):
+def vod_contents(page=1,limit=20,content_type='newcontents',genre='all',orderby='new',is_cf=n):
  try:
-  page=V(page)if b(page)!=V else page
+  page=m(page)if D(page)!=m else page
   param=get_baseparameter()
   param['genre']=genre
   param['channel']='all'
@@ -53,12 +53,12 @@ def vod_contents(page=1,limit=20,content_type='newcontents',genre='all',orderby=
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except D as exception:
+ except R as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def vod_allprograms(page=1,limit=20,contenttype='program',genre='all',subgenre=j,orderby='new',is_cf=H):
+def vod_allprograms(page=1,limit=20,contenttype='program',genre='all',subgenre=W,orderby='new',is_cf=n):
  try:
-  page=V(page)if b(page)!=V else page
+  page=m(page)if D(page)!=m else page
   param=get_baseparameter()
   param['genre']=genre
   param['contenttype']=contenttype
@@ -67,7 +67,7 @@ def vod_allprograms(page=1,limit=20,contenttype='program',genre='all',subgenre=j
   param['offset']=(page-1)*limit
   param['limit']=limit
   param['orderby']=orderby 
-  if subgenre is not j:
+  if subgenre is not W:
    param['subgenre']=subgenre
   if is_cf:
    url="%s/cf/vod/allprograms?%s"%(config['base_url'],py_urllib.urlencode(param))
@@ -80,7 +80,7 @@ def vod_allprograms(page=1,limit=20,contenttype='program',genre='all',subgenre=j
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except D as exception:
+ except R as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def vod_contents_contentid(contentid):
@@ -94,7 +94,7 @@ def vod_contents_contentid(contentid):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except D as exception:
+ except R as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def vod_programs_programid(programid):
@@ -108,12 +108,12 @@ def vod_programs_programid(programid):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except D as exception:
+ except R as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def vod_program_contents_programid(programid,page=1,limit=20):
  try:
-  page=V(page)if b(page)!=V else page
+  page=m(page)if D(page)!=m else page
   param=get_baseparameter()
   param['offset']=(page-1)*limit
   param['limit']=limit
@@ -126,7 +126,7 @@ def vod_program_contents_programid(programid,page=1,limit=20):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except D as exception:
+ except R as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def get_filename(data,quality):
@@ -180,7 +180,7 @@ def get_filename(data,quality):
    else:
     ret="%s.%s.%s-%s.mp4"%(title,airdate,qualityRes,release)
    return ret
- except D as exception:
+ except R as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def movie_contents_detail(movie_id):
@@ -194,7 +194,7 @@ def movie_contents_detail(movie_id):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except D as exception:
+ except R as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

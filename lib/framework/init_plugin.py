@@ -1,10 +1,10 @@
 import os
-x=True
-M=False
+T=True
+I=False
 r=Exception
-N=sorted
-k=getattr
-K=len
+A=sorted
+f=getattr
+g=len
 import sys
 import traceback
 from framework import app,db,logger,plugin_instance_list,plugin_menu
@@ -12,15 +12,15 @@ import system
 def is_include_menu(plugin_name):
  try:
   if plugin_name not in['daum_tv','ffmpeg','fileprocess_movie','gdrive_scan','ktv','plex','rclone']:
-   return x
+   return T
   if system.SystemLogic.get_setting_value('use_plugin_%s'%plugin_name)=='True':
-   return x
+   return T
   elif system.SystemLogic.get_setting_value('use_plugin_%s'%plugin_name)=='False':
-   return M
+   return I
  except r as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc()) 
- return x
+ return T
 def plugin_init():
  try:
   if not app.config['config']['auth_status']:
@@ -38,7 +38,7 @@ def plugin_init():
    plugins=os.listdir(plugin_path)
   pass_include=[]
   except_plugin_list=[]
-  if app.config['config']['run_by_migration']==M:
+  if app.config['config']['run_by_migration']==I:
    if app.config['config']['server']or app.config['config']['is_debug']:
     server_plugin_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),'server')
     if os.path.exists(server_plugin_path):
@@ -75,7 +75,7 @@ def plugin_init():
    except r as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
-   plugins=N(plugins)
+   plugins=A(plugins)
   """
         try: plugins.remove('epg')
         except: pass
@@ -92,7 +92,7 @@ def plugin_init():
    try:
     mod=__import__('%s'%(plugin_name),fromlist=[])
     try:
-     mod_plugin_info=k(mod,'plugin_info') 
+     mod_plugin_info=f(mod,'plugin_info') 
      if 'policy_point' in mod_plugin_info:
       if mod_plugin_info['policy_point']>app.config['config']['point']:
        continue
@@ -101,7 +101,7 @@ def plugin_init():
        continue
     except:
      logger.debug('no plugin_info : %s',plugin_name)
-    mod_blue_print=k(mod,'blueprint')
+    mod_blue_print=f(mod,'blueprint')
     if mod_blue_print:
      if plugin_name in pass_include or is_include_menu(plugin_name):
       app.register_blueprint(mod_blue_print)
@@ -122,7 +122,7 @@ def plugin_init():
   for key,mod in plugin_instance_list.items():
    try:
     logger.debug('### plugin_load start : %s',key)
-    mod_plugin_load=k(mod,'plugin_load')
+    mod_plugin_load=f(mod,'plugin_load')
     if mod_plugin_load and(key in pass_include or is_include_menu(key)):
      mod.plugin_load()
     logger.debug('### plugin_load return : %s',key)
@@ -131,19 +131,19 @@ def plugin_init():
     logger.error(traceback.format_exc())
     logger.debug('no init_scheduler')
    try:
-    mod_menu=k(mod,'menu')
+    mod_menu=f(mod,'menu')
     if mod_menu and(key in pass_include or is_include_menu(key)):
      plugin_menu.append(mod_menu)
    except r as exception:
     logger.debug('no menu')
-  logger.debug('Plugin Log completed.. : %s ',K(plugin_instance_list))
+  logger.debug('Plugin Log completed.. : %s ',g(plugin_instance_list))
  except r as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 def plugin_unload():
  for key,mod in plugin_instance_list.items():
   try:
-   mod_plugin_unload=k(mod,'plugin_unload')
+   mod_plugin_unload=f(mod,'plugin_unload')
    if mod_plugin_unload:
     mod.plugin_unload()
   except r as exception:

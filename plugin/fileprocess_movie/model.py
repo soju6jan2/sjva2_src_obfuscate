@@ -1,11 +1,11 @@
 import os
-r=True
-E=repr
-F=getattr
-L=None
+D=True
+R=repr
+m=getattr
+H=None
 N=staticmethod
-w=Exception
-H=False
+f=Exception
+X=False
 import traceback
 from datetime import datetime
 import json
@@ -22,7 +22,7 @@ class ModelFileprocessMovieItem(db.Model):
  __tablename__='%s_item'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=r)
+ id=db.Column(db.Integer,primary_key=D)
  created_time=db.Column(db.DateTime)
  filename=db.Column(db.String)
  source_dir=db.Column(db.String)
@@ -39,11 +39,11 @@ class ModelFileprocessMovieItem(db.Model):
  def __init__(self):
   self.created_time=datetime.now()
  def __repr__(self):
-  return E(self.as_dict())
+  return R(self.as_dict())
  def as_dict(self):
-  ret={x.name:F(self,x.name)for x in self.__table__.columns}
+  ret={x.name:m(self,x.name)for x in self.__table__.columns}
   ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')
-  if self.json is not L:
+  if self.json is not H:
    ret['json']=json.loads(ret['json'])
   else:
    ret['json']={}
@@ -58,7 +58,7 @@ class ModelFileprocessMovieItem(db.Model):
    model.flag_move=item['flag_move']
    model.target=item['target']
    model.dest_folder_name=item['dest_folder_name']
-   if item['movie']is not L:
+   if item['movie']is not H:
     model.movie_title=item['movie']['title']
     model.movie_id=item['movie']['id']
     if 'more' in item['movie']:
@@ -70,12 +70,12 @@ class ModelFileprocessMovieItem(db.Model):
    model.json=json.dumps(item)
    db.session.add(model)
    db.session.commit()
-   return r
-  except w as exception:
+   return D
+  except f as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    logger.debug(item)
    db.session.rollback()
    logger.debug('ROLLBACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-   return H
+   return X
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
