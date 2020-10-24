@@ -1,12 +1,12 @@
 import os
-G=None
-B=object
-R=staticmethod
-C=str
-l=Exception
-f=True
-u=False
-S=sum
+y=None
+c=object
+s=staticmethod
+h=str
+a=Exception
+q=True
+X=False
+L=sum
 import traceback
 import logging
 import platform
@@ -17,7 +17,7 @@ try:
  from selenium import webdriver
  from selenium.webdriver.support.ui import WebDriverWait
  from PIL import Image
- Image.MAX_IMAGE_PIXELS=G
+ Image.MAX_IMAGE_PIXELS=y
 except:
  pass
 from io import BytesIO
@@ -25,10 +25,10 @@ from framework.logger import get_logger
 from framework import path_app_root,path_data
 from.plugin import logger,package_name
 from.model import ModelSetting
-class SystemLogicSelenium(B):
- chrome_driver=G
+class SystemLogicSelenium(c):
+ chrome_driver=y
  chrome_driver_list=[]
- @R
+ @s
  def process_ajax(sub,req):
   try:
    if sub=='selenium_test_go':
@@ -39,7 +39,7 @@ class SystemLogicSelenium(B):
     driver=SystemLogicSelenium.get_driver()
     img=Image.open(BytesIO((driver.get_screenshot_as_png())))
     timestamp=time.time()
-    timestamp=C(timestamp).split('.')[0]
+    timestamp=h(timestamp).split('.')[0]
     tmp=os.path.join(path_data,'tmp','%s.png'%timestamp)
     img.save(tmp)
     from system.model import ModelSetting as SystemModelSetting
@@ -54,7 +54,7 @@ class SystemLogicSelenium(B):
     driver=SystemLogicSelenium.get_driver()
     img=SystemLogicSelenium.full_screenshot(driver)
     timestamp=time.time()
-    timestamp=C(timestamp).split('.')[0]
+    timestamp=h(timestamp).split('.')[0]
     tmp=os.path.join(path_data,'tmp','%s.png'%timestamp)
     img.save(tmp)
     return send_file(tmp,mimetype='image/png')
@@ -62,12 +62,12 @@ class SystemLogicSelenium(B):
     driver=SystemLogicSelenium.get_driver()
     data=driver.get_cookies()
     return jsonify(data)
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return jsonify('exception')
- @R
- def get_pagesoruce_by_selenium(url,wait_xpath,retry=f):
+ @s
+ def get_pagesoruce_by_selenium(url,wait_xpath,retry=q):
   try:
    logger.debug('get_pagesoruce_by_selenium:%s %s',url,wait_xpath)
    driver=SystemLogicSelenium.get_driver()
@@ -75,49 +75,49 @@ class SystemLogicSelenium(B):
    WebDriverWait(driver,30).until(lambda driver:driver.find_element_by_xpath(wait_xpath))
    logger.debug('return page_source') 
    return driver.page_source
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   SystemLogicSelenium.chrome_driver=G
+   SystemLogicSelenium.chrome_driver=y
    if retry:
-    return SystemLogicSelenium.get_pagesoruce_by_selenium(url,wait_xpath,retry=u)
- @R
- def get_driver(chrome_options=G):
+    return SystemLogicSelenium.get_pagesoruce_by_selenium(url,wait_xpath,retry=X)
+ @s
+ def get_driver(chrome_options=y):
   try:
-   if SystemLogicSelenium.chrome_driver is G:
+   if SystemLogicSelenium.chrome_driver is y:
     SystemLogicSelenium.chrome_driver=SystemLogicSelenium.inner_create_driver(chrome_options)
    return SystemLogicSelenium.chrome_driver
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @R
- def create_driver(chrome_options=G):
+ @s
+ def create_driver(chrome_options=y):
   try:
    driver=SystemLogicSelenium.inner_create_driver(chrome_options)
-   if driver is not G:
+   if driver is not y:
     SystemLogicSelenium.chrome_driver_list.append(driver)
     return driver
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @R
+ @s
  def close_driver():
   try:
-   if SystemLogicSelenium.chrome_driver is not G:
+   if SystemLogicSelenium.chrome_driver is not y:
     SystemLogicSelenium.chrome_driver.quit()
-    SystemLogicSelenium.chrome_driver=G
-  except l as exception:
+    SystemLogicSelenium.chrome_driver=y
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @R
+ @s
  def inner_create_driver(chrome_options):
   try:
-   driver=G
+   driver=y
    remote_url=ModelSetting.get('selenium_remote_url')
    if remote_url.endswith('/wd/hub/'):
     remote_url=remote_url[:-1]
    if remote_url!='':
-    if chrome_options is G:
+    if chrome_options is y:
      chrome_options=webdriver.ChromeOptions()
      tmp=ModelSetting.get_list('selenium_remote_default_option')
      for t in tmp:
@@ -129,37 +129,37 @@ class SystemLogicSelenium(B):
     path_chrome=os.path.join(path_app_root,'bin',platform.system(),'chromedriver')
     if platform.system()=='Windows':
      path_chrome+='.exe'
-    if chrome_options is G:
+    if chrome_options is y:
      chrome_options=webdriver.ChromeOptions()
      tmp=ModelSetting.get_list('selenium_binary_default_option')
      for t in tmp:
       chrome_options.add_argument(t)
     driver=webdriver.Chrome(path_chrome,chrome_options=chrome_options)
     logger.debug('Using local bin :%s',driver)
-   if driver is not G:
+   if driver is not y:
     return driver
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @R
+ @s
  def plugin_unload():
   try:
    logger.debug(SystemLogicSelenium.chrome_driver)
-   if SystemLogicSelenium.chrome_driver is not G:
+   if SystemLogicSelenium.chrome_driver is not y:
     SystemLogicSelenium.chrome_driver.quit()
     logger.debug(SystemLogicSelenium.chrome_driver)
    for tmp in SystemLogicSelenium.chrome_driver_list:
-    if tmp is not G:
+    if tmp is not y:
      tmp.quit()
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @R
+ @s
  def get_text_excluding_children(driver,element):
   return driver.execute_script("""
         return jQuery(arguments[0]).contents().filter(function() {return this.nodeType == Node.TEXT_NODE; }).text();
         """  , element)
- @R
+ @s
  def full_screenshot(driver,low_offset=0):
   try:
    img_li=[] 
@@ -176,7 +176,7 @@ class SystemLogicSelenium(B):
     img_li.append(img)
     offset+=height
     logger.debug('offset : %s / %s',offset,max_window_height)
-   img_frame_height=S([img_frag.size[1]for img_frag in img_li])
+   img_frame_height=L([img_frag.size[1]for img_frag in img_li])
    img_frame=Image.new('RGB',(img_li[0].size[0],img_frame_height))
    offset=0
    for img_frag in img_li:
@@ -184,47 +184,47 @@ class SystemLogicSelenium(B):
     offset+=img_frag.size[1]
     logger.debug('paste offset : %s ',offset)
    return img_frame
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @R
+ @s
  def remove_element(driver,element):
   driver.execute_script("""
         var element = arguments[0];
         element.parentNode.removeChild(element);
         """  , element)
- @R
- def __get_downloaded_files(driver=G):
-  if driver is G:
+ @s
+ def __get_downloaded_files(driver=y):
+  if driver is y:
    driver=SystemLogicSelenium.get_driver()
   if not driver.current_url.startswith("chrome://downloads"):
    driver.get("chrome://downloads/")
   return driver.execute_script("return downloads.Manager.get().items_   " "  .filter(e => e.state === 'COMPLETE')  " "  .map(e => e.filePath || e.file_path); ")
- @R
- def get_file_content(path,driver=G):
-  if driver is G:
+ @s
+ def get_file_content(path,driver=y):
+  if driver is y:
    driver=SystemLogicSelenium.get_driver()
   elem=driver.execute_script("var input = window.document.createElement('INPUT'); " "input.setAttribute('type', 'file'); " "input.hidden = true; " "input.onchange = function (e) { e.stopPropagation() }; " "return window.document.documentElement.appendChild(input); ")
   elem._execute('sendKeysToElement',{'value':[path],'text':path})
   result=driver.execute_async_script("var input = arguments[0], callback = arguments[1]; " "var reader = new FileReader(); " "reader.onload = function (ev) { callback(reader.result) }; " "reader.onerror = function (ex) { callback(ex.message) }; " "reader.readAsDataURL(input.files[0]); " "input.remove(); ",elem)
   if not result.startswith('data:'):
-   raise l("Failed to get file content: %s"%result)
+   raise a("Failed to get file content: %s"%result)
   return base64.b64decode(result[result.find('base64,')+7:])
- @R
- def get_downloaded_files(driver=G):
-  if driver is G:
+ @s
+ def get_downloaded_files(driver=y):
+  if driver is y:
    driver=SystemLogicSelenium.get_driver()
   files=SystemLogicSelenium.__get_downloaded_files()
   return files
- @R
- def waitUntilDownloadCompleted(maxTime=600,driver=G):
-  if driver is G:
+ @s
+ def waitUntilDownloadCompleted(maxTime=600,driver=y):
+  if driver is y:
    driver=SystemLogicSelenium.get_driver()
   driver.execute_script("window.open()")
   driver.switch_to.window(driver.window_handles[-1])
   driver.get('chrome://downloads')
   endTime=time.time()+maxTime
-  while f:
+  while q:
    try:
     downloadPercentage=driver.execute_script("return document.querySelector('downloads-manager').shadowRoot.querySelector('#downloadsList downloads-item').shadowRoot.querySelector('#progress').value")
     if downloadPercentage==100:

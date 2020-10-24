@@ -1,13 +1,13 @@
 import traceback
-N=True
-y=False
-M=repr
-Y=getattr
-Q=staticmethod
-X=Exception
-S=None
-q=int
-i=set
+h=True
+a=False
+S=repr
+T=getattr
+U=staticmethod
+t=None
+o=Exception
+f=int
+X=set
 from framework import db
 from framework.util import Util
 def get_model_setting(package_name,logger):
@@ -15,62 +15,65 @@ def get_model_setting(package_name,logger):
   __tablename__='%s_setting'%package_name
   __table_args__={'mysql_collate':'utf8_general_ci'}
   __bind_key__=package_name
-  id=db.Column(db.Integer,primary_key=N)
-  key=db.Column(db.String,unique=N,nullable=y)
-  value=db.Column(db.String,nullable=y)
+  id=db.Column(db.Integer,primary_key=h)
+  key=db.Column(db.String,unique=h,nullable=a)
+  value=db.Column(db.String,nullable=a)
   def __init__(self,key,value):
    self.key=key
    self.value=value
   def __repr__(self):
-   return M(self.as_dict())
+   return S(self.as_dict())
   def as_dict(self):
-   return{x.name:Y(self,x.name)for x in self.__table__.columns}
-  @Q
+   return{x.name:T(self,x.name)for x in self.__table__.columns}
+  @U
   def get(key):
    try:
-    return db.session.query(ModelSetting).filter_by(key=key).first().value.strip()
-   except X as exception:
+    ret=db.session.query(ModelSetting).filter_by(key=key).first()
+    if ret is not t:
+     return ret.value.strip()
+    return t
+   except o as exception:
     logger.error('Exception:%s %s',exception,key)
     logger.error(traceback.format_exc())
-  @Q
+  @U
   def has_key(key):
-   return(db.session.query(ModelSetting).filter_by(key=key).first()is not S)
-  @Q
+   return(db.session.query(ModelSetting).filter_by(key=key).first()is not t)
+  @U
   def get_int(key):
    try:
-    return q(ModelSetting.get(key))
-   except X as exception:
+    return f(ModelSetting.get(key))
+   except o as exception:
     logger.error('Exception:%s %s',exception,key)
     logger.error(traceback.format_exc())
-  @Q
+  @U
   def get_bool(key):
    try:
     return(ModelSetting.get(key)=='True')
-   except X as exception:
+   except o as exception:
     logger.error('Exception:%s %s',exception,key)
     logger.error(traceback.format_exc())
-  @Q
-  def i(key,value):
+  @U
+  def X(key,value):
    try:
     item=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
-    if item is not S:
-     item.value=value.strip()if value is not S else value
+    if item is not t:
+     item.value=value.strip()if value is not t else value
      db.session.commit()
     else:
      db.session.add(ModelSetting(key,value.strip()))
-   except X as exception:
+   except o as exception:
     logger.error('Exception:%s %s',exception,key)
     logger.error(traceback.format_exc())
-  @Q
+  @U
   def to_dict():
    try:
     ret=Util.db_list_to_dict(db.session.query(ModelSetting).all())
     ret['package_name']=package_name
     return ret 
-   except X as exception:
+   except o as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
-  @Q
+  @U
   def setting_save(req):
    try:
     for key,value in req.form.items():
@@ -82,23 +85,23 @@ def get_model_setting(package_name,logger):
      entity=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
      entity.value=value
     db.session.commit()
-    return N 
-   except X as exception:
+    return h 
+   except o as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
     logger.debug('Error Key:%s Value:%s',key,value)
-    return y
-  @Q
+    return a
+  @U
   def get_list(key,delimeter,comment=' #'):
    try:
     value=ModelSetting.get(key).replace('\n',delimeter)
-    if comment is S:
+    if comment is t:
      values=[x.strip()for x in value.split(delimeter)]
     else:
      values=[x.split(comment)[0].strip()for x in value.split(delimeter)]
     values=Util.get_list_except_empty(values)
     return values
-   except X as exception:
+   except o as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
     logger.error('Error Key:%s Value:%s',key,value)

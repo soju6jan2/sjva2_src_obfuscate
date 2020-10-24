@@ -1,13 +1,13 @@
 import os
-K=object
-b=None
-f=staticmethod
+i=object
+H=None
+S=staticmethod
 s=Exception
-c=False
-o=True
-B=len
-t=id
-Q=int
+E=False
+c=True
+J=len
+h=id
+X=int
 import sys
 import traceback
 import time
@@ -27,11 +27,11 @@ from.model import ModelSetting,ModelKtvFile,ModelKtvLibrary
 from.entity_show import EntityLibraryPathRoot,EntityLibraryPath,EntityShow
 package_name=__name__.split('.')[0]
 logger=logging.getLogger(package_name)
-class Logic(K):
+class Logic(i):
  db_default={'auto_start':'False','interval':'2','not_ktv_move_folder_name':'no_ktv','manual_folder_name':'manual','no_daum_folder_name':u'기타','web_page_size':20,'download_path':'','telegram':'','except_partial':'.part','except_genre_remove_epi_number':u'애니메이션',}
- _DOWNLOAD_PATH=b
- _LIBRARY_ROOT_LIST=b
- @f
+ _DOWNLOAD_PATH=H
+ _LIBRARY_ROOT_LIST=H
+ @S
  def db_init():
   try:
    for key,value in Logic.db_default.items():
@@ -41,7 +41,7 @@ class Logic(K):
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
+ @S
  def plugin_load():
   try:
    Logic.db_init()
@@ -51,26 +51,26 @@ class Logic(K):
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
+ @S
  def plugin_unload():
   pass
- @f
+ @S
  def scheduler_start():
   try:
    interval=ModelSetting.query.filter_by(key='interval').first().value
-   job=Job(package_name,'ktv_process',interval,Logic.process_download_file0,[u'국내영상 파일 처리'],c)
+   job=Job(package_name,'ktv_process',interval,Logic.process_download_file0,[u'국내영상 파일 처리'],E)
    scheduler.add_job_instance(job)
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
+ @S
  def scheduler_stop():
   try:
    scheduler.remove_job('ktv_process')
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
+ @S
  def setting_save(req):
   try:
    for key,value in req.form.items():
@@ -78,25 +78,25 @@ class Logic(K):
     entity=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
     entity.value=value
    db.session.commit()
-   return o 
+   return c 
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @f 
+   return E
+ @S 
  def check_except_partial(filename,except_partial):
   try:
    for tmp in except_partial:
     if tmp=='':
      continue
     elif filename.find(tmp.strip())!=-1:
-     return o
-   return c
+     return c
+   return E
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @f
+   return E
+ @S
  def for_synoindex(arg):
   try:
    logger.debug('FOR SYNOINDEX : %s'%arg)
@@ -107,13 +107,13 @@ class Logic(K):
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
+ @S
  def process_download_file0():
   try:
    if app.config['config']['use_celery']:
     result=Logic.process_download_file.apply_async()
     try:
-     flag_rclone_start=result.get(on_message=Logic.for_synoindex,propagate=o)
+     flag_rclone_start=result.get(on_message=Logic.for_synoindex,propagate=c)
      if flag_rclone_start:
       scheduler.execute_job('rclone')
     except:
@@ -127,7 +127,7 @@ class Logic(K):
    else:
     Logic.process_download_file()
    if Logic.plex_update_list:
-    logger.debug('>> len plex_update_list : %s',B(Logic.plex_update_list))
+    logger.debug('>> len plex_update_list : %s',J(Logic.plex_update_list))
     for item in Logic.plex_update_list:
      try:
       db.session.add(item)
@@ -139,8 +139,8 @@ class Logic(K):
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @f
- @celery.task(bind=o)
+ @S
+ @celery.task(bind=c)
  def process_download_file(self):
   setting_list=Util.db_list_to_dict(db.session.query(ModelSetting).all())
   Logic._DOWNLOAD_PATH=setting_list['download_path']
@@ -157,23 +157,23 @@ class Logic(K):
     drive_type=EntityLibraryPathRoot.DriveType.RCLONE
    lib=EntityLibraryPathRoot(drive_type=drive_type,mount_path=item.library_path,rclone_path=item.rclone_path,depth=2,replace_for_plex=[item.replace_for_plex_source,item.replace_for_plex_target])
    Logic._LIBRARY_ROOT_LIST.append(lib)
-  dir_list=b
+  dir_list=H
   path=Logic._DOWNLOAD_PATH
   list_=os.listdir(Logic._DOWNLOAD_PATH)
   logger.debug('process_download_file 2')
-  logger.debug('list : %s',B(list_))
-  flag_rclone_start=c
+  logger.debug('list : %s',J(list_))
+  flag_rclone_start=E
   for var in list_:
    try:
-    if o:
+    if c:
      abspath=os.path.join(path,var)
-     telegram_log=b
-     entity=b
+     telegram_log=H
+     entity=H
      if os.path.isfile(abspath):
       if Logic.check_except_partial(var,except_partial):
        continue
       telegram_log=package_name+'\n%s\n'%abspath
-      if dir_list is b:
+      if dir_list is H:
        logger.debug('process_download_file')
        dir_list=Logic._make_dir_list()
        logger.debug('process_download_file 1')
@@ -183,7 +183,7 @@ class Logic(K):
       if entity.video_type==EntityShow.VideoType.KOREA_TV:
        logger.debug('<Move>') 
        _find_dir=Logic._get_find_dir(dir_list,entity) 
-       if B(_find_dir)==1:
+       if J(_find_dir)==1:
         entity.set_find_library_path(_find_dir[0])
         logger.debug(' - 하나의 폴더 선택됨 : %s',_find_dir[0].abspath)
         entity.move_file()
@@ -210,13 +210,13 @@ class Logic(K):
          db.session.add(entity.modelfile)
          db.session.commit()
         if entity.move_type==EntityLibraryPathRoot.DriveType.RCLONE:
-         flag_rclone_start=o
-       elif B(_find_dir)>1:
+         flag_rclone_start=c
+       elif J(_find_dir)>1:
         logger.debug(' - 선택된 폴더가 2개 이상')
         logger.debug('  %s',_find_dir[0].abspath)
         logger.debug('  %s',_find_dir[1].abspath)
         entity.log+='<파일이동>\n'
-        entity.log+='선택된 폴더 %s개\n'%(B(_find_dir))
+        entity.log+='선택된 폴더 %s개\n'%(J(_find_dir))
         entity.log+='  %s\n'%_find_dir[0].abspath
         entity.log+='  %s\n'%_find_dir[1].abspath
         tmp=os.path.join(Logic._DOWNLOAD_PATH,setting_list['manual_folder_name'])
@@ -234,8 +234,8 @@ class Logic(K):
         logger.debug(' - 선택된 폴더 없음')
         entity.log+='<파일이동>\n'
         entity.log+='선택된 폴더 없음\n'
-        flag_move=c
-        if entity.daum_info is b:
+        flag_move=E
+        if entity.daum_info is H:
          try:
           import daum_tv
           daum=daum_tv.ModelDaumTVShow(-1)
@@ -244,10 +244,10 @@ class Logic(K):
          except s as exception:
           logger.error('Exception:%s',exception)
           logger.error(traceback.format_exc())
-          daum=b
+          daum=H
          entity.daum_info=daum
-        if flag_move==c and entity.daum_info:
-         flag_search=c
+        if flag_move==E and entity.daum_info:
+         flag_search=E
          for library_root in Logic._LIBRARY_ROOT_LIST:
           for _ in library_root.get_genre_list():
            if _==entity.daum_info.genre:
@@ -257,7 +257,7 @@ class Logic(K):
              os.mkdir(tmp)
              entity.log+='폴더생성 : %s\n'%tmp
             logger.debug('  * 장르:%s [%s] 폴더 생성. 다음 탐색시 이동',_,tmp)
-            flag_search=o
+            flag_search=c
             break
           if flag_search:
            break
@@ -283,11 +283,11 @@ class Logic(K):
        telegram_log+='처리하지 못하는 파일 형식\n이동:%s\n'%tmp
      else:
       tmp=var+'.mp4'
-      match_flag=c
+      match_flag=E
       for regex in EntityShow._REGEX_FILENAME:
        match=re.compile(regex).match(tmp)
        if match:
-        match_flag=o
+        match_flag=c
         break
       if match_flag:
        try:
@@ -322,9 +322,9 @@ class Logic(K):
     logger.error(traceback.format_exc())
    finally:
     try:
-     if ModelSetting.query.filter_by(key='telegram').first().value=='True' and telegram_log is not b:
-      img=b
-      if entity is not b and entity.daum_info is not b and entity.daum_info.poster_url is not b:
+     if ModelSetting.query.filter_by(key='telegram').first().value=='True' and telegram_log is not H:
+      img=H
+      if entity is not H and entity.daum_info is not H and entity.daum_info.poster_url is not H:
        img=entity.daum_info.poster_url
       import framework.common.notify as Notify
       Notify.send_message(telegram_log,image_url=img,message_id='fileprocess_ktv_result')
@@ -334,7 +334,7 @@ class Logic(K):
   logger.debug('flag_rclone_start : %s',flag_rclone_start) 
   Logic.check_library_completed()
   return flag_rclone_start
- @f
+ @S
  def _make_dir_list():
   dir_list=[]
   for library_root in Logic._LIBRARY_ROOT_LIST:
@@ -373,7 +373,7 @@ class Logic(K):
             dir_list.append(EntityLibraryPath(library_root, os.path.basename(fnpath), fnpath))
         return dir_list
     """ 
- @f
+ @S
  def _explore_by_depth(library_root,fnpath,dir_list,library_root_depth,current_depth):
   listdir=os.listdir(fnpath)
   for var in listdir:
@@ -384,7 +384,7 @@ class Logic(K):
     else:
      dir_list.append(EntityLibraryPath(library_root,var,_abspath))
   return dir_list
- @f
+ @S
  def _get_find_dir(dir_list,entity):
   ret=[]
   for item in dir_list:
@@ -394,7 +394,7 @@ class Logic(K):
     ret.append(item)
    elif entity.nd_compare_name.replace(u'시즌','').find(item.compare_name.replace(u'시즌',''))!=-1:
     ret.append(item)
-   elif entity.daum_info is not b and entity.daum_info.title==item.basename:
+   elif entity.daum_info is not H and entity.daum_info.title==item.basename:
     ret.append(item)
   logger.debug('entity.filename_name : %s entity.nd_compare_name: %s',entity.filename_name,entity.nd_compare_name)
   for item in ret:
@@ -405,16 +405,16 @@ class Logic(K):
     return[item]
   return ret
  plex_update_list=[]
- @f
- def receive_scan_result(t,filename):
+ @S
+ def receive_scan_result(h,filename):
   try:
    import plex
-   logger.debug('Receive Scan Completed : %s-%s',t,filename)
-   modelfile=db.session.query(ModelKtvFile).filter_by(t=Q(t)).first()
-   if modelfile is not b:
+   logger.debug('Receive Scan Completed : %s-%s',h,filename)
+   modelfile=db.session.query(ModelKtvFile).filter_by(h=X(h)).first()
+   if modelfile is not H:
     modelfile.scan_status=3
     modelfile.scan_time=datetime.now()
-    plex.Logic.get_section_id(modelfile,more=o)
+    plex.Logic.get_section_id(modelfile,more=c)
     if scheduler.is_running('ktv_process'):
      Logic.plex_update_list.append(modelfile)
      logger.debug('>> plex_update_list insert!!')
@@ -446,7 +446,7 @@ class Logic(K):
             logger.error('Exception:%s', exception)
             logger.error(traceback.format_exc())
     """ 
- @f
+ @S
  @celery.task
  def check_library_completed():
   try:
@@ -484,29 +484,29 @@ class Logic(K):
    entity_list=ModelKtvFile.get_image_empty_list()
    for entity in entity_list:
     logger.debug('filename:%s',entity.filename)
-    plex.Logic.get_section_id(entity,more=o)
+    plex.Logic.get_section_id(entity,more=c)
     db.session.add(entity)
    db.session.commit()
   except s as exception:
    logger.debug('Exception:%s',exception)
    logger.debug(traceback.format_exc()) 
- @f
+ @S
  def filelist(req):
   try:
    ret={}
    page=1
-   page_size=Q(db.session.query(ModelSetting).filter_by(key='web_page_size').first().value)
+   page_size=X(db.session.query(ModelSetting).filter_by(key='web_page_size').first().value)
    job_id=''
    search=''
    if 'page' in req.form:
-    page=Q(req.form['page'])
+    page=X(req.form['page'])
    if 'search_word' in req.form:
     search=req.form['search_word']
    query=db.session.query(ModelKtvFile)
    if search!='':
     query=query.filter(ModelKtvFile.plex_abspath.like('%'+search+'%'))
    count=query.count()
-   query=(query.order_by(desc(ModelKtvFile.t)).limit(page_size).offset((page-1)*page_size))
+   query=(query.order_by(desc(ModelKtvFile.h)).limit(page_size).offset((page-1)*page_size))
    logger.debug('ModelKtvFile count:%s',count)
    lists=query.all()
    ret['list']=[item.as_dict()for item in lists]
@@ -520,93 +520,93 @@ class Logic(K):
   except s as exception:
    logger.debug('Exception:%s',exception)
    logger.debug(traceback.format_exc())
- @f
+ @S
  def library_save(req):
   try:
-   if o:
-    library_id=Q(req.form['library_id'])
+   if c:
+    library_id=X(req.form['library_id'])
     if library_id==-1:
      item=ModelKtvLibrary()
     else:
-     item=db.session.query(ModelKtvLibrary).filter_by(t=library_id).with_for_update().first()
-    item.library_type=Q(req.form['library_type'])
+     item=db.session.query(ModelKtvLibrary).filter_by(h=library_id).with_for_update().first()
+    item.library_type=X(req.form['library_type'])
     item.library_path=req.form['library_path']
     if item.library_type==1:
      item.rclone_path=req.form['rclone_path']
     item.replace_for_plex_source=req.form['replace_for_plex_source']
     item.replace_for_plex_target=req.form['replace_for_plex_target']
-    item.index=Q(req.form['index'])
+    item.index=X(req.form['index'])
     db.session.add(item)
     db.session.commit()
     logger.debug('item.library_type:%s',item.library_type)
     if item.library_type!=0:
      Logic.call_rclone_plugin(item)
-   return o 
+   return c 
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @f
- def call_rclone_plugin(item,remove=c):
+   return E
+ @S
+ def call_rclone_plugin(item,remove=E):
   local=os.path.join(db.session.query(ModelSetting).filter_by(key='download_path').first().value,'rclone_%s'%item.rclone_path.split(':')[0],os.path.basename(item.library_path))
   logger.debug('Local:%s',local)
   import rclone
   rclone.Logic.rclone_job_by_ktv(local,item.rclone_path,remove)
- @f
+ @S
  def library_list():
   try:
    return db.session.query(ModelKtvLibrary).order_by(ModelKtvLibrary.index).all()
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @f
+   return E
+ @S
  def library_remove(req):
   try:
-   if o:
-    library_id=Q(req.form['library_id'])
-    lib=db.session.query(ModelKtvLibrary).filter_by(t=library_id).first()
+   if c:
+    library_id=X(req.form['library_id'])
+    lib=db.session.query(ModelKtvLibrary).filter_by(h=library_id).first()
     if lib.library_type!=0:
-     Logic.call_rclone_plugin(lib,remove=o)
+     Logic.call_rclone_plugin(lib,remove=c)
     db.session.delete(lib)
     db.session.commit()
-   return o
+   return c
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @f
+   return E
+ @S
  def reset_db():
   try:
    db.session.query(ModelKtvFile).delete()
    db.session.commit()
-   return o
+   return c
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
+   return E
  listener=MyEvent()
- @f
+ @S
  def add_listener(f):
   try:
    Logic.listener+=f
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @f
+   return E
+ @S
  def remove_listener(f):
   try:
    Logic.listener-=f
   except s as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return c
- @f
+   return E
+ @S
  def send_to_listener(target_file):
   try:
    args=[]
-   kargs={'plugin':'ktv','type':'add','filepath':target_file,'is_file':o}
+   kargs={'plugin':'ktv','type':'add','filepath':target_file,'is_file':c}
    Logic.listener.fire(*args,**kargs)
   except s as exception:
    logger.error('Exception:%s',exception)

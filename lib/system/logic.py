@@ -1,14 +1,14 @@
 import os
-B=object
-G=None
-R=staticmethod
-l=Exception
-u=False
-f=True
-k=range
-C=str
-L=int
-O=len
+c=object
+y=None
+s=staticmethod
+a=Exception
+X=False
+q=True
+t=range
+h=str
+H=int
+T=len
 import traceback
 import logging
 from datetime import datetime
@@ -29,51 +29,51 @@ from.model import ModelSetting
 import system
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
-class SystemLogic(B):
+class SystemLogic(c):
  point=0
  db_default={'db_version':'1','port':'9999','ddns':'http://localhost:9999','url_filebrowser':'http://localhost:9998','id':'sjva','pw':'sjva','system_start_time':'','repeat':'','auto_restart_hour':'12','theme':'Default','log_level':'10','use_login':'False','link_json':'[]','plugin_dev_path':'','plugin_tving_level2':'False','web_title':'SJ Video Assistant','my_ip':'','wavve_guid':'','videoportal_adult':'False','trans_type':'0','trans_google_api_key':'','trans_papago_key':'','auth_use_apikey':'False','auth_apikey':'','selenium_remote_url':'','selenium_remote_default_option':'--no-sandbox\n--disable-gpu','selenium_binary_default_option':'','notify_telegram_use':'False','notify_telegram_token':'','notify_telegram_chat_id':'','notify_telegram_disable_notification':'False','notify_discord_use':'False','notify_discord_webhook':'','notify_advaned_use':'False','notify_advaned_policy':u"# 각 플러그인 설정 설명에 명시되어 있는 ID = 형식\n# DEFAULT 부터 주석(#) 제거 후 작성\n\n# DEFAULT = ",'telegram_bot_token':'','telegram_bot_auto_start':'False','telegram_resend':'False','telegram_resend_chat_id':'','sjva_me_user_id':'','auth_status':'','sjva_id':'','site_daum_interval':'0 4 */3 * *','site_daum_auto_start':'False','site_daum_cookie':'TIARA=gaXEIPluo-wWAFlwZN6l8gN3yzhkoo_piP.Kymhuy.6QBt4Q6.cRtxbKDaWpWajcyteRHzrlTVpJRxLjwLoMvyYLVi_7xJ1L','site_daum_test':u'나쁜 녀석들','site_wavve_id':'','site_wavve_pw':'','site_wavve_credential':'','memo':'',}
  db_default2={'use_category_vod':'True','use_category_file_process':'True','use_category_plex':'True','use_category_tool':'True'}
  db_default3={'use_plugin_ffmpeg':'False','use_plugin_ktv':'False','use_plugin_fileprocess_movie':'False','use_plugin_plex':'False','use_plugin_gdrive_scan':'False','use_plugin_rclone':'False','use_plugin_daum_tv':'False'}
- recent_version=G
- @R
+ recent_version=y
+ @s
  def plugin_load():
   try:
    SystemLogic.db_init()
    SystemLogic.init()
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @R
+ @s
  def db_init():
   try:
    logger.debug('setting count : %s',db.session.query(ModelSetting).filter_by().count())
-   is_first=u
+   is_first=X
    for key,value in SystemLogic.db_default.items():
     if db.session.query(ModelSetting).filter_by(key=key).count()==0:
      if key=='port':
-      is_first=f
+      is_first=q
      if key=='sjva_id' or key=='auth_apikey':
-      value=''.join(random.choice(string.ascii_uppercase+string.digits)for _ in k(10))
+      value=''.join(random.choice(string.ascii_uppercase+string.digits)for _ in t(10))
      db.session.add(ModelSetting(key,value))
      db.session.commit()
    for key,value in SystemLogic.db_default2.items():
     if db.session.query(ModelSetting).filter_by(key=key).count()==0:
      tmp=value
-     if is_first==u:
+     if is_first==X:
       tmp='True'
      db.session.add(ModelSetting(key,tmp))
      db.session.commit()
    for key,value in SystemLogic.db_default3.items():
     if db.session.query(ModelSetting).filter_by(key=key).count()==0:
      tmp=value
-     if is_first==u:
+     if is_first==X:
       tmp='True'
      db.session.add(ModelSetting(key,tmp))
      db.session.commit()
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @R
+ @s
  def init():
   try:
    if app.config['config']['repeat']==0 or SystemLogic.get_setting_value('system_start_time')=='':
@@ -81,7 +81,7 @@ class SystemLogic(B):
     item.value=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     db.session.commit()
    item=db.session.query(ModelSetting).filter_by(key='repeat').with_for_update().first()
-   item.value=C(app.config['config']['repeat'])
+   item.value=h(app.config['config']['repeat'])
    db.session.commit()
    username=db.session.query(ModelSetting).filter_by(key='id').first().value
    passwd=db.session.query(ModelSetting).filter_by(key='pw').first().value
@@ -89,10 +89,10 @@ class SystemLogic(B):
    SystemLogic.set_restart_scheduler()
    SystemLogic.set_scheduler_check_scheduler()
    SystemLogic.get_recent_version()
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @R
+ @s
  def get_recent_version():
   try:
    import requests
@@ -100,16 +100,16 @@ class SystemLogic(B):
    if ModelSetting.get('ddns')=='https://sjva-server.soju6jan.com':
     url='https://sjva-dev.soju6jan.com/version'
    SystemLogic.recent_version=requests.get(url).text
-   return f
-  except l as exception:
+   return q
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-  return u
- @R
+  return X
+ @s
  def restart():
   import system
   system.restart()
- @R
+ @s
  def get_info():
   info={}
   import platform
@@ -141,17 +141,17 @@ class SystemLogic(B):
     root='/'
    tmp=psutil.disk_usage('/')
    info['disk']=u'전체 : %s   사용량 : %s   남은량 : %s  (%s%%) - 드라이브 (%s)'%(Util.sizeof_fmt(tmp[0],suffix='B'),Util.sizeof_fmt(tmp[1],suffix='B'),Util.sizeof_fmt(tmp[2],suffix='B'),tmp[3],root)
-  except l as exception:
+  except a as exception:
    info['disk']='not supported'
   try:
    tmp=SystemLogic.get_setting_value('system_start_time')
    tmp_datetime=datetime.strptime(tmp,'%Y-%m-%d %H:%M:%S')
    timedelta=datetime.now()-tmp_datetime
-   info['time']=u'시작 : %s   경과 : %s   재시작 : %s'%(tmp,C(timedelta).split('.')[0],app.config['config']['repeat'])
-  except l as exception:
-   info['time']=C(exception)
+   info['time']=u'시작 : %s   경과 : %s   재시작 : %s'%(tmp,h(timedelta).split('.')[0],app.config['config']['repeat'])
+  except a as exception:
+   info['time']=h(exception)
   return info
- @R
+ @s
  def setting_save_system(req):
   try:
    for key,value in req.form.items():
@@ -163,59 +163,59 @@ class SystemLogic(B):
    SystemLogic.setting_list=Util.db_list_to_dict(lists)
    USERS[db.session.query(ModelSetting).filter_by(key='id').first().value]=User(db.session.query(ModelSetting).filter_by(key='id').first().value,passwd_hash=db.session.query(ModelSetting).filter_by(key='pw').first().value)
    SystemLogic.set_restart_scheduler()
-   set_level(L(db.session.query(ModelSetting).filter_by(key='log_level').first().value))
-   return f 
-  except l as exception:
+   set_level(H(db.session.query(ModelSetting).filter_by(key='log_level').first().value))
+   return q 
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return u
- @R
+   return X
+ @s
  def setting_save_after():
   try:
    USERS[ModelSetting.get('id')]=User(ModelSetting.get('id'),passwd_hash=ModelSetting.get('pw'))
    SystemLogic.set_restart_scheduler()
-   set_level(L(db.session.query(ModelSetting).filter_by(key='log_level').first().value))
+   set_level(H(db.session.query(ModelSetting).filter_by(key='log_level').first().value))
    from.logic_site import SystemLogicSite
-   SystemLogicSite.get_daum_cookies(force=f)
-   return f 
-  except l as exception:
+   SystemLogicSite.get_daum_cookies(force=q)
+   return q 
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return u
- @R
+   return X
+ @s
  def change_theme(theme):
   try:
    source=os.path.join(path_app_root,'static','css','theme','%s_bootstrap.min.css'%theme)
    target=os.path.join(path_app_root,'static','css','bootstrap.min.css')
    os.remove(target)
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return u
- @R
+   return X
+ @s
  def get_setting_value(key):
   try:
    entity=db.session.query(ModelSetting).filter_by(key=key).first()
-   if entity is G:
-    return G
+   if entity is y:
+    return y
    else:
     return entity.value
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    logger.error('error key : %s',key)
-   return u
- @R
+   return X
+ @s
  def set_restart_scheduler():
   name='%s_restart'%(package_name)
   if scheduler.is_include(name):
    scheduler.remove_job(name)
   interval=ModelSetting.get('auto_restart_hour')
   if interval!='0':
-   if O(interval.split(' '))==1:
-    interval='%s'%(L(interval)*60)
-   job_instance=Job(package_name,name,interval,SystemLogic.restart,u"자동 재시작",f)
-   scheduler.add_job_instance(job_instance,run=u)
+   if T(interval.split(' '))==1:
+    interval='%s'%(H(interval)*60)
+   job_instance=Job(package_name,name,interval,SystemLogic.restart,u"자동 재시작",q)
+   scheduler.add_job_instance(job_instance,run=X)
  """    
     @staticmethod
     def set_statistics_scheduler():
@@ -230,18 +230,18 @@ class SystemLogic(B):
             logger.error(traceback.format_exc())
             return False
     """ 
- @R
+ @s
  def set_scheduler_check_scheduler():
   try:
    name='scheduler_check'
    if scheduler.is_include(name):
     scheduler.remove_job(name)
-   job_instance=Job(package_name,name,2,scheduler.first_run_check_thread_function,u"Scheduler Check",f)
-   scheduler.add_job_instance(job_instance,run=u)
-  except l as exception:
+   job_instance=Job(package_name,name,2,scheduler.first_run_check_thread_function,u"Scheduler Check",q)
+   scheduler.add_job_instance(job_instance,run=X)
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return u
+   return X
  """
     @staticmethod
     def statistics_scheduler_function():
@@ -287,7 +287,7 @@ class SystemLogic(B):
             logger.error(traceback.format_exc())
             return False
     """ 
- @R
+ @s
  def command_run(command_text):
   try:
    ret={}
@@ -297,11 +297,11 @@ class SystemLogic(B):
     ret['log']='Empty..'
     return ret
    if tmp[0]=='set':
-    if O(tmp)==3:
+    if T(tmp)==3:
      if tmp[1]=='token':
       tmp[1]='unique'
      entity=db.session.query(ModelSetting).filter_by(key=tmp[1]).with_for_update().first()
-     if entity is G:
+     if entity is y:
       ret['ret']='fail'
       ret['log']='%s not exist'%tmp[1]
       return ret
@@ -330,13 +330,13 @@ class SystemLogic(B):
    ret['ret']='fail'
    ret['log']='wrong command'
    return ret
-  except l as exception:
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    ret['ret']='fail'
-   ret['log']=C(exception)
+   ret['log']=h(exception)
    return ret
- @R
+ @s
  def link_save(link_data_str):
   try:
    data=json.loads(link_data_str)
@@ -344,12 +344,12 @@ class SystemLogic(B):
    entity.value=link_data_str
    db.session.commit()
    SystemLogic.apply_menu_link()
-   return f
-  except l as exception:
+   return q
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return u
- @R
+   return X
+ @s
  def apply_menu_link():
   try:
    link_data_str=SystemLogic.get_setting_value('link_json') 
@@ -367,9 +367,9 @@ class SystemLogic(B):
      entity['name']=item['title']
      entity['link']=item['url']
     link_category['list'].append(entity)
-   return f
-  except l as exception:
+   return q
+  except a as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   return u
+   return X
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
