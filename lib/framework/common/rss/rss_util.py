@@ -1,16 +1,16 @@
 import os
-w=object
-m=staticmethod
-o=len
-p=Exception
-O=None
+o=object
+V=staticmethod
+u=len
+a=Exception
+D=None
 import traceback
 import logging
 import urllib
 import xml.etree.ElementTree as ET
 from framework import logger,py_urllib2
-class RssUtil(w):
- @m
+class RssUtil(o):
+ @V
  def get_rss(url):
   try:
    logger.debug('get_rss : %s',url)
@@ -20,7 +20,7 @@ class RssUtil(w):
    tree=ET.ElementTree(file=resp)
    root=tree.getroot()
    item_list=root.find('channel').findall('item')
-   logger.debug('xml item count:%s',o(item_list))
+   logger.debug('xml item count:%s',u(item_list))
    ret=[]
    for item in item_list:
     try:
@@ -34,15 +34,15 @@ class RssUtil(w):
        link=item.find('link').text.strip()
      rss=Feed(item.find('title').text.strip(),link)
      ret.append(rss)
-    except p as exception:
+    except a as exception:
      logger.debug(exception)
      logger.debug(traceback.format_exc())
    return ret
-  except p as exception:
+  except a as exception:
    logger.debug(exception)
    logger.debug(traceback.format_exc())
    logger.debug('url:%s',url)
-   return O
+   return D
  """
     @staticmethod
     def make_rss(title, rss_list, torrent_mode, ddns, is_bot=False):
@@ -79,13 +79,13 @@ class RssUtil(w):
         xml += '</rss>'
         return xml
     """ 
- @m
+ @V
  def replace_xml(xml):
   tmp=[['&','&amp;'],['<','&lt;'],['>','&gt;'],['‘','&apos;'],['"','&quot;']]
   for t in tmp:
    xml=xml.replace(t[0],t[1])
   return xml
- @m
+ @V
  def make_rss(package_name,rss_list):
   xml='<rss xmlns:showrss=\"http://showrss.info/\" version=\"2.0\">\n'
   xml+='\t<channel>\n'
@@ -102,13 +102,13 @@ class RssUtil(w):
     item_str+='\t\t\t<pubDate>%s</pubDate>\n'%date_str
     item_str+='\t\t</item>\n'
     xml+=item_str
-   except p as exception:
+   except a as exception:
     logger.debug('Exception:%s',exception)
     logger.debug(traceback.format_exc())
   xml+='\t</channel>\n'
   xml+='</rss>'
   return xml
-class Feed(w):
+class Feed(o):
  def __init__(self,title,link):
   self.title=title
   self.link=link

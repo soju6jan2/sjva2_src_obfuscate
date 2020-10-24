@@ -1,28 +1,28 @@
 import base64
-S=len
-A=chr
-i=ord
-v=object
-j=staticmethod
-J=None
+j=len
+s=chr
+A=ord
+V=object
+C=staticmethod
+P=None
 from Crypto.Cipher import AES
 from Crypto import Random
 from framework.logger import get_logger
 from framework import app,logger
 BS=16
-pad=lambda s:s+(BS-S(s)%BS)*A(BS-S(s)%BS)
+pad=lambda s:s+(BS-j(s)%BS)*s(BS-j(s)%BS)
 if app.config['config']['is_py2']:
- unpad=lambda s:s[0:-i(s[-1])]
+ unpad=lambda s:s[0:-A(s[-1])]
 else:
  unpad=lambda s:s[0:-s[-1]]
 key='140b41b22a29beb4061bda66b6747e14'
-class AESCipher(v):
- @j
- def encrypt(raw,mykey=J):
+class AESCipher(V):
+ @C
+ def encrypt(raw,mykey=P):
   if app.config['config']['is_py2']:
    raw=pad(raw)
    iv=Random.new().read(AES.block_size)
-   cipher=AES.new(key if mykey is J else mykey,AES.MODE_CBC,iv)
+   cipher=AES.new(key if mykey is P else mykey,AES.MODE_CBC,iv)
    ret=base64.b64encode(iv+cipher.encrypt(raw))
    if app.config['config']['is_py3']:
     ret=ret.decode()
@@ -30,7 +30,7 @@ class AESCipher(v):
   else:
    raw=pad(raw)
    iv=Random.new().read(AES.block_size)
-   cipher=AES.new(key if mykey is J else mykey,AES.MODE_CBC,iv)
+   cipher=AES.new(key if mykey is P else mykey,AES.MODE_CBC,iv)
    try:
     tmp=cipher.encrypt(raw)
    except:
@@ -39,11 +39,11 @@ class AESCipher(v):
    if app.config['config']['is_py3']:
     ret=ret.decode()
    return ret
- @j
- def decrypt(enc,mykey=J):
+ @C
+ def decrypt(enc,mykey=P):
   enc=base64.b64decode(enc)
   iv=enc[:16]
-  cipher=AES.new(key if mykey is J else mykey,AES.MODE_CBC,iv)
+  cipher=AES.new(key if mykey is P else mykey,AES.MODE_CBC,iv)
   return unpad(cipher.decrypt(enc[16:]))
 if __name__=="__main__":
  key="140b41b22a29beb4061bda66b6747e14"
