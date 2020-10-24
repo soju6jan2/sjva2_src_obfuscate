@@ -1,13 +1,13 @@
 import os
-P=object
-N=staticmethod
-Y=None
-J=Exception
-m=False
-D=True
-B=str
-r=range
-b=sorted
+t=object
+x=staticmethod
+h=None
+I=Exception
+E=False
+v=True
+C=str
+D=range
+T=sorted
 from datetime import datetime
 import traceback
 import subprocess
@@ -19,58 +19,58 @@ from framework import app,path_data,socketio
 from system.logic_command import SystemLogicCommand
 from.import logger,Vars
 REMOTE_NAME_SJVA_SHARE_TEMP='SJVA_SHARE_TEMP' 
-class RcloneTool(P):
- @N
- def lsjson(rclone_path,config_path,remote_path,option=Y):
+class RcloneTool(t):
+ @x
+ def lsjson(rclone_path,config_path,remote_path,option=h):
   try:
    from system.logic_command import SystemLogicCommand
    command=[rclone_path,'--config',config_path,'lsjson',remote_path]
    logger.debug(command)
-   if option is not Y:
+   if option is not h:
     command+=option
    logger.debug(command)
    ret=SystemLogicCommand.execute_command_return(command,format='json')
    return ret
-  except J as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
- def size(rclone_path,config_path,remote_path,option=Y):
+ @x
+ def size(rclone_path,config_path,remote_path,option=h):
   try:
    from system.logic_command import SystemLogicCommand
    command=[rclone_path,'--config',config_path,'size',remote_path,'--json']
-   if option is not Y:
+   if option is not h:
     command+=option
    ret=SystemLogicCommand.execute_command_return(command,format='json')
    return ret
-  except J as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
- def rmdir(rclone_path,config_path,remote_path,option=Y):
+ @x
+ def rmdir(rclone_path,config_path,remote_path,option=h):
   try:
    from system.logic_command import SystemLogicCommand
    command=[rclone_path,'--config',config_path,'rmdir',remote_path]
    logger.debug(command)
-   if option is not Y:
+   if option is not h:
     command+=option
    logger.debug(command)
    ret=SystemLogicCommand.execute_command_return(command)
    return ret
-  except J as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
- def do_action(rclone_path,config_path,mode,server_type,folder_id,folder_name,server_filename,remote_path,action,folder_id_encrypted=m,listener=Y,dry=m,option=Y,remove_config=D,show_modal=D,force_remote_name=Y):
+ @x
+ def do_action(rclone_path,config_path,mode,server_type,folder_id,folder_name,server_filename,remote_path,action,folder_id_encrypted=E,listener=h,dry=E,option=h,remove_config=v,show_modal=v,force_remote_name=h):
   try:
    logger.debug('%s %s %s %s %s %s',mode,server_type,folder_id,remote_path,action,folder_id_encrypted)
    if folder_id_encrypted:
     from framework.common.util import AESCipher
-    folder_id=AESCipher.decrypt(B(folder_id),Vars.key)
+    folder_id=AESCipher.decrypt(C(folder_id),Vars.key)
    rclone_upload_remote=remote_path.split(':')[0]
-   return_folder_id=m
+   return_folder_id=E
    if mode=='download':
-    src_remote=remote_path.split(':')[0]if force_remote_name is Y or force_remote_name=='' else force_remote_name
+    src_remote=remote_path.split(':')[0]if force_remote_name is h or force_remote_name=='' else force_remote_name
    else:
     src_remote=remote_path.split(':')[0]
    server_remote='{src_remote}:{{{folderid}}}'.format(src_remote=src_remote,folderid=folder_id)
@@ -86,7 +86,7 @@ class RcloneTool(P):
       server_remote+='/%s'%folder_name
      else:
       server_remote+='/%s'%remote_path.split('/')[-1]
-     return_folder_id=D
+     return_folder_id=v
     elif server_type=='content':
      pass
     command=[rclone_path,'--config',config_path,'copy',remote_path,server_remote,'--drive-server-side-across-configs=true','-v']
@@ -96,17 +96,17 @@ class RcloneTool(P):
       server_remote+='/%s'%folder_name
      else:
       server_remote+='/%s'%remote_path.split('/')[-1]
-     return_folder_id=D
+     return_folder_id=v
     command=[rclone_path,'--config',config_path,'move',remote_path,server_remote,'--drive-server-side-across-configs=true','-v']
    if dry:
     command.append('--dry-run')
-   if option is not Y:
+   if option is not h:
     command+=option
    logger.debug(command)
    from system.logic_command2 import SystemLogicCommand2
    from system.logic_command import SystemLogicCommand
    ret={'percent':0,'folder_id':'','config_path':config_path,'server_remote':server_remote}
-   return_log=SystemLogicCommand2('공유',[['msg','잠시만 기다리세요'],command,['msg','Rclone 명령을 완료하였습니다.'],],wait=D,show_modal=show_modal).start()
+   return_log=SystemLogicCommand2('공유',[['msg','잠시만 기다리세요'],command,['msg','Rclone 명령을 완료하였습니다.'],],wait=v,show_modal=show_modal).start()
    for tmp in return_log:
     if tmp.find('Transferred')!=-1 and tmp.find('100%')!=-1:
      logger.debug(tmp)
@@ -122,7 +122,7 @@ class RcloneTool(P):
     if ret['percent']==100:
      parent_remote='/'.join(server_remote.split('/')[:-1])
      logger.debug('parent_remote : %s',parent_remote)
-     for i in r(20):
+     for i in D(20):
       command=[rclone_path,'--config',config_path,'lsjson',parent_remote,'--dirs-only']
       logger.debug(command)
       ret['lsjson']=SystemLogicCommand.execute_command_return(command,format='json')
@@ -131,11 +131,11 @@ class RcloneTool(P):
       for item in ret['lsjson']:
        if item['Name']==tmp:
         from framework.common.util import AESCipher
-        ret['folder_id']=AESCipher.encrypt(B(item['ID']),Vars.key)
+        ret['folder_id']=AESCipher.encrypt(C(item['ID']),Vars.key)
         command=[rclone_path,'--config',config_path,'lsjson',parent_remote+'/'+item['Name'],'-R','--files-only']
         logger.debug(command)
         ret['lsjson']=SystemLogicCommand.execute_command_return(command,format='json')
-        ret['lsjson']=b(ret['lsjson'],key=lambda k:k['Path'])
+        ret['lsjson']=T(ret['lsjson'],key=lambda k:k['Path'])
         break
       logger.debug('folderid:%s',ret['folder_id'])
       if ret['folder_id']=='':
@@ -147,7 +147,7 @@ class RcloneTool(P):
       time.sleep(30)
       logger.debug('GET FOLDERID : %s',i)
    return ret
-  except J as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
   """
@@ -162,22 +162,22 @@ class RcloneTool(P):
                 logger.error('Exception:%s', exception)
                 logger.error(traceback.format_exc())
         """  
- @N
+ @x
  def fileid_copy(rclone_path,config_path,fileid,remote_path):
   try:
    from framework.common.util import AESCipher
-   fileid=AESCipher.decrypt(B(fileid),Vars.key)
+   fileid=AESCipher.decrypt(C(fileid),Vars.key)
    command=[rclone_path,'--config',config_path,'copy','{remote}:{{{fileid}}}'.format(remote=remote_path.split(':')[0],fileid=fileid),remote_path,'--drive-server-side-across-configs','-v']
    from system.logic_command import SystemLogicCommand
    log=SystemLogicCommand.execute_command_return(command)
    logger.debug('fileid copy 결과 : %s',log)
    if log.find('100%')!=-1:
-    return D
-   return m
-  except J as exception:
+    return v
+   return E
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
+ @x
  def __make_rclone_conf(config_path,rclone_upload_remote,folder_id):
   try:
    from framework.common.util import read_file
@@ -185,13 +185,13 @@ class RcloneTool(P):
     rclone_info=read_file(config_path)
    from framework import path_data
    import time
-   filename='%s.conf'%(B(time.time()).split('.')[0])
+   filename='%s.conf'%(C(time.time()).split('.')[0])
    conf_filepath=os.path.join(path_data,'tmp',filename)
    start=-1
-   dest_remote=Y
-   match=Y
-   first_rclone_info=Y
-   while D:
+   dest_remote=h
+   match=h
+   first_rclone_info=h
+   while v:
     start=rclone_info.find('[',start+1)
     if start==-1:
      break
@@ -200,24 +200,24 @@ class RcloneTool(P):
      dest_remote=rclone_info[start:]
     else:
      dest_remote=rclone_info[start:next_start]
-    if first_rclone_info is Y and dest_remote.find('access_token')!=-1:
+    if first_rclone_info is h and dest_remote.find('access_token')!=-1:
      first_rclone_info=dest_remote
     import re
     match=re.compile(r'\[(?P<remote_name>.*?)\]').search(dest_remote.strip())
     if match.group('remote_name')==rclone_upload_remote:
      break
     else:
-     dest_remote=Y
-     match=Y
-   if rclone_upload_remote is not Y:
-    if dest_remote is Y:
-     raise J('cannot find remote_name')
+     dest_remote=h
+     match=h
+   if rclone_upload_remote is not h:
+    if dest_remote is h:
+     raise I('cannot find remote_name')
     else:
      if dest_remote.find('type = drive')==-1:
-      if first_rclone_info is not Y:
+      if first_rclone_info is not h:
        src_remote_ready=first_rclone_info
       else:
-       raise J('cannot find google remote_name')
+       raise I('cannot find google remote_name')
      else:
       pass
       src_remote_ready=dest_remote
@@ -231,12 +231,12 @@ class RcloneTool(P):
    import framework.common.util as CommonUtil
    CommonUtil.write_file(filedata,conf_filepath)
    return conf_filepath
-  except J as exception:
+  except I as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @N
+ @x
  def folderid_decrypt(folderid):
   from framework.common.util import AESCipher
-  folderid=AESCipher.decrypt(B(folderid),Vars.key)
+  folderid=AESCipher.decrypt(C(folderid),Vars.key)
   return folderid
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,9 +1,9 @@
 import os
-d=True
-c=str
-D=getattr
-W=None
-h=int
+J=True
+a=str
+p=getattr
+F=None
+O=int
 P=False
 from datetime import datetime
 from framework import db,app,path_data
@@ -15,7 +15,7 @@ class ModelRcloneJob(db.Model):
  __tablename__='%s_job'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=d)
+ id=db.Column(db.Integer,primary_key=J)
  job_type=db.Column(db.Integer)
  name=db.Column(db.String)
  command=db.Column(db.String)
@@ -30,16 +30,16 @@ class ModelRcloneJob(db.Model):
  def __init__(self):
   self.last_file_count=0
  def __repr__(self):
-  return c(self.as_dict())
+  return a(self.as_dict())
  def as_dict(self):
-  ret={x.name:D(self,x.name)for x in self.__table__.columns}
-  ret['last_run_time']=self.last_run_time.strftime('%m-%d %H:%M:%S')if self.last_run_time is not W else ''
+  ret={x.name:p(self,x.name)for x in self.__table__.columns}
+  ret['last_run_time']=self.last_run_time.strftime('%m-%d %H:%M:%S')if self.last_run_time is not F else ''
   return ret
 class ModelRcloneFile(db.Model):
  __tablename__='%s_file'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=d)
+ id=db.Column(db.Integer,primary_key=J)
  job_id=db.Column(db.Integer)
  folder=db.Column(db.String)
  name=db.Column(db.String)
@@ -53,20 +53,20 @@ class ModelRcloneFile(db.Model):
  created_time=db.Column(db.DateTime)
  finish_time=db.Column(db.DateTime)
  def __init__(self,job_id,folder,name):
-  self.job_id=h(job_id)
+  self.job_id=O(job_id)
   self.folder=folder
   self.name=name
   self.log=''
   self.created_time=datetime.now()
  def __repr__(self):
-  return c(self.as_dict())
+  return a(self.as_dict())
  def as_dict(self):
-  ret={x.name:D(self,x.name)for x in self.__table__.columns}
+  ret={x.name:p(self,x.name)for x in self.__table__.columns}
   ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')
-  ret['finish_time']=self.finish_time.strftime('%m-%d %H:%M:%S')if self.finish_time is not W else ''
+  ret['finish_time']=self.finish_time.strftime('%m-%d %H:%M:%S')if self.finish_time is not F else ''
   ret['delta']=''
   try:
-   ret['delta']=c(self.finish_time-self.created_time).split('.')[0]
+   ret['delta']=a(self.finish_time-self.created_time).split('.')[0]
   except:
    pass
   return ret
@@ -74,7 +74,7 @@ class ModelRcloneMount(db.Model):
  __tablename__='%s_mount'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=d)
+ id=db.Column(db.Integer,primary_key=J)
  created_time=db.Column(db.DateTime)
  json=db.Column(db.JSON)
  name=db.Column(db.String)
@@ -87,16 +87,16 @@ class ModelRcloneMount(db.Model):
   self.current_status=P
   self.created_time=datetime.now()
  def __repr__(self):
-  return c(self.as_dict())
+  return a(self.as_dict())
  def as_dict(self):
-  ret={x.name:D(self,x.name)for x in self.__table__.columns}
+  ret={x.name:p(self,x.name)for x in self.__table__.columns}
   ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')
   return ret
 class ModelRcloneServe(db.Model):
  __tablename__='%s_serve'%package_name
  __table_args__={'mysql_collate':'utf8_general_ci'}
  __bind_key__=package_name
- id=db.Column(db.Integer,primary_key=d)
+ id=db.Column(db.Integer,primary_key=J)
  created_time=db.Column(db.DateTime)
  json=db.Column(db.JSON)
  name=db.Column(db.String)
@@ -110,9 +110,9 @@ class ModelRcloneServe(db.Model):
   self.current_status=P
   self.created_time=datetime.now()
  def __repr__(self):
-  return c(self.as_dict())
+  return a(self.as_dict())
  def as_dict(self):
-  ret={x.name:D(self,x.name)for x in self.__table__.columns}
+  ret={x.name:p(self,x.name)for x in self.__table__.columns}
   ret['created_time']=self.created_time.strftime('%m-%d %H:%M:%S')
   ret['command_ui']=ModelRcloneServe.commands[ret['command']]
   return ret

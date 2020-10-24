@@ -1,13 +1,13 @@
 import traceback
-Y=id
-K=False
-q=Exception
+G=id
+D=False
+t=Exception
 import json
 from framework import py_urllib
 from framework.wavve.api import logger,session,config,logger
-def do_login(Y,pw,json_return=K):
+def do_login(G,pw,json_return=D):
  try:
-  body={"type":"general","id":Y,"pushid":"","password":pw,"profile":"0","networktype":"","carrier":"","mcc":"","mnc":"","markettype":"unknown","adid":"","simoperator":"","installerpackagename":""}
+  body={"type":"general","id":G,"pushid":"","password":pw,"profile":"0","networktype":"","carrier":"","mcc":"","mnc":"","markettype":"unknown","adid":"","simoperator":"","installerpackagename":""}
   url="%s/login?%s"%(config['base_url'],py_urllib.urlencode(config['base_parameter']))
   response=session.post(url,json=body,headers=config['headers'])
   data=response.json()
@@ -20,14 +20,14 @@ def do_login(Y,pw,json_return=K):
    logger.debug('login fail!!')
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
- except q as exception:
+ except t as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
  return
 def get_baseparameter():
  try:
   return config['base_parameter'].copy()
- except q as exception:
+ except t as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -1,8 +1,8 @@
 import os
-P=object
-e=staticmethod
-J=Exception
-U=False
+m=object
+h=staticmethod
+e=Exception
+r=False
 import traceback
 import logging
 import platform
@@ -14,8 +14,8 @@ from framework.job import Job
 import framework.common.notify as Notify
 from.plugin import logger,package_name
 from.model import ModelSetting
-class SystemLogicTelegramBot(P):
- @e
+class SystemLogicTelegramBot(m):
+ @h
  def process_ajax(sub,req):
   try:
    if sub=='telegram_test':
@@ -35,36 +35,36 @@ class SystemLogicTelegramBot(P):
     else:
      SystemLogicTelegramBot.scheduler_stop()
     return jsonify(go)
-  except J as exception:
+  except e as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return jsonify('exception')
- @e
+ @h
  def plugin_load():
   try:
    if app.config['config']['run_by_worker']:
     return
    if ModelSetting.get_bool('telegram_bot_auto_start'):
     SystemLogicTelegramBot.scheduler_start()
-  except J as exception:
+  except e as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @e
+ @h
  def scheduler_start():
   try:
    interval=60*24
-   job=Job(package_name,'%s_telegram_bot'%(package_name),9999,SystemLogicTelegramBot.scheduler_function,u"시스템 - 텔레그램 봇",U)
+   job=Job(package_name,'%s_telegram_bot'%(package_name),9999,SystemLogicTelegramBot.scheduler_function,u"시스템 - 텔레그램 봇",r)
    scheduler.add_job_instance(job)
-  except J as exception:
+  except e as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @e
+ @h
  def scheduler_function():
   try:
    bot_token=ModelSetting.get('telegram_bot_token')
    from framework.common.telegram_bot import TelegramBot
    TelegramBot.start(bot_token)
-  except J as exception:
+  except e as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
