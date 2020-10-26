@@ -9,6 +9,7 @@ from pytz import timezone
 import requests
 from framework.logger import get_logger
 from framework.util import Util
+from framework import app
 from ffmpeg.logic import Logic,Status
 from ffmpeg.model import ModelSetting 
 package_name=__name__.split('.')[0]
@@ -187,7 +188,8 @@ class Ffmpeg(object):
     pass
  def log_thread_fuction(self):
   with self.process.stdout:
-   for line in iter(self.process.stdout.readline,b''):
+   iter_arg= b'' if app.config['config']['is_py2']else ''
+   for line in iter(self.process.stdout.readline,iter_arg):
     try:
      if self.status==Status.READY:
       if line.find('Server returned 404 Not Found')!=-1 or line.find('Unknown error')!=-1:
@@ -278,10 +280,14 @@ class Ffmpeg(object):
    command=u'%s -version'%(Logic.path_ffmpeg)
    command=command.split(' ')
    logger.debug(command)
-   process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
+   if app.config['config']['is_py2']:
+    process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
+   else:
+    process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True)
+   iter_arg= b'' if app.config['config']['is_py2']else ''
    ret=[]
    with process.stdout:
-    for line in iter(process.stdout.readline,b''):
+    for line in iter(process.stdout.readline,iter_arg):
      ret.append(line)
     process.wait()
    return ret

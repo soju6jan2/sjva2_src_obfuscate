@@ -199,7 +199,10 @@ class LogicNormal(object):
     command_logger=get_logger('%s_%s'%(package_name,command_id))
     LogicNormal.module_load(command,logger=command_logger)
    else:
-    p=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
+    if app.config['config']['is_py2']:
+     p=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
+    else:
+     p=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True)
     command_logger=None
     logger.debug(LogicNormal.process_list)
     if command_id!=-1:
@@ -209,7 +212,8 @@ class LogicNormal(object):
      LogicNormal.process_list[command_id]=p
     logger.debug(LogicNormal.process_list)
     with p.stdout:
-     for line in iter(p.stdout.readline,b''):
+     iter_arg= b'' if app.config['config']['is_py2']else ''
+     for line in iter(p.stdout.readline,iter_arg):
       try:
        line=line.decode('utf-8')
       except Exception as exception:
