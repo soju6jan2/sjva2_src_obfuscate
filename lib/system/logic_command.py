@@ -9,7 +9,7 @@ import io
 import time
 import json
 from framework.logger import get_logger
-from framework import path_app_root,socketio,py_queue
+from framework import path_app_root,socketio,py_queue,app
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 class SystemLogicCommand(object):
@@ -166,14 +166,24 @@ class SystemLogicCommand(object):
  def execute_command_return(command,format=None,force_log=False):
   try:
    logger.debug('execute_command_return : %s',' '.join(command))
-   process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
-   ret=[]
-   with process.stdout:
-    for line in iter(process.stdout.readline,b''):
-     ret.append(line.strip())
-     if force_log:
-      logger.debug(line.strip())
-    process.wait()
+   if app.config['config']['is_py2']:
+    process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
+    ret=[]
+    with process.stdout:
+     for line in iter(process.stdout.readline,b''):
+      ret.append(line.strip())
+      if force_log:
+       logger.debug(ret[-1])
+     process.wait()
+   else:
+    process=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True)
+    ret=[]
+    with process.stdout:
+     for line in iter(p.stdout.readline,''):
+      ret.append(line.strip())
+      if force_log:
+       logger.debug(ret[-1])
+     process.wait()
    if format is None:
     ret2='\n'.join(ret)
    elif format=='json':
