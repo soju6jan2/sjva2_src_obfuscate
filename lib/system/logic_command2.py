@@ -9,7 +9,7 @@ import io
 import time
 import json
 from framework.logger import get_logger
-from framework import path_app_root,socketio,logger,py_queue
+from framework import path_app_root,socketio,logger,py_queue,app
 package_name=__name__.split('.')[0]
 class SystemLogicCommand2(object):
  instance_list=[]
@@ -102,18 +102,19 @@ class SystemLogicCommand2(object):
      except:
       pass
      if r is not None:
-      try:
-       r=r.decode('utf-8')
-      except Exception as exception:
+      if app.config['config']['is_py2']:
        try:
-        r=r.decode('cp949')
+        r=r.decode('utf-8')
        except Exception as exception:
-        logger.error('Exception:%s',exception)
-        logger.error(traceback.format_exc())
         try:
-         r=r.decode('euc-kr')
-        except:
-         pass
+         r=r.decode('cp949')
+        except Exception as exception:
+         logger.error('Exception:%s',exception)
+         logger.error(traceback.format_exc())
+         try:
+          r=r.decode('euc-kr')
+         except:
+          pass
       self.stdout_queue.put(r)
       self.return_log+=r.split('\n')
     self.stdout_queue.put('<END>')

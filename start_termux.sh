@@ -12,6 +12,21 @@ export FILEBROWSER_BASEURL="/filebrowser"
 EOF
 fi
 
+if [ -f "/usr/sbin/nginx" ]; then
+    echo "Run nginx.."
+    nginx
+fi
+
+if [ -f "/usr/sbin/php-fpm7" ]; then
+    echo "Run php.."
+    php-fpm7 -R
+fi
+
+if [ -f "/usr/sbin/nginx" ]; then
+    echo "Run nginx.."
+    nginx
+fi
+
 if [ -f "export.sh" ] ; then
     echo "Run export.sh start"
     chmod 777 export.sh
