@@ -179,7 +179,7 @@ class SystemLogicCommand(object):
     process=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True)
     ret=[]
     with process.stdout:
-     for line in iter(p.stdout.readline,''):
+     for line in iter(process.stdout.readline,''):
       ret.append(line.strip())
       if force_log:
        logger.debug(ret[-1])
