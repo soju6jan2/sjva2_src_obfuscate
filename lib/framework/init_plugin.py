@@ -1,6 +1,4 @@
-import os
-import sys
-import traceback
+import os,sys,traceback,threading
 from framework import app,db,logger,plugin_instance_list,plugin_menu
 import system
 def is_include_menu(plugin_name):
@@ -115,11 +113,15 @@ def plugin_init():
    return
   for key,mod in plugin_instance_list.items():
    try:
-    logger.debug('### plugin_load start : %s',key)
     mod_plugin_load=getattr(mod,'plugin_load')
     if mod_plugin_load and(key in pass_include or is_include_menu(key)):
-     mod.plugin_load()
-    logger.debug('### plugin_load return : %s',key)
+     def func():
+      logger.debug('### plugin_load threading start : %s',key)
+      mod.plugin_load()
+      logger.debug('### plugin_load threading end : %s',key)
+     t=threading.Thread(target=func,args=())
+     t.setDaemon(True)
+     t.start()
    except Exception as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
@@ -130,7 +132,7 @@ def plugin_init():
      plugin_menu.append(mod_menu)
    except Exception as exception:
     logger.debug('no menu')
-  logger.debug('Plugin Log completed.. : %s ',len(plugin_instance_list))
+  logger.debug('### plugin_load threading all start.. : %s ',len(plugin_instance_list))
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
