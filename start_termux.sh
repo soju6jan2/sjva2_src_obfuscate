@@ -9,6 +9,7 @@ export RUN_FILEBROWSER="true"
 export FILEBROWSER_PORT="9998"
 export OS_PREFIX="LinuxArm"
 export FILEBROWSER_BASEURL="/filebrowser"
+export SJVA_RUNNING_TYPE="termux"
 EOF
 fi
 
