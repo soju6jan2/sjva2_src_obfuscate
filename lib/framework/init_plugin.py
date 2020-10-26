@@ -115,11 +115,16 @@ def plugin_init():
    try:
     mod_plugin_load=getattr(mod,'plugin_load')
     if mod_plugin_load and(key in pass_include or is_include_menu(key)):
-     def func():
-      logger.debug('### plugin_load threading start : %s',key)
-      mod.plugin_load()
-      logger.debug('### plugin_load threading end : %s',key)
-     t=threading.Thread(target=func,args=())
+     def func(mod,key):
+      try:
+       logger.debug('### plugin_load threading start : %s',key)
+       mod.plugin_load()
+       logger.debug('### plugin_load threading end : %s',key)
+      except Exception as exception:
+       logger.error('### plugin_load exception : %s',key)
+       logger.error('Exception:%s',exception)
+       logger.error(traceback.format_exc())
+     t=threading.Thread(target=func,args=(mod,key))
      t.setDaemon(True)
      t.start()
    except Exception as exception:
