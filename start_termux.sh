@@ -13,15 +13,12 @@ export SJVA_RUNNING_TYPE="termux"
 EOF
 fi
 
-
-
 if [ -f "export.sh" ] ; then
     echo "Run export.sh start"
     chmod 777 export.sh
     source export.sh
     echo "Run export.sh end"
 fi
-
 
 if [ "${USE_CELERY}" == "true" ] ; then
     nohup redis-server --port ${REDIS_PORT} > /dev/null 2>&1 &
