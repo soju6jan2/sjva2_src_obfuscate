@@ -15,6 +15,7 @@ from framework import app,db,scheduler,path_app_root
 from framework.job import Job
 from framework.util import Util
 from system.logic import SystemLogic
+from system.logic_command import SystemLogicCommand
 from.model import ModelSetting,ModelRcloneJob,ModelRcloneFile,ModelRcloneMount,ModelRcloneServe
 import plugin
 package_name=__name__.split('.')[0]
@@ -89,15 +90,8 @@ class Logic(object):
  @staticmethod
  def rclone_version():
   try:
-   command=u'%s version'%(Logic.path_rclone)
-   command=command.split(' ')
-   logger.debug(command)
-   process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
-   ret=[]
-   with process.stdout:
-    for line in iter(process.stdout.readline,b''):
-     ret.append(line)
-    process.wait()
+   command=[u'%s'%Logic.path_rclone,'version']
+   ret=SystemLogicCommand.execute_command_return(command)
    return ret
   except Exception as exception:
    logger.error('Exception:%s',exception)
@@ -266,7 +260,10 @@ class Logic(object):
     tmp=[Logic.path_rclone,job.command,job.local_path,'%s:%s'%(job.remote,job.remote_path)]+job.option_static.split(' ')+Logic.get_user_command_list(job.option_user)
    logger.debug('type : %s',type(tmp))
    logger.debug('tmp : %s',tmp)
-   Logic.current_process=subprocess.Popen(tmp,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
+   if app.config['config']['is_py2']:
+    Logic.current_process=subprocess.Popen(tmp,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
+   else:
+    Logic.current_process=subprocess.Popen(tmp,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True)
    Logic.current_data={}
    Logic.current_data['job']=job.as_dict()
    Logic.current_data['command']=command
@@ -327,7 +324,8 @@ class Logic(object):
  def log_thread_fuction():
   with Logic.current_process.stdout:
    ts=None
-   for line in iter(Logic.current_process.stdout.readline,b''):
+   iter_arg= b'' if app.config['config']['is_py2']else ''
+   for line in iter(Logic.current_process.stdout.readline,iter_arg):
     line=line.strip()
     try:
      try:
@@ -625,7 +623,6 @@ class Logic(object):
     log_filename='mount_%s'%item.name
    log_filename=os.path.join(path_app_root,'data','log','%s.log'%log_filename)
    command.append(log_filename)
-   logger.debug(command)
    try:
     if platform.system()=='Linux':
      fuse_unmount_command=['fusermount','-uz',local_path]

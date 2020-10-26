@@ -60,9 +60,7 @@ def get_episode_json_default(episode_code,quality,token,proxy=None):
   r=session.get(url,headers=headers,proxies=proxies)
   data=r.json()
   url=data['body']['stream']['broadcast']['broad_url']
-  logger.debug(url)
   decrypted_url=decrypt(episode_code,ts,url)
-  logger.debug(decrypted_url)
   if decrypted_url.find('m3u8')==-1:
    decrypted_url=decrypted_url.replace('rtmp','http')
    decrypted_url=decrypted_url.replace('?','/playlist.m3u8?')
@@ -278,7 +276,6 @@ def get_movie_json(code,deviceid,token,proxy=None):
   headers['Cookie']=token
   r=session.get(url,headers=headers,proxies=proxies)
   data=r.json()
-  logger.debug(data)
   data['ret']={}
   if data['body']['result']['code']=="000":
    if '4k_nondrm_url' in data['body']['stream']['broadcast']:
