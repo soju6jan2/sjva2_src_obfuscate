@@ -162,7 +162,7 @@ class Ffmpeg(object):
      if self.save_fullpath!=self.temp_fullpath:
       if os.path.exists(self.save_fullpath):
        os.remove(self.save_fullpath)
-      os.chmod(self.temp_fullpath,777)
+      os.system('chmod 777 %s'%self.temp_fullpath)
       import shutil
       shutil.move(self.temp_fullpath,self.save_fullpath)
       self.filesize=os.stat(self.save_fullpath).st_size
