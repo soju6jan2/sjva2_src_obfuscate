@@ -4,7 +4,6 @@ import json
 import time
 import copy
 import re
-from guessit import guessit
 from framework.common.torrent import logger
 from system.model import ModelSetting as SystemModelSetting
 import framework.common.fileprocess as FileProcess
