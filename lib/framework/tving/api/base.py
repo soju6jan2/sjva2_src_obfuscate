@@ -5,7 +5,7 @@ import requests
 import time
 import json
 import base64
-from framework import app
+from framework import app,py_urllib
 from framework.logger import get_logger
 from framework.util import Util
 logger=get_logger('tving_api')
@@ -93,16 +93,34 @@ def get_episode_json_default_live(episode_code,quality,token,proxy=None,inc_qual
   headers['Cookie']=token
   r=session.get(url,headers=headers,proxies=proxies)
   data=r.json()
-  url=data['body']['stream']['broadcast']['broad_url']
-  decrypted_url=decrypt(episode_code,ts,url)
-  if decrypted_url.find('.mp4')!=-1 and decrypted_url.find('/VOD/')!=-1:
+  logger.debug(url)
+  if data['body']['stream']['drm_yn']=='N':
+   url=data['body']['stream']['broadcast']['broad_url']
+   decrypted_url=decrypt(episode_code,ts,url)
+   if decrypted_url.find('.mp4')!=-1 and decrypted_url.find('/VOD/')!=-1:
+    return data,decrypted_url
+   if decrypted_url.find('Policy=')==-1:
+    data,ret=get_episode_json_default_live(episode_code,quality,token,proxy=proxy,inc_quality=False)
+    if quality=='stream50' and ret.find('live2000.smil'):
+     ret=ret.replace('live2000.smil','live5000.smil')
+     return data,ret
    return data,decrypted_url
-  if decrypted_url.find('Policy=')==-1:
-   data,ret=get_episode_json_default_live(episode_code,quality,token,proxy=proxy,inc_quality=False)
-   if quality=='stream50' and ret.find('live2000.smil'):
-    ret=ret.replace('live2000.smil','live5000.smil')
-    return data,ret
-  return data,decrypted_url
+  elif data['body']['stream']['drm_yn']=='Y':
+   drm_data=requests.get('https://sjva.me/sjva/tving.php').json()
+   logger.debug(drm_data)
+   logger.debug(type(drm_data))
+   logger.debug(drm_data['data'])
+   logger.debug(type(drm_data['data']))
+   kodi_data="""#EXTM3U
+#KODIPROP:inputstreamaddon=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:inputstream.adaptive.license_key=%s
+#EXTINF:-1,Widevine encrypted
+%s"""   
+   kodi_data=kodi_data%(drm_data['data']['license_key'],drm_data['data']['decrypted_url'])
+   logger.debug(kodi_data)
+   return data,kodi_data
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
@@ -205,7 +223,7 @@ def get_quality_to_res(quality):
  elif quality=='stream25':
   return '270p'
  return '1080p'
-def get_live_list(list_type=0,order='rating'):
+def get_live_list(list_type=0,order='rating',except_drm=True):
  if list_type==0 or list_type=='0':
   params=['&channelType=CPCS0100']
  elif list_type==1 or list_type=='1':
@@ -216,14 +234,14 @@ def get_live_list(list_type=0,order='rating'):
  for param in params:
   page=1
   while True:
-   hasMore,data=get_live_list2(param,page,order=order)
+   hasMore,data=get_live_list2(param,page,order=order,except_drm=except_drm)
    for i in data:
     ret.append(i)
    if hasMore=='N':
     break
    page+=1
  return ret
-def get_live_list2(param,page,order='rating'):
+def get_live_list2(param,page,order='rating',except_drm=True):
  has_more='N'
  try:
   result=[]
@@ -235,9 +253,12 @@ def get_live_list2(param,page,order='rating'):
   data=res.json()
   for item in data["body"]["result"]:
    try:
+    info={'is_drm':False}
     if item["live_code"]in['C07381','C05661','C44441','C04601','C07382']:
-     continue
-    info={}
+     if except_drm:
+      continue
+     else:
+      info['is_drm']=True
     if True:
      info['id']=item["live_code"]
      info['title']=item['schedule']['channel']['name']['ko']
@@ -371,9 +392,8 @@ def get_movie_json2(code,deviceid,token,proxy=None,quality='stream50'):
   headers['Cookie']=token
   r=session.get(url,headers=headers,proxies=proxies)
   data=r.json()
-  if 'broad_url' in data['body']['stream']['broadcast']:
-   data['body']['decrypted_url']=decrypt(code,ts,data['body']['stream']['broadcast']['broad_url'])
-  return data
+  logger.debug(url)
+   return data
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
