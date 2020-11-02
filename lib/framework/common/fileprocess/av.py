@@ -526,9 +526,12 @@ def javdb_update(arg,retry=0):
   tree=html.fromstring(data)
   ret={}
   insert_code=''
-  javdb_base_18='/html/body/section/div/div[4]/div'
-  base=javdb_base_18+'/div[2]/nav'
-  base_full=javdb_base_18+'/div[1]/a/img'
+  DIV_INDEX=3
+  DIV_BASE='/html/body/section/div/div[%s]/div'
+  javdb_base_18=DIV_BASE%DIV_INDEX
+  base='//nav[@class="panel video-panel-info"]/div'
+  base_full='//div[@class="column column-video-cover"]/a/img'
+  SAMPLE_TAG='//div[@class="tile-images preview-images"]'
   ret['code']=''
   ret['date']=''
   ret['running_time']=''
@@ -542,7 +545,7 @@ def javdb_update(arg,retry=0):
   ret['series_ko']=''
   ret['genre']=[]
   ret['performer']=[]
-  tags=tree.xpath('{base}/div'.format(base=base))
+  tags=tree.xpath(base)
   logger.debug('tags :%s',len(tags))
   if len(tags)==0:
    if retry<5:
@@ -645,7 +648,7 @@ def javdb_update(arg,retry=0):
    ret['poster']= ret['poster_full']
   ret['sample_image']=[]
   try:
-   tag=tree.xpath('/html/body/section/div/div[5]/div/article/div/div')
+   tag=tree.xpath(SAMPLE_TAG)
    if tag:
     tag=tag[0]
     nodes=tag.xpath('.//a')

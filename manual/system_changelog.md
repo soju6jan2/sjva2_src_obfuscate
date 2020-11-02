@@ -7,13 +7,20 @@
     - plex 통합 에이전트 + sjva.bundle<br>
     - Daum 쿠키값 관련. Daum TV 플러그인 삭제. 관련 API 정리<br>    
     - tv 이동폴더 지정 풀매칭으로<br>
-    - 토렌트 watch 폴더 기능<br>
   - 검토<br>
     - 설정 - 백업, 초기화<br>
     - downloader 일반파일(자막) 설정 없어도 받기<br>
-    - uncensored 처리 [(참고)]](https://sjva.me/bbs/board.php?bo_table=qa&wr_id=3968)
-    - 봇 영화 다음 평정 조건 추가 <br>
+    - uncensored 처리 [(참고)](https://sjva.me/bbs/board.php?bo_table=qa&wr_id=3968)<br>
+    - 봇 영화 다음 평점 조건 추가 <br>
+  - recent<br>
+    - dmm 에이전트 카테고리 추가  [(참고)](https://sjva.me/bbs/board.php?bo_table=qa&wr_id=6675)
 
+##### ■ 0.2.17.5 (2020-11-02) #####
+  - 2등급 회원 일괄 삭제<br>
+  - 구드공 av : 처리 공유드라이브 리밋 걸려 며칠간 오작동 한것으로 보임. 11월 2일 아침까지 요청 일괄삭제.<br>
+    fail_sorry_lost_file 리턴을 보내려고 하였으나 이 작업도 너무 올려 리턴없이 삭제 함.<br>
+  - 구드공 vod : 미처리된 vod 재처리. 예전 영상을 받을 수 있음<br>
+  - 웹 torrent movie 게시판 토렌트 연동 버그 수정<br>
 
 ##### ■ 0.2.17.4 (2020-10-27) #####
   - ffmpeg 권한 문제 수정<br>
