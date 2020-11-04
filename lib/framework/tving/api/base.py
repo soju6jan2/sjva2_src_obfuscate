@@ -143,14 +143,19 @@ def get_episode_json(episode_code,quality,token,proxy=None,is_live=False):
 def decrypt(code,key,value):
  try:
   from Crypto.Cipher import DES3 
-  data=base64.decodestring(value.encode())
-  cryptoCode='cjhv*tving**good/%s/%s'%(code[-3:],key)
-  key=cryptoCode[:24]
-  des3=DES3.new(key,DES3.MODE_ECB)
-  ret=des3.decrypt(data)
   if app.config['config']['is_py2']:
+   data=base64.decodestring(value.encode())
+   cryptoCode='cjhv*tving**good/%s/%s'%(code[-3:],key)
+   key=cryptoCode[:24]
+   des3=DES3.new(key,DES3.MODE_ECB)
+   ret=des3.decrypt(data)
    pad_len=ord(ret[-1])
   else:
+   data=base64.decodebytes(value.encode())
+   cryptoCode='cjhv*tving**good/%s/%s'%(code[-3:],key)
+   key=cryptoCode[:24]
+   des3=DES3.new(key,DES3.MODE_ECB)
+   ret=des3.decrypt(data)
    pad_len=ret[-1]
   ret=ret[:-pad_len]
   return ret.decode()
