@@ -22,6 +22,8 @@ class AESCipher(object):
     ret=ret.decode()
    return ret
   else:
+   if type(raw)==type(''):
+    raw=raw.encode()
    raw=pad(raw)
    iv=Random.new().read(AES.block_size)
    cipher=AES.new(key if mykey is None else mykey,AES.MODE_CBC,iv)
