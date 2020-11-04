@@ -24,10 +24,12 @@ class AESCipher(object):
     ret=ret.decode()
    return ret
   else:
+   logger.debug('>>raw2:%s',type(raw))
    if type(raw)==type(''):
     raw=raw.encode()
    if mykey is not None and type(mykey)==type(''):
     mykey=mykey.encode()
+   logger.debug('>>raw2:%s',type(raw))
    raw=pad(raw)
    iv=Random.new().read(AES.block_size)
    cipher=AES.new(key if mykey is None else mykey,AES.MODE_CBC,iv)
