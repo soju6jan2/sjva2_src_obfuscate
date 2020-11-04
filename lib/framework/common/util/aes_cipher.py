@@ -10,6 +10,8 @@ if app.config['config']['is_py2']:
 else:
  unpad=lambda s:s[0:-s[-1]]
 key='140b41b22a29beb4061bda66b6747e14'
+if app.config['config']['is_py3']:
+ key=key.encode()
 class AESCipher(object):
  @staticmethod
  def encrypt(raw,mykey=None):
@@ -24,6 +26,8 @@ class AESCipher(object):
   else:
    if type(raw)==type(''):
     raw=raw.encode()
+   if mykey is not None and type(mykey)==type(''):
+    mykey=mykey.encode()
    raw=pad(raw)
    iv=Random.new().read(AES.block_size)
    cipher=AES.new(key if mykey is None else mykey,AES.MODE_CBC,iv)
