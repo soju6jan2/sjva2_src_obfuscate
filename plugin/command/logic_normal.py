@@ -336,7 +336,10 @@ class LogicNormal(object):
  def send_process_command(req):
   try:
    command=req.form['command']
-   LogicNormal.foreground_process.stdin.write(b'%s\n'%command)
+   if app.config['config']['is_py2']:
+    LogicNormal.foreground_process.stdin.write(b'%s\n'%command)
+   else:
+    LogicNormal.foreground_process.stdin.write('%s\n'%command)
    LogicNormal.foreground_process.stdin.flush()
    return True
   except Exception as exception:
