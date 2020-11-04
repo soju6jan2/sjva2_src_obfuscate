@@ -279,18 +279,19 @@ class LogicNormal(object):
      except:
       pass
      if r is not None:
-      try:
-       r=r.decode('utf-8')
-      except Exception as exception:
+      if app.config['config']['is_py2']:
        try:
-        r=r.decode('cp949')
+        r=r.decode('utf-8')
        except Exception as exception:
-        logger.error('Exception:%s',exception)
-        logger.error(traceback.format_exc())
         try:
-         r=r.decode('euc-kr')
-        except:
-         pass
+         r=r.decode('cp949')
+        except Exception as exception:
+         logger.error('Exception:%s',exception)
+         logger.error(traceback.format_exc())
+         try:
+          r=r.decode('euc-kr')
+         except:
+          pass
       LogicNormal.command_queue.put(r.replace('\x00',''))
     LogicNormal.command_queue.put('<END>')
     logger.debug('END clct')
