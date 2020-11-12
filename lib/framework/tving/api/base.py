@@ -93,7 +93,10 @@ def get_episode_json_default_live(episode_code,quality,token,proxy=None,inc_qual
   headers['Cookie']=token
   r=session.get(url,headers=headers,proxies=proxies)
   data=r.json()
-  url=data['body']['stream']['broadcast']['broad_url']
+  if 'broad_url' in data['body']['stream']['broadcast']:
+   url=data['body']['stream']['broadcast']['broad_url']
+  else:
+   return
   decrypted_url=decrypt(episode_code,ts,url)
   if decrypted_url.find('.mp4')!=-1 and decrypted_url.find('/VOD/')!=-1:
    return data,decrypted_url
@@ -210,7 +213,7 @@ def get_quality_to_res(quality):
  elif quality=='stream25':
   return '270p'
  return '1080p'
-def get_live_list(list_type=0,order='rating',except_drm=True):
+def get_live_list(list_type=0,order='rating',include_drm=False):
  if list_type==0 or list_type=='0':
   params=['&channelType=CPCS0100']
  elif list_type==1 or list_type=='1':
@@ -221,14 +224,16 @@ def get_live_list(list_type=0,order='rating',except_drm=True):
  for param in params:
   page=1
   while True:
-   hasMore,data=get_live_list2(param,page,order=order,except_drm=except_drm)
+   hasMore,data=get_live_list2(param,page,order=order,include_drm=include_drm)
    for i in data:
     ret.append(i)
    if hasMore=='N':
     break
    page+=1
  return ret
-def get_live_list2(param,page,order='rating',except_drm=True):
+def is_drm_channel(code):
+ return(code in['C07381','C05661','C44441','C04601','C07382'])
+def get_live_list2(param,page,order='rating',include_drm=True):
  has_more='N'
  try:
   result=[]
@@ -240,23 +245,17 @@ def get_live_list2(param,page,order='rating',except_drm=True):
   data=res.json()
   for item in data["body"]["result"]:
    try:
-    info={'is_drm':False}
-    if item["live_code"]in['C07381','C05661','C44441','C04601','C07382']:
-     if except_drm:
-      continue
-     else:
-      info['is_drm']=True
-    if True:
-     info['id']=item["live_code"]
-     info['title']=item['schedule']['channel']['name']['ko']
-     info['episode_title']=' '
-     info['img']='http://image.tving.com/upload/cms/caic/CAIC1900/%s.png'%item["live_code"]
-     if item['schedule']['episode']is not None:
-      info['episode_title']=item['schedule']['episode']['name']['ko']
-      if info['title'].startswith('CH.')and len(item['schedule']['episode']['image'])>0:
-       info['img']='http://image.tving.com'+item['schedule']['episode']['image'][0]['url']
-     info['free']=(item['schedule']['broadcast_url'][0]['broad_url1'].find('drm')==-1)
-     info['summary']=info['episode_title']
+    info={'is_drm':is_drm_channel(item['live_code'])}
+    info['id']=item["live_code"]
+    info['title']=item['schedule']['channel']['name']['ko']
+    info['episode_title']=' '
+    info['img']='http://image.tving.com/upload/cms/caic/CAIC1900/%s.png'%item["live_code"]
+    if item['schedule']['episode']is not None:
+     info['episode_title']=item['schedule']['episode']['name']['ko']
+     if info['title'].startswith('CH.')and len(item['schedule']['episode']['image'])>0:
+      info['img']='http://image.tving.com'+item['schedule']['episode']['image'][0]['url']
+    info['free']=(item['schedule']['broadcast_url'][0]['broad_url1'].find('drm')==-1)
+    info['summary']=info['episode_title']
     result.append(info)
    except Exception as exception:
     logger.error('Exception:%s',exception)
@@ -390,6 +389,21 @@ def get_schedules(code,date,start_time,end_time):
   url+=config['default_param']
   res=requests.get(url)
   return res.json()
+ except Exception as exception:
+  logger.error('Exception:%s',exception)
+  logger.error(traceback.format_exc())
+def get_device_id(token):
+ try:
+  url="http://api.tving.com/v1/user/device/list?"
+  url+=config['default_param'][1:]
+  headers['Cookie']=token
+  r=session.get(url,headers=headers)
+  data=r.json()
+  if data['header']['message']!='OK':
+   return
+  for tmp in data['body']:
+   if tmp['model']=='PC':
+    return tmp['uuid']
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())

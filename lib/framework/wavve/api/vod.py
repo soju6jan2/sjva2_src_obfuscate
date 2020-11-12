@@ -102,6 +102,7 @@ def vod_programs_programid(programid):
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
+    logger.debug(url)
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
