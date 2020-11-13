@@ -6,7 +6,7 @@ def check_api(original_function):
  @wraps(original_function)
  def wrapper_function(*args,**kwargs): 
   from framework import logger
-  logger.debug('CHECK API... {}'.format(original_function.__module__))
+  logger.debug('CHECK API... {} {}'.format(original_function.__module__,get_ip()))
   try:
    from system import ModelSetting as SystemModelSetting
    if SystemModelSetting.get_bool('auth_use_apikey'):
@@ -61,4 +61,7 @@ def pip_install():
   except:
    print('discord-webhook fail..')
  print('pip_install end')
+def get_ip():
+ headers_list=request.headers.getlist("X-Forwarded-For")
+ return headers_list[0]if headers_list else request.remote_addr
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
