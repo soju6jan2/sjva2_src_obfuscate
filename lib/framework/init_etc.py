@@ -6,7 +6,7 @@ def check_api(original_function):
  @wraps(original_function)
  def wrapper_function(*args,**kwargs): 
   from framework import logger
-  logger.debug('CHECK API... {} {}'.format(original_function.__module__,get_ip()))
+  logger.debug('CHECK API... {} '.format(original_function.__module__))
   try:
    from system import ModelSetting as SystemModelSetting
    if SystemModelSetting.get_bool('auth_use_apikey'):
