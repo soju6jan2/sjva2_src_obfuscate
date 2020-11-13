@@ -297,7 +297,7 @@ def streaming2(contenttype,contentid,quality,credential,action='dash',ishevc='n'
     ret['drm_key_request_properties']={'origin':'https://www.wavve.com','sec-fetch-site':'same-site','sec-fetch-mode':'cors','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36','referer':'https://www.wavve.com','pallycon-customdata':data['drm']['customdata'],'cookie':data['awscookie'],'content-type':'application/octet-stream',}
     data['playurl']=ret
    else:
-    return streaming(contenttype,contentid,quality,credential,ishevc='n',proxy=proxy):
+    return streaming(contenttype,contentid,quality,credential,ishevc='n',proxy=proxy)
    return data
   else:
    if 'resultcode' in data:
