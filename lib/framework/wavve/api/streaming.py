@@ -1,10 +1,9 @@
 import traceback
 import json
 from framework.wavve.api import session,logger,get_baseparameter,config
-from framework import py_urllib
+from framework import py_urllib,SystemModelSetting
 def get_guid():
  try:
-  from system.model import ModelSetting as SystemModelSetting
   tmp=SystemModelSetting.get('wavve_guid')
   if tmp!='':
    return tmp
@@ -28,7 +27,7 @@ def get_guid():
  uuid=GenerateID("POOQ")
  m.update(uuid)
  return str(m.hexdigest())
-def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',isabr='y',proxy=None):
+def streaming(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y',proxy=None):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -40,11 +39,9 @@ def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',i
  if contenttype=='live':
   ishevc='n'
   isabr='n'
- if credential is None:
-  credential='none'
  try:
   param=get_baseparameter()
-  param['credential']=credential
+  param['credential']=SystemModelSetting.get('site_wavve_credential')
   if contenttype=='general':
    contenttype='vod'
   elif contenttype=='onair':
@@ -71,7 +68,7 @@ def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',i
    try:
     if data['playurl'].startswith('https://event.pca.wavve.com'):
      logger.debug('playurl startswith https://event.pca.wavve.com!!!!!')
-     return streaming_imsi(contenttype,contentid,quality,credential,action=action,ishevc=ishevc,isabr=isabr)
+     return streaming_imsi(contenttype,contentid,quality,action=action,ishevc=ishevc,isabr=isabr)
    except:
     logger.debug('https://event.pca.wavve.com error')
    if data['playurl'].endswith('.mpd'):
@@ -88,7 +85,7 @@ def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',i
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def streaming_imsi(contenttype,contentid,quality,credential,action='hls',ishevc='y',isabr='y',proxy=None):
+def streaming_imsi(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y',proxy=None):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -100,11 +97,9 @@ def streaming_imsi(contenttype,contentid,quality,credential,action='hls',ishevc=
  if contenttype=='live':
   ishevc='n'
   isabr='n'
- if credential is None:
-  credential='none'
  try:
   param=get_baseparameter()
-  param['credential']=credential
+  param['credential']=SystemModelSetting.get('site_wavve_credential')
   if contenttype=='general':
    contenttype='vod'
   elif contenttype=='onair':
@@ -131,7 +126,7 @@ def streaming_imsi(contenttype,contentid,quality,credential,action='hls',ishevc=
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',isabr='y',proxy=None):
+def streaming(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y',proxy=None):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -143,11 +138,9 @@ def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',i
  if contenttype=='live':
   ishevc='n'
   isabr='n'
- if credential is None:
-  credential='none'
  try:
   param=get_baseparameter()
-  param['credential']=credential
+  param['credential']=SystemModelSetting.get('site_wavve_credential')
   if contenttype=='general':
    contenttype='vod'
   elif contenttype=='onair':
@@ -172,7 +165,7 @@ def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',i
    try:
     if data['playurl'].startswith('https://event.pca.wavve.com'):
      logger.debug('playurl startswith https://event.pca.wavve.com!!!!!')
-     return streaming_imsi(contenttype,contentid,quality,credential,action=action,ishevc=ishevc,isabr=isabr)
+     return streaming_imsi(contenttype,contentid,quality,action=action,ishevc=ishevc,isabr=isabr)
    except:
     logger.debug('https://event.pca.wavve.com error')
    return data
@@ -201,53 +194,7 @@ def get_prefer_url(url):
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
  return url
-"""
- https://vod.cdn.wavve.com/hls/E01/E01_20241954.1/1/chunklist5000.m3u8?authtoken=g8fzFN4NgPAowe29k7tVyhFOUHDFWuIrK3GlEjoGyxweyoGUXtnWk2LFCEZDWKlDfBTXnbWG16PvhdgHjYIiNiA9ypJrs0EuBk3UFDEveWoAA_h_XRoSTVjveRiaBU0Mo25IV4mIEgepfI7712-0KneO-a7tucrHBYJwpcZ4QWCN53z13cdyA1GjdwPkhgCTYOWf2A
-5000/chunklist.m3u8?authtoken=g8fzFN4NgPAowe29k7tVyhFOUHDFWuIrK3GlEjoGyxweyoGUXtnWk2LFCEZDWKlDfBTXnbWG16PvhdgHjYIiNiA9ypJrs0EuBk3UFDEveWoAA_h_XRoSTVjveRiaBU0Mo25IV4mIEgepfI7712-0KneO-a7tucrHBYJwpcZ4QWCN53z13cdyA1GjdwPkhgCTYOWf2A
- https://apis.pooq.co.kr/streaming?credential=Zbi2TxCuEsdktgNrGBrjNuGjE8BKEZocboUC8%2FDpGLCktIdUURykKALOPhBrlszlxuP7np1nJxdwL3UWinH6B1iQUoDl9USk2I%2F2JNJZhelF2CU0nxFgGaDhBElXatI6gPgf8iNgEW2Fvpkrrl8cYMl5kN4%2Fi%2FjSgqKWFjuE%2FyLyRDYwLctu5aytUq%2BVJMV1hAJJ4LkCDrRv7NEx5Z1CU76UdxIFqgyQB2yiIW6eHueyLeliCrLvBEizrdOcCbdj
- authtype=url
- apikey=E5F3E0D30947AA5440556471321BB6D9
- contenttype=vod
- contentid=M_EP202001235626.1
- region=kor
- targetage=auto
- deviceModelId=Windows+10
- drm=wm
- pooqzone=none
- device=pc
- partner=pooq
- guid=636bd06c38161b9c066fe0a2c6fde0f0
- quality=1080p
- action=hls
- isabr=y
- ishevc=y
-https://apis.pooq.co.kr/streaming?device=pc
-partner=pooq
-pooqzone=none
-region=kor
-drm=wm
-targetage=auto
-apikey=E5F3E0D30947AA5440556471321BB6D9
-credential=aiqk%2FPx6%2BLfWxuBH87cit1wgagHqiA%2Fy7B1SCnB%2FxeoyafsmznGAh%2BP62%2F8R7Pqw1J9auwQ%2Ba902Su%2FgpPR3Bp96sGhk1rEgult3Y0iyu7zEG42sXrc9ynMyool6Fa603DDrLJKSWKBIKDKndMqwFxKPHB2cpvN3hvuRW%2FF%2BI3rgZGc%2B8APVD0l7l3OFDuHeqSUl6KBjwyH4IgjbTXVgcjqPcZlskS6QHf4G90Fv7tDvC%2Bgt4vyH%2BzcP9Glv5%2B%2Fx
-contentid=M_EP202001235626.1
-contenttype=vod
-action=hls
-quality=1080p
-deviceModelId=Windows%2010
-guid=fa324b92-42a3-11ea-909b-c230188c31d3
-lastplayid=3d734859ba424632afd0fc952dda0e2e
-authtype=cookie
-isabr=y
-ishevc=n
-https://vod-su.cdn.pooq.co.kr/hls/CA01/MV_CA01_DY0000011394.1/8/chunklist5000.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiKi9obHMvQ0EwMS9NVl9DQTAxX0RZMDAwMDAxMTM5NC4xLzgvKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTU3NDYxMTU3MX0sIklwQWRkcmVzcyI6eyJBV1M6U291cmNlSXAiOiIxMjUuMTgzLjIwNC4wLzI0In19fV0sInRpZCI6IjczNTA3NDI5OTcxIiwidmVyIjoiMyJ9
-Signature=dvPJjCch7k28JuNF9FgtSigFpAw9QKGYsM3k~oYmVXbarnKY0XJSp7Q8ZCWD7QI4MnjBHvHL~NkvqkGlyItYHGQOh9W7nGUbIXoiBF0QSjQVh86uk9J1JEWm59i3SRQJomNKhBVfA8I9SdZ7~RuJVsCfXposnIWahYAQyHn1Hwm26vnqzLdq9SFoZZg6ZGXAj716onEfKbNV9sv9ZwJdhNtUgfb~7OMeCwkcIjrITwgaKvdsoSwSZPBKnpFR~WW2FrH-DW0lWIr0gIXaBABm~1~gsw6bCgVYImsEpTWNztA8evpprwUFXyEF7bIWITMoUXBn8RFHGv1cLgJh8~gV1A__&Key-Pair-Id=APKAJ6KCI2B6BKBQMD4A
-https://vod-su.cdn.pooq.co.kr/hls/CA01/MV_CA01_DY0000011394.1/8/5000/chunklist.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiKi9obHMvQ0EwMS9NVl9DQTAxX0RZMDAwMDAxMTM5NC4xLzgvKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTU3NDYxMTU3MX0sIklwQWRkcmVzcyI6eyJBV1M6U291cmNlSXAiOiIxMjUuMTgzLjIwNC4wLzI0In19fV0sInRpZCI6IjczNTA3NDI5OTcxIiwidmVyIjoiMyJ9&Signature=dvPJjCch7k28JuNF9FgtSigFpAw9QKGYsM3k~oYmVXbarnKY0XJSp7Q8ZCWD7QI4MnjBHvHL~NkvqkGlyItYHGQOh9W7nGUbIXoiBF0QSjQVh86uk9J1JEWm59i3SRQJomNKhBVfA8I9SdZ7~RuJVsCfXposnIWahYAQyHn1Hwm26vnqzLdq9SFoZZg6ZGXAj716onEfKbNV9sv9ZwJdhNtUgfb~7OMeCwkcIjrITwgaKvdsoSwSZPBKnpFR~WW2FrH-DW0lWIr0gIXaBABm~1~gsw6bCgVYImsEpTWNztA8evpprwUFXyEF7bIWITMoUXBn8RFHGv1cLgJh8~gV1A__&Key-Pair-Id=APKAJ6KCI2B6BKBQMD4A
-header = {'DNT': '1', 'Origin': 'https://www.wavve.com', 'Referer': 'https://www.wavve.com/player/movie?movieid=%s' % code, 'Sec-Fetch-Mode': 'cors', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36', 'Content-type': 'application/octet-stream', 'pallycon-customdata': drm['customdata']}
-                item.setProperty('inputstreamaddon', 'inputstream.adaptive')
-                item.setProperty('inputstream.adaptive.manifest_type', PROTOCOL)
-                item.setProperty('inputstream.adaptive.license_key', '%s|%s|R{SSM}|' % (drm['drmhost'], urlencode(header)))
-"""
-def streaming2(contenttype,contentid,quality,credential,action='dash',ishevc='n',isabr='y',proxy=None):
+def streaming2(contenttype,contentid,quality,action='dash',ishevc='n',isabr='y',proxy=None):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -259,11 +206,9 @@ def streaming2(contenttype,contentid,quality,credential,action='dash',ishevc='n'
  if contenttype=='live':
   ishevc='n'
   isabr='n'
- if credential is None:
-  credential='none'
  try:
   param=get_baseparameter()
-  param['credential']=credential
+  param['credential']=SystemModelSetting.get('site_wavve_credential')
   if contenttype=='general':
    contenttype='vod'
   elif contenttype=='onair':
@@ -295,7 +240,7 @@ def streaming2(contenttype,contentid,quality,credential,action='dash',ishevc='n'
     ret['drm_key_request_properties']={'origin':'https://www.wavve.com','sec-fetch-site':'same-site','sec-fetch-mode':'cors','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36','referer':'https://www.wavve.com','pallycon-customdata':data['drm']['customdata'],'cookie':data['awscookie'],'content-type':'application/octet-stream',}
     data['playurl']=ret
    else:
-    return streaming(contenttype,contentid,quality,credential,ishevc='n',proxy=proxy)
+    return streaming(contenttype,contentid,quality,ishevc='n',proxy=proxy)
    return data
   else:
    if 'resultcode' in data:
