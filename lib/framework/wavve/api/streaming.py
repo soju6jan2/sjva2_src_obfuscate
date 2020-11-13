@@ -167,7 +167,6 @@ def streaming(contenttype,contentid,quality,credential,action='hls',ishevc='y',i
   if proxy is not None:
    proxies={"https":proxy,'http':proxy}
   response=session.get(url,headers=config['headers'],proxies=proxies)
-  logger.debug("STREAM1 : %s",url)
   data=response.json()
   if response.status_code==200:
    try:
@@ -283,7 +282,6 @@ def streaming2(contenttype,contentid,quality,credential,action='dash',ishevc='n'
   proxies=None
   if proxy is not None:
    proxies={"https":proxy,'http':proxy}
-  logger.debug("STREAM2 : %s",url)
   response=session.get(url,headers=config['headers'],proxies=proxies)
   data=response.json()
   if response.status_code==200:
