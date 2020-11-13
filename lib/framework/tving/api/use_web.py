@@ -19,6 +19,7 @@ def get_stream_info_by_web(content_type,media_code,quality,token,deviceid="",pro
   if True or content_type=='live':
    headers['referer']='https://www.tving.com/%s/player/%s'%(content_type,media_code)
    url='https://www.tving.com/streaming/info'
+   proxies=None
    if proxy is not None:
     proxies={"https":proxy,'http':proxy}
    res=requests.post(url,data=data,headers=headers,cookies=cookies,proxies=proxies)
