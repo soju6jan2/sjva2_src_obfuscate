@@ -287,23 +287,17 @@ def streaming2(contenttype,contentid,quality,credential,action='dash',ishevc='n'
   response=session.get(url,headers=config['headers'],proxies=proxies)
   data=response.json()
   if response.status_code==200:
-   try:
-    if data['playurl'].startswith('https://event.pca.wavve.com'):
-     logger.debug('playurl startswith https://event.pca.wavve.com!!!!!')
-     return streaming_imsi(contenttype,contentid,quality,credential,action=action,ishevc=ishevc,isabr=isabr)
-   except:
-    logger.debug('https://event.pca.wavve.com error')
    if data['playurl'].find('.mpd')!=-1:
-    if contenttype=='movie':
-     referer='https://www.wavve.com/player/movie?movieid=%s'%contentid
-    else:
-     referer='https://www.wavve.com/player/vod?programid=%s'%contentid
+    if data['playurl'].endswith('.mpd'):
+     data['playurl']+='?'+data['awscookie']
     ret={}
     ret['uri']=data['playurl']
     ret['drm_scheme']='widevine'
     ret['drm_license_uri']=data['drm']['drmhost']
     ret['drm_key_request_properties']={'origin':'https://www.wavve.com','sec-fetch-site':'same-site','sec-fetch-mode':'cors','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36','referer':'https://www.wavve.com','pallycon-customdata':data['drm']['customdata'],'cookie':data['awscookie'],'content-type':'application/octet-stream',}
     data['playurl']=ret
+   else:
+    return streaming(contenttype,contentid,quality,credential,ishevc='n',proxy=proxy):
    return data
   else:
    if 'resultcode' in data:
