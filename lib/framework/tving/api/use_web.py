@@ -9,20 +9,17 @@ from framework import app,py_urllib
 from framework.logger import get_logger
 from framework.util import Util
 logger=get_logger('tving_api')
-session=requests.session()
+from.base import get_proxies,session
 headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36','Accept':'application/json, text/plain, */*','Accept-Language':'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7','origin':'https://www.tving.com','sec-fetch-dest':'empty','sec-fetch-mode':'cors','sec-fetch-site':'same-origin',}
-def get_stream_info_by_web(content_type,media_code,quality,token,deviceid="",proxy=None):
+def get_stream_info_by_web(content_type,media_code,quality):
  ooc='isTrusted=false^type=oocCreate^eventPhase=0^bubbles=false^cancelable=false^defaultPrevented=false^composed=false^timeStamp=3336.340000038035^returnValue=true^cancelBubble=false^NONE=0^CAPTURING_PHASE=1^AT_TARGET=2^BUBBLING_PHASE=3^'
  try:
-  data={'apiKey':'1e7952d0917d6aab1f0293a063697610','info':'Y','networkCode':'CSND0900','osCode':'CSOD0900','teleCode':'CSCD0900','mediaCode':media_code,'screenCode':'CSSD0100','callingFrom':'HTML5','streamCode':quality,'deviceId':deviceid,'adReq':'adproxy','ooc':ooc,'wm':'Y',}
-  cookies={'_tving_token':token.split('=')[1],'onClickEvent2':py_urllib.quote(ooc)}
+  data={'apiKey':'1e7952d0917d6aab1f0293a063697610','info':'Y','networkCode':'CSND0900','osCode':'CSOD0900','teleCode':'CSCD0900','mediaCode':media_code,'screenCode':'CSSD0100','callingFrom':'HTML5','streamCode':quality,'deviceId':SystemModelSetting.get('site_tving_deviceid'),'adReq':'adproxy','ooc':ooc,'wm':'Y',}
+  cookies={'_tving_token':SystemModelSetting.get('site_tving_token').split('=')[1],'onClickEvent2':py_urllib.quote(ooc)}
   if True or content_type=='live':
    headers['referer']='https://www.tving.com/%s/player/%s'%(content_type,media_code)
    url='https://www.tving.com/streaming/info'
-   proxies=None
-   if proxy is not None:
-    proxies={"https":proxy,'http':proxy}
-   res=requests.post(url,data=data,headers=headers,cookies=cookies,proxies=proxies)
+   res=requests.post(url,data=data,headers=headers,cookies=cookies,proxies=get_proxies())
    data=res.json()
    ret={}
    ret['uri']=data['stream']['broadcast']['widevine']['broad_url']

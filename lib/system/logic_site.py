@@ -34,6 +34,32 @@ class SystemLogicSite(object):
     else:
      SystemLogicSite.scheduler_stop()
     return jsonify(go)
+   elif sub=='tving_login':
+    try:
+     import framework.tving.api as Tving
+     token=Tving.do_login(req.form['tving_id'],req.form['tving_pw'],req.form['tving_login_type'])
+     if token is None:
+      ret['ret']=False
+     else:
+      ret['ret']=True
+      ret['token']=token
+     return jsonify(ret)
+    except Exception as e:
+     logger.error('Exception:%s',e)
+     logger.error(traceback.format_exc())
+   elif sub=='tving_deviceid':
+    try:
+     import framework.tving.api as Tving
+     device_list=Tving.get_device_list(req.form['tving_token'])
+     if device_list is None:
+      ret['ret']=False
+     else:
+      ret['ret']=True
+      ret['device_list']=device_list
+     return jsonify(ret)
+    except Exception as e:
+     logger.error('Exception:%s',e)
+     logger.error(traceback.format_exc())
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())

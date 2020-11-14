@@ -5,13 +5,20 @@ import requests
 import time
 import json
 import base64
-from framework import app,py_urllib
+from framework import app,py_urllib,SystemModelSetting
 from framework.logger import get_logger
 from framework.util import Util
 logger=get_logger('tving_api')
 session=requests.session()
 headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36','Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8','Accept-Language':'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7','Referer':'',}
-config={'token':None,'param':"&free=all&lastFrequency=y&order=broadDate",'program_param':'&free=all&order=frequencyDesc&programCode=%s','default_param':'&screenCode=CSSD0100&networkCode=CSND0900&osCode=CSOD0900&teleCode=CSCD0900&apiKey=1e7952d0917d6aab1f0293a063697610'}
+config={'param':"&free=all&lastFrequency=y&order=broadDate",'program_param':'&free=all&order=frequencyDesc&programCode=%s','default_param':'&screenCode=CSSD0100&networkCode=CSND0900&osCode=CSOD0900&teleCode=CSCD0900&apiKey=1e7952d0917d6aab1f0293a063697610'}
+def get_proxies():
+ proxy=get_proxy()
+ if proxy is not None:
+  return{"https":proxy,'http':proxy}
+def get_proxy():
+ if SystemModelSetting.get_bool('site_tving_use_proxy'):
+  return SystemModelSetting.get('site_tving_proxy_url')
 def do_login(user_id,user_pw,login_type):
  try:
   url='https://user.tving.com/user/doLogin.tving'
@@ -43,21 +50,16 @@ def get_vod_list(p=None,page=1):
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def get_episode_json_default(episode_code,quality,token,proxy=None):
+def get_episode_json_default(episode_code,quality):
  ts='%d'%time.time()
- if token is None:
-  token=config['token']
  try:
   if quality=='stream70':
    tmp_param=config['default_param'].replace('CSSD0100','CSSD1200')
    url='http://api.tving.com/v2/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH'%(tmp_param,ts,episode_code,quality) 
   else:
    url='http://api.tving.com/v2/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH'%(config['default_param'],ts,episode_code,quality)
-  proxies=None
-  if proxy is not None:
-   proxies={"https":proxy,'http':proxy}
-  headers['Cookie']=token
-  r=session.get(url,headers=headers,proxies=proxies)
+  headers['Cookie']=SystemModelSetting.get('site_tving_token')
+  r=session.get(url,headers=headers,proxies=get_proxies())
   data=r.json()
   url=data['body']['stream']['broadcast']['broad_url']
   decrypted_url=decrypt(episode_code,ts,url)
@@ -66,7 +68,7 @@ def get_episode_json_default(episode_code,quality,token,proxy=None):
    decrypted_url=decrypted_url.replace('?','/playlist.m3u8?')
   if decrypted_url.find('smil/playlist.m3u8')!=-1 and decrypted_url.find('content_type=VOD')!=-1:
    tmps=decrypted_url.split('playlist.m3u8')
-   r=session.get(decrypted_url,headers=headers,proxies=proxies)
+   r=session.get(decrypted_url,headers=headers,proxies=get_proxies())
    lines=r.text.split('\n')
    i=-1
    last=''
@@ -78,20 +80,15 @@ def get_episode_json_default(episode_code,quality,token,proxy=None):
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def get_episode_json_default_live(episode_code,quality,token,proxy=None,inc_quality=True):
+def get_episode_json_default_live(episode_code,quality,inc_quality=True):
  ts='%d'%time.time()
- if token is None:
-  token=config['token']
  try:
   if inc_quality:
    url='http://api.tving.com/v2/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH'%(config['default_param'],ts,episode_code,quality)
   else:
    url='http://api.tving.com/v2/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&callingFrom=FLASH'%(config['default_param'],ts,episode_code)
-  proxies=None
-  if proxy is not None:
-   proxies={"https":proxy,'http':proxy}
-  headers['Cookie']=token
-  r=session.get(url,headers=headers,proxies=proxies)
+  headers['Cookie']=SystemModelSetting.get('site_tving_token')
+  r=session.get(url,headers=headers,proxies=get_proxies())
   data=r.json()
   if 'broad_url' in data['body']['stream']['broadcast']:
    url=data['body']['stream']['broadcast']['broad_url']
@@ -101,7 +98,7 @@ def get_episode_json_default_live(episode_code,quality,token,proxy=None,inc_qual
   if decrypted_url.find('.mp4')!=-1 and decrypted_url.find('/VOD/')!=-1:
    return data,decrypted_url
   if decrypted_url.find('Policy=')==-1:
-   data,ret=get_episode_json_default_live(episode_code,quality,token,proxy=proxy,inc_quality=False)
+   data,ret=get_episode_json_default_live(episode_code,quality,inc_quality=False)
    if quality=='stream50' and ret.find('live2000.smil'):
     ret=ret.replace('live2000.smil','live5000.smil')
     return data,ret
@@ -109,37 +106,12 @@ def get_episode_json_default_live(episode_code,quality,token,proxy=None,inc_qual
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-"""
-def get_episode_json_proxy(episode_code, quality, proxy_url, token):
-    ts = '%d' % time.time()
-    if token is None:
-        token = config['token']
-    try:
-        #https://www.tving.com/streaming/info?networkCode=CSND0900&apiKey=1e7952d0917d6aab1f0293a063697610&ooc=composed%3Dfalse%5ECAPTURING_PHASE%3D1%5Ecancelable%3Dfalse%5EreturnValue%3Dtrue%5EcancelBubble%3Dfalse%5Ebubbles%3Dfalse%5EdefaultPrevented%3Dfalse%5ENONE%3D0%5EAT_TARGET%3D2%5EBUBBLING_PHASE%3D3%5EtimeStamp%3D2158.7350000045262%5EisTrusted%3Dfalse%5Etype%3DoocCreate%5EeventPhase%3D0%5E&screenCode=CSSD0100&callingFrom=HTML5&deviceId=2357832822&osCode=CSOD0900&teleCode=CSCD0900&info=Y&adReq=none&streamCode=stream50&mediaCode=E002837703
-        if quality == 'stream70':
-            tmp_param = config['default_param'].replace('CSSD0100', 'CSSD1200')
-            url = 'http://api.tving.com/v1/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH' % (tmp_param, ts, episode_code, quality)
-        else:
-            url = 'http://api.tving.com/v1/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH' % (config['default_param'], ts, episode_code, quality)
-        data = {'url' : url, 'cookie' : token}
-        res = session.post(proxy_url, data=data)
-        data = res.json()
-        url = data['body']['stream']['broadcast']['broad_url']
-        decrypted_url = decrypt(episode_code, ts, url)
-        if decrypted_url.find('m3u8') == -1:
-            decrypted_url = decrypted_url.replace('rtmp', 'http')
-            decrypted_url = decrypted_url.replace('?', '/playlist.m3u8?')
-        return data, decrypted_url
-    except Exception as exception:
-        logger.error('Exception:%s', exception)
-        logger.error(traceback.format_exc())
-"""
-def get_episode_json(episode_code,quality,token,proxy=None,is_live=False):
+def get_episode_json(episode_code,quality,is_live=False):
  try:
   if is_live:
-   return get_episode_json_default_live(episode_code,quality,token,proxy=proxy)
+   return get_episode_json_default_live(episode_code,quality)
   else:
-   return get_episode_json_default(episode_code,quality,token,proxy=proxy)
+   return get_episode_json_default(episode_code,quality)
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
@@ -265,10 +237,8 @@ def get_live_list2(param,page,order='rating',include_drm=True):
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
  return has_more,result
-def get_movie_json(code,deviceid,token,proxy=None):
+def get_movie_json(code):
  ts='%d'%time.time()
- if token is None:
-  token=config['token']
  try:
   quality='stream70'
   if quality=='stream70':
@@ -276,12 +246,9 @@ def get_movie_json(code,deviceid,token,proxy=None):
    url='http://api.tving.com/v1/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH'%(tmp_param,ts,code,quality) 
   else:
    url='http://api.tving.com/v1/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH'%(config['default_param'],ts,code,quality)
-  url+='&deviceId=%s'%deviceid
-  proxies=None
-  if proxy is not None:
-   proxies={"https":proxy,'http':proxy}
-  headers['Cookie']=token
-  r=session.get(url,headers=headers,proxies=proxies)
+  url+='&deviceId=%s'%SystemModelSetting.get('site_tving_deviceid')
+  headers['Cookie']=SystemModelSetting.get('site_tving_token')
+  r=session.get(url,headers=headers,proxies=get_proxies())
   data=r.json()
   data['ret']={}
   if data['body']['result']['code']=="000":
@@ -365,18 +332,13 @@ https://api.tving.com/v2/media/movies?callback=jQuery112307642887056924332_16030
 https://api.tving.com/v2/media/movies?callback=jQuery112307642887056924332_1603081489114&pageNo=1&pageSize=24&order=new&free=all&adult=all&guest=all&scope=all&productPackageCode=338723&personal=N&diversityYn=N&screenCode=CSSD0100&networkCode=CSND0900&osCode=CSOD0900&teleCode=CSCD0900&apiKey=1e7952d0917d6aab1f0293a063697610&_=1603081489123
 &multiCategoryCode=MG100%2CMG190%2CMG230%2CMG270%2CMG290  %2C = ,
 """
-def get_movie_json2(code,deviceid,token,proxy=None,quality='stream50'):
+def get_movie_json2(code,quality='stream50'):
  ts='%d'%time.time()
- if token is None:
-  token=config['token']
  try:
   url='http://api.tving.com/v1/media/stream/info?info=y%s&noCache=%s&mediaCode=%s&streamCode=%s&callingFrom=FLASH'%(config['default_param'],ts,code,quality)
-  url+='&deviceId=%s'%deviceid
-  proxies=None
-  if proxy is not None:
-   proxies={"https":proxy,'http':proxy}
-  headers['Cookie']=token
-  r=session.get(url,headers=headers,proxies=proxies)
+  url+='&deviceId=%s'%SystemModelSetting.get('site_tving_deviceid')
+  headers['Cookie']=SystemModelSetting.get('site_tving_token')
+  r=session.get(url,headers=headers,proxies=get_proxies())
   data=r.json()
   return data
   logger.debug(url)
@@ -404,6 +366,17 @@ def get_device_id(token):
   for tmp in data['body']:
    if tmp['model']=='PC':
     return tmp['uuid']
+ except Exception as exception:
+  logger.error('Exception:%s',exception)
+  logger.error(traceback.format_exc())
+def get_device_list(token):
+ try:
+  url="http://api.tving.com/v1/user/device/list?"
+  url+=config['default_param'][1:]
+  headers['Cookie']=token
+  r=session.get(url,headers=headers)
+  data=r.json()
+  return data
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())

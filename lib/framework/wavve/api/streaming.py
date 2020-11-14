@@ -27,7 +27,14 @@ def get_guid():
  uuid=GenerateID("POOQ")
  m.update(uuid)
  return str(m.hexdigest())
-def streaming(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y',proxy=None):
+def get_proxies():
+ proxy=get_proxy()
+ if proxy is not None:
+  return{"https":proxy,'http':proxy}
+def get_proxy():
+ if SystemModelSetting.get_bool('site_wavve_use_proxy'):
+  return SystemModelSetting.get('site_wavve_proxy_url')
+def streaming(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y'):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -57,10 +64,7 @@ def streaming(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y',pr
   param['ishevc']=ishevc
   param['lastplayid']='none'
   url="%s/streaming?%s"%(config['base_url'],py_urllib.urlencode(param))
-  proxies=None
-  if proxy is not None:
-   proxies={"https":proxy,'http':proxy}
-  response=session.get(url,headers=config['headers'],proxies=proxies)
+  response=session.get(url,headers=config['headers'],proxies=get_proxies())
   data=response.json()
   if response.status_code==200:
    logger.debug(url)
@@ -71,13 +75,6 @@ def streaming(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y',pr
      return streaming_imsi(contenttype,contentid,quality,action=action,ishevc=ishevc,isabr=isabr)
    except:
     logger.debug('https://event.pca.wavve.com error')
-   if data['playurl'].endswith('.mpd'):
-    ret={}
-    ret['uri']=data['playurl']
-    ret['drm_scheme']='widevine'
-    ret['drm_license_uri']=data['drm']['drmhost']
-    ret['drm_key_request_properties']={'origin':'https://www.wavve.com','sec-fetch-site':'same-site','sec-fetch-mode':'cors','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36','pallycon-customdata':data['drm']['customdata'],'cookie':data['awscookie']}
-    data['playurl']=ret
    return data
   else:
    if 'resultcode' in data:
@@ -85,7 +82,7 @@ def streaming(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y',pr
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def streaming_imsi(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y',proxy=None):
+def streaming_imsi(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y'):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -126,55 +123,6 @@ def streaming_imsi(contenttype,contentid,quality,action='hls',ishevc='y',isabr='
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def streaming(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y',proxy=None):
- if quality=='FHD':
-  quality='1080p'
- elif quality=='HD':
-  quality='720p'
- elif quality=='SD':
-  quality='480p'
- elif quality=='UHD':
-  quality='2160p'
- if contenttype=='live':
-  ishevc='n'
-  isabr='n'
- try:
-  param=get_baseparameter()
-  param['credential']=SystemModelSetting.get('site_wavve_credential')
-  if contenttype=='general':
-   contenttype='vod'
-  elif contenttype=='onair':
-   contenttype='onairvod'
-  param['contenttype']=contenttype
-  param['contentid']=contentid
-  param['action']=action
-  param['quality']=quality
-  param['guid']=''
-  param['deviceModelId']='Windows 10'
-  param['authtype']='url' 
-  param['isabr']=isabr
-  param['ishevc']=ishevc
-  param['lastplayid']='none'
-  url="%s/streaming?%s"%(config['base_url'],py_urllib.urlencode(param))
-  proxies=None
-  if proxy is not None:
-   proxies={"https":proxy,'http':proxy}
-  response=session.get(url,headers=config['headers'],proxies=proxies)
-  data=response.json()
-  if response.status_code==200:
-   try:
-    if data['playurl'].startswith('https://event.pca.wavve.com'):
-     logger.debug('playurl startswith https://event.pca.wavve.com!!!!!')
-     return streaming_imsi(contenttype,contentid,quality,action=action,ishevc=ishevc,isabr=isabr)
-   except:
-    logger.debug('https://event.pca.wavve.com error')
-   return data
-  else:
-   if 'resultcode' in data:
-    pass
- except Exception as exception:
-  logger.error('Exception:%s',exception)
-  logger.error(traceback.format_exc())
 def get_prefer_url(url):
  try:
   response=session.get(url,headers=config['headers'])
@@ -194,7 +142,7 @@ def get_prefer_url(url):
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
  return url
-def streaming2(contenttype,contentid,quality,action='dash',ishevc='n',isabr='y',proxy=None):
+def streaming2(contenttype,contentid,quality,action='dash',ishevc='n',isabr='y'):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -224,10 +172,7 @@ def streaming2(contenttype,contentid,quality,action='dash',ishevc='n',isabr='y',
   param['ishevc']=ishevc
   param['lastplayid']='none'
   url="%s/streaming?%s"%(config['base_url'],py_urllib.urlencode(param))
-  proxies=None
-  if proxy is not None:
-   proxies={"https":proxy,'http':proxy}
-  response=session.get(url,headers=config['headers'],proxies=proxies)
+  response=session.get(url,headers=config['headers'],proxies=get_proxies())
   data=response.json()
   if response.status_code==200:
    if data['playurl'].find('.mpd')!=-1:
@@ -240,7 +185,7 @@ def streaming2(contenttype,contentid,quality,action='dash',ishevc='n',isabr='y',
     ret['drm_key_request_properties']={'origin':'https://www.wavve.com','sec-fetch-site':'same-site','sec-fetch-mode':'cors','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36','referer':'https://www.wavve.com','pallycon-customdata':data['drm']['customdata'],'cookie':data['awscookie'],'content-type':'application/octet-stream',}
     data['playurl']=ret
    else:
-    return streaming(contenttype,contentid,quality,ishevc='n',proxy=proxy)
+    return streaming(contenttype,contentid,quality,ishevc='n')
    return data
   else:
    if 'resultcode' in data:
