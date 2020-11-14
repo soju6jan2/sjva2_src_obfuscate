@@ -181,12 +181,14 @@ def dmm_search(keyword,do_trans=True):
    title=keyword
   logger.debug('keyword %s -> %s',keyword,title)
   url='https://www.dmm.co.jp/digital/videoa/-/list/search/=/?searchstr=%s'%title
+  logger.debug(url)
   page=_session.get(url,headers=_headers,proxies=Vars.proxies)
   data=page.text
   tree=html.fromstring(data)
   lists=tree.xpath('//*[@id="list"]/li')
   ret=[]
   score=60
+  logger.debug('len lists :%s',len(lists))
   for node in lists:
    try:
     entity={'meta':'dmm'}

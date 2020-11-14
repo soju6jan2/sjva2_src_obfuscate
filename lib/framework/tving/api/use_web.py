@@ -5,7 +5,7 @@ import requests
 import time
 import json
 import base64
-from framework import app,py_urllib
+from framework import app,py_urllib,SystemModelSetting
 from framework.logger import get_logger
 from framework.util import Util
 logger=get_logger('tving_api')
