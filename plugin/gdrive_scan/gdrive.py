@@ -10,19 +10,26 @@ import platform
 import requests
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify,session,send_from_directory 
 from flask_socketio import SocketIO,emit,send
-import oauth2client
-from apiclient.discovery import build
-from oauth2client.file import Storage
-from oauth2client import tools
-from oauth2client.client import flow_from_clientsecrets,OAuth2WebServerFlow
-from httplib2 import Http
-from oauth2client import client,tools
 from sqlitedict import SqliteDict
 from framework.logger import get_logger
 from framework import app,db,scheduler,path_data,socketio,path_app_root
 from framework.util import Util,AlchemyEncoder
 from system.logic import SystemLogic
 from.model import ModelSetting,ModelGDriveScanJob,ModelGDriveScanFile
+try:
+ import oauth2client
+except:
+ try:
+  os.system("{} install oauth2client".format(app.config['config']['pip']))
+  import oauth2client
+ except:
+  pass
+from apiclient.discovery import build
+from oauth2client.file import Storage
+from oauth2client import tools
+from oauth2client.client import flow_from_clientsecrets,OAuth2WebServerFlow
+from httplib2 import Http
+from oauth2client import client,tools
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 class Auth(object):
