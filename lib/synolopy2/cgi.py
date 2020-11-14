@@ -8,7 +8,7 @@ else:
  from queue import Queue
  from urllib.parse import urljoin
  from urllib.parse import urlencode
-from synolopy.errors import*
+from synolopy2.errors import*
 TIMEOUT=10
 def _url_formatter(url):
  if not url.endswith('/'):

@@ -1,6 +1,6 @@
 import requests
-from synolopy.cgi import CGIFactory,SessionManager,ValidationManager
-from synolopy.errors import API_ERROR,SynologyException
+from synolopy2.cgi import CGIFactory,SessionManager,ValidationManager
+from synolopy2.errors import API_ERROR,SynologyException
 class _NasValidationManager(ValidationManager):
  @staticmethod
  def validate(response):
