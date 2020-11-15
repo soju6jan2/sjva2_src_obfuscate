@@ -287,21 +287,21 @@ def dmm_update(arg,use_discord_proxy=False):
    ret['poster_full']=tag.attrib['src']
    ret['poster']=tag.attrib['src']
    pass
-  if ret['poster']!='' and Vars.proxies is not None:
-   ret['poster']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster'])
-   if SystemModelSetting.get_bool('auth_use_apikey'):
-    ret['poster']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
-  elif ret['poster']!='' and use_discord_proxy:
+  if ret['poster']!='' and use_discord_proxy:
    ret['poster']='%s/av_agent/api/discord_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster'])
    if SystemModelSetting.get_bool('auth_use_apikey'):
     ret['poster']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
-  if ret['poster_full']!='' and Vars.proxies is not None:
-   from system.model import ModelSetting as SystemModelSetting
-   ret['poster_full']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster_full'])
+  elif ret['poster']!='':
+   ret['poster']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster'])
+   if SystemModelSetting.get_bool('auth_use_apikey'):
+    ret['poster']+='&apikey=%s'%SystemModelSetting.get('auth_apikey') 
+  if ret['poster_full']!='' and use_discord_proxy:
+   ret['poster_full']='%s/av_agent/api/discord_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster_full'])
    if SystemModelSetting.get_bool('auth_use_apikey'):
     ret['poster_full']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
-  elif ret['poster_full']!='' and use_discord_proxy:
-   ret['poster_full']='%s/av_agent/api/discord_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster_full'])
+  if ret['poster_full']!='':
+   from system.model import ModelSetting as SystemModelSetting
+   ret['poster_full']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster_full'])
    if SystemModelSetting.get_bool('auth_use_apikey'):
     ret['poster_full']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
   ret['title']=tag.attrib['alt']
@@ -390,13 +390,12 @@ def dmm_update(arg,use_discord_proxy=False):
    tag=node.xpath('.//img')
    entity['thumb']=tag[0].attrib['src']
    entity['full']=entity['thumb'].replace(ret['code']+'-',ret['code']+'jp-')
-   if Vars.proxies is not None:
-    from system.model import ModelSetting as SystemModelSetting
-    entity['full']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['full'])
-    entity['thumb']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['thumb'])
-    if SystemModelSetting.get_bool('auth_use_apikey'):
-     entity['full']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
-     entity['thumb']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
+   from system.model import ModelSetting as SystemModelSetting
+   entity['full']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['full'])
+   entity['thumb']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['thumb'])
+   if SystemModelSetting.get_bool('auth_use_apikey'):
+    entity['full']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
+    entity['thumb']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
    ret['sample_image'].append(entity)
   ret['result']='success'
   return ret
@@ -433,11 +432,10 @@ def get_actor_info(entity,retry=True):
   nodes=tree.xpath('//img')
   if nodes:
    entity['img']=nodes[0].attrib['src'].strip()
-   if Vars.proxies is not None:
-    from system.model import ModelSetting as SystemModelSetting
-    entity['img']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['img'])
-    if SystemModelSetting.get_bool('auth_use_apikey'):
-     entity['img']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
+   from system.model import ModelSetting as SystemModelSetting
+   entity['img']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['img'])
+   if SystemModelSetting.get_bool('auth_use_apikey'):
+    entity['img']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
    nodes=tree.xpath('//div[@class="avstar_info_b"]')
    tmps=nodes[0].text_content().split('/')
    entity['name_kor']=tmps[0].strip()
@@ -628,11 +626,10 @@ def javdb_update(arg,retry=0):
   ret['summary_ko']=ret['title_ko']
   tag=tree.xpath(base_full)[0]
   ret['poster_full']=tag.attrib['src']
-  if Vars.proxies is not None:
-   from system.model import ModelSetting as SystemModelSetting
-   ret['poster_full']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster_full'])
-   if SystemModelSetting.get_bool('auth_use_apikey'):
-    ret['poster_full']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
+  from system.model import ModelSetting as SystemModelSetting
+  ret['poster_full']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster_full'])
+  if SystemModelSetting.get_bool('auth_use_apikey'):
+   ret['poster_full']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
   search_data=javdb_search(ret['code'])
   logger.debug(search_data)
   target=None
@@ -659,13 +656,12 @@ def javdb_update(arg,retry=0):
      entity['full']=node.attrib['href']
      tag=node.xpath('.//img')[0]
      entity['thumb']=tag.attrib['src']
-     if Vars.proxies is not None:
-      from system.model import ModelSetting as SystemModelSetting
-      entity['full']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['full'])
-      entity['thumb']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['thumb'])
-      if SystemModelSetting.get_bool('auth_use_apikey'):
-       entity['full']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
-       entity['thumb']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
+     from system.model import ModelSetting as SystemModelSetting
+     entity['full']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['full'])
+     entity['thumb']='%s/av_agent/api/image_proxy?url=%s'%(SystemModelSetting.get('ddns'),entity['thumb'])
+     if SystemModelSetting.get_bool('auth_use_apikey'):
+      entity['full']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
+      entity['thumb']+='&apikey=%s'%SystemModelSetting.get('auth_apikey')
      ret['sample_image'].append(entity)
   except:
    pass
