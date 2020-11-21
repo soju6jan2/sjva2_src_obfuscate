@@ -11,6 +11,9 @@ class ProcessAV(object):
  @staticmethod
  def process(filename,av_type):
   try:
+   import framework.common.fileprocess as FileProcess
+   tmp="http://soju6jan.iptime.org:3128"
+   FileProcess.Vars.proxies={"http":tmp,"https":tmp,}
    if av_type=='censored':
     tmp=FileProcess.change_filename_censored(filename)
     if tmp is not None:

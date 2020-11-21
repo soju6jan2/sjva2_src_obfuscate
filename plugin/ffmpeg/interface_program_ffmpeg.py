@@ -52,7 +52,6 @@ class Ffmpeg(object):
   self.download_speed=''
   self.headers=headers
   Ffmpeg.instance_list.append(self)
-  logger.debug('Ffmpeg.instance_list LEN:%s',len(Ffmpeg.instance_list))
   if len(Ffmpeg.instance_list)>30:
    for f in Ffmpeg.instance_list:
     if f.thread is None and f.status!=Status.READY:
@@ -119,12 +118,10 @@ class Ffmpeg(object):
    else:
     command.append(self.temp_fullpath)
    try:
-    logger.debug(' '.join(command))
     if os.path.exists(self.temp_fullpath):
      for f in Ffmpeg.instance_list:
       if f.idx!=self.idx and f.temp_fullpath==self.temp_fullpath and f.status in[Status.DOWNLOADING,Status.READY]:
        self.status=Status.ALREADY_DOWNLOADING
-       logger.debug('temp_fullpath ALREADY_DOWNLOADING')
        return
    except:
     pass
@@ -133,26 +130,20 @@ class Ffmpeg(object):
    self.log_thread=threading.Thread(target=self.log_thread_fuction,args=())
    self.log_thread.start()
    self.start_event.wait(timeout=60)
-   logger.debug('start_event awake.. ')
    if self.log_thread is None:
-    logger.debug('log_thread is none')
     if self.status==Status.READY:
      self.status=Status.ERROR
     self.kill()
    elif self.status==Status.READY:
-    logger.debug('still status.ready kill')
     self.status=Status.ERROR
     self.kill()
    else:
-    logger.debug('normally process wait()')
     process_ret=self.process.wait(timeout=60*ModelSetting.get_int('timeout_minute'))
-    logger.debug('process_ret :%s'%process_ret)
     if process_ret is None:
      if self.status!=Status.COMPLETED and self.status!=Status.USER_STOP and self.status!=Status.PF_STOP:
       self.status=Status.TIME_OVER
       self.kill()
     else:
-     logger.debug('process end')
      if self.status==Status.DOWNLOADING:
       self.status=Status.FORCE_STOP
    self.end_time=datetime.now()
@@ -176,7 +167,6 @@ class Ffmpeg(object):
    self.send_to_listener(**arg)
    self.process=None
    self.thread=None
-   logger.debug('ffmpeg thread end')
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
@@ -195,11 +185,9 @@ class Ffmpeg(object):
       if line.find('Server returned 404 Not Found')!=-1 or line.find('Unknown error')!=-1:
        self.status=Status.WRONG_URL
        self.start_event.set()
-       logger.debug('start_event set by 404 not found')
       elif line.find('No such file or directory')!=-1:
        self.status=Status.WRONG_DIRECTORY
        self.start_event.set()
-       logger.debug('start_event set by WRONG_DIR')
       else:
        match=re.compile(r'Duration\:\s(\d{2})\:(\d{2})\:(\d{2})\.(\d{2})\,\sstart').search(line)
        if match:
@@ -208,7 +196,6 @@ class Ffmpeg(object):
         self.duration+=int(match.group(3))*100
         self.duration+=int(match.group(2))*100*60
         self.duration+=int(match.group(1))*100*60*60
-        logger.debug('Duration : %s',self.duration)
         if match:
          self.status=Status.READY
          arg={'type':'status_change','status':self.status,'data':self.get_data()}
@@ -220,17 +207,14 @@ class Ffmpeg(object):
         arg={'type':'status_change','status':self.status,'data':self.get_data()}
         self.send_to_listener(**arg)
         self.start_event.set()
-        logger.debug('start_event set by DOWNLOADING')
      elif self.status==Status.DOWNLOADING:
       if line.find('PES packet size mismatch')!=-1:
        self.current_pf_count+=1
        if self.current_pf_count>self.max_pf_count:
-        logger.debug('%s : PF_STOP!',self.idx)
         self.status=Status.PF_STOP
         self.kill()
        continue
       if line.find('HTTP error 403 Forbidden')!=-1:
-       logger.debug('HTTP error 403 Forbidden')
        self.status=Status.HTTP_FORBIDDEN
        self.kill()
        continue
@@ -259,7 +243,6 @@ class Ffmpeg(object):
     except Exception as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc())
-  logger.debug('ffmpeg log thread end')
   self.start_event.set()
   self.log_thread=None
  def get_data(self):
@@ -279,7 +262,6 @@ class Ffmpeg(object):
   try:
    command=u'%s -version'%(Logic.path_ffmpeg)
    command=command.split(' ')
-   logger.debug(command)
    if app.config['config']['is_py2']:
     process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
    else:
