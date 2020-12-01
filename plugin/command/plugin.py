@@ -102,6 +102,11 @@ def ajax(sub):
    import framework.common.util as CommonUtil
    logger.debug(job.filename)
    CommonUtil.write_file(data,job.filename)
+   try:
+    os.system('dos2unix %s'%job.filename)
+   except Exception as exception:
+    logger.error('Exception:%s',exception)
+    logger.error(traceback.format_exc()) 
    ret['ret']=True
    return jsonify(ret)
   elif sub=='foreground_command_by_job':
@@ -168,6 +173,16 @@ def api(sub):
     update=True
    import framework.common.util as CommonUtil
    CommonUtil.write_file(r.text,download_path)
+   try:
+    os.system('dos2unix %s'%download_path)
+   except Exception as exception:
+    logger.error('Exception:%s',exception)
+    logger.error(traceback.format_exc())
+   try:
+    os.system('chmod 777 %s'%download_path)
+   except Exception as exception:
+    logger.error('Exception:%s',exception)
+    logger.error(traceback.format_exc())
    ret['ret']='success'
    if update:
     ret['log']=u'정상적으로 설치하였습니다.<br>파일을 업데이트 하였습니다.'

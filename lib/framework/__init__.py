@@ -1,4 +1,4 @@
-version='0.2.17.14'
+version='0.2.17.15'
 import os
 import sys
 path_app_root=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

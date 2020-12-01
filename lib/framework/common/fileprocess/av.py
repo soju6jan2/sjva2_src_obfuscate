@@ -184,11 +184,12 @@ def dmm_search(keyword,do_trans=True):
   logger.debug(url)
   page=_session.get(url,headers=_headers,proxies=Vars.proxies)
   data=page.text
+  logger.debug('text len : %s',len(data))
   tree=html.fromstring(data)
   lists=tree.xpath('//*[@id="list"]/li')
   ret=[]
   score=60
-  logger.debug('len lists :%s',len(lists))
+  logger.debug('len lists2 :%s',len(lists))
   for node in lists:
    try:
     entity={'meta':'dmm'}
@@ -789,16 +790,16 @@ def _javdb_prefer_keyword(keyword):
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def test_dmm(keyword):
+def test_dmm(keyword,use_discord_proxy=False):
  try:
   ret={}
   ret['search']=dmm_search(keyword)
   if len(ret['search'])==1:
-   ret['update']=dmm_update(ret['search'][0]['id'])
+   ret['update']=dmm_update(ret['search'][0]['id'],use_discord_proxy=use_discord_proxy)
   else:
    for tmp in ret['search']:
     if tmp['score']==100:
-     ret['update']=dmm_update(tmp['id'])
+     ret['update']=dmm_update(tmp['id'],use_discord_proxy=use_discord_proxy)
      break
   return ret
  except Exception as exception:

@@ -11,19 +11,12 @@ class ProcessAV(object):
  @staticmethod
  def process(filename,av_type):
   try:
-   import framework.common.fileprocess as FileProcess
-   tmp="http://soju6jan.iptime.org:3128"
-   FileProcess.Vars.proxies={"http":tmp,"https":tmp,}
    if av_type=='censored':
     tmp=FileProcess.change_filename_censored(filename)
     if tmp is not None:
      arg=os.path.splitext(tmp)[0].split('cd')[0]
-     data=FileProcess.test_dmm(arg)
+     data=FileProcess.test_dmm(arg,use_discord_proxy=True)
      if data and 'update' in data:
-      from framework.common.notify import discord_proxy_image
-      poster_ret=discord_proxy_image(data['update']['poster'])
-      if poster_ret is not None:
-       data['update']['poster']=poster_ret
       ret={'type':'dmm','data':data}
       return ret
      data=FileProcess.test_javdb(arg)
