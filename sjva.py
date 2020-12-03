@@ -5,15 +5,14 @@ if sys.version_info[0]==2:
  sys.setdefaultencoding('utf-8')
 sys.path.insert(0,os.path.join(os.path.dirname(os.path.abspath(__file__)),'lib'))
 import platform
-print(sys.path)
+print('### sys.path : %s'%sys.path)
+print('### sys.argv : %s'%sys.argv)
 try:
  from gevent import monkey;monkey.patch_all()
 except:
  print('not monkey')
 try:
- print(sys.argv)
- print(sys.argv)
- print(sys.argv)
+ pass
  if sys.argv[0].startswith('sjva.py'):
   try:
    if platform.system()!='Windows':
@@ -23,24 +22,6 @@ try:
     os.system("chmod 777 -R %s"%custom)
   except:
    print('Exception:%s',e)
-  server_plugin_path=os.path.join(os.path.dirname(os.path.abspath(__file__)),'data','custom')
-  try:
-   import shutil
-   remove_plugin=['ani24','manamoa','launcher_gateone']
-   for plugin in remove_plugin:
-    try:
-     plugin_path=os.path.join(server_plugin_path,plugin)
-     if os.path.exists(plugin_path):
-      print('remove plugin:%s',plugin)
-      shutil.rmtree(plugin_path)
-     tmp=os.path.join(os.path.dirname(os.path.abspath(__file__)),'data','db','%s.db'%plugin)
-     if os.path.exists(tmp):
-      print('remove plugin db:%s'%plugin)
-      os.remove(tmp)
-    except Exception as exception:
-     print('Exception:%s'%exception) 
-  except Exception as exception:
-   print('Exception:%s'%exception)
 except Exception as exception:
  print('Exception:%s'%exception)
 import framework

@@ -1,4 +1,4 @@
-version='0.2.17.15'
+version='0.2.17.16'
 import os
 import sys
 path_app_root=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -28,11 +28,6 @@ try:
  import platform
  logger.debug('Platform : %s',platform.system())
  app=Flask('sjva')
- try:
-  from flask_restful import Api
-  api=Api(app)
- except:
-  logger.debug('NOT INSTALLED FLASK_RESTFUL')
  app.secret_key=os.urandom(24)
  app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///data/db/sjva.db?check_same_thread=False'
  app.config['SQLALCHEMY_BINDS']={'sjva':'sqlite:///data/db/sjva.db'}

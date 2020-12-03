@@ -1,4 +1,4 @@
-import os
+import os,traceback
 from datetime import datetime,timedelta
 from flask import request,abort
 from functools import wraps
@@ -21,7 +21,6 @@ def check_api(original_function):
      return 
   except Exception as exception:
    print('Exception:%s',exception)
-   import traceback
    print(traceback.format_exc())
    logger.debug('CHECK API : ABORT exception')
    abort(403)
@@ -46,21 +45,16 @@ def make_default_dir(path_data):
     os.mkdir(tmp)
  except Exception as exception:
   print('Exception:%s',exception)
-  import traceback
   print(traceback.format_exc())
 def pip_install():
  from framework import app
- print('pip_install start')
  try:
   import discord_webhook
-  print('discord_webhook already installed..')
  except:
   try:
    os.system("{} install discord-webhook".format(app.config['config']['pip']))
-   print('discord-webhook install..')
   except:
-   print('discord-webhook fail..')
- print('pip_install end')
+   pass
 def get_ip():
  headers_list=request.headers.getlist("X-Forwarded-For")
  return headers_list[0]if headers_list else request.remote_addr

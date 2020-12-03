@@ -165,11 +165,12 @@ class LogicNormal(object):
    logger.error(traceback.format_exc())
    return False
  @staticmethod
- def execute_thread_function_job(job_id):
+ def execute_thread_function_job(job_id,**kwargs):
   job=ModelCommand.get_job_by_id(job_id)
-  LogicNormal.execute_thread_function(job.command,command_id=job.id)
+  kwargs['command_id']=job.id
+  return LogicNormal.execute_thread_function(job.command,**kwargs)
  @staticmethod
- def execute_thread_function(command,command_id=-1):
+ def execute_thread_function(command,command_id=-1,**kwargs):
   try:
    logger.debug('COMMAND RUN START : %s %s',command,command_id)
    ret=[]
@@ -197,7 +198,8 @@ class LogicNormal(object):
    command=new_command
    if command[0]=='LOAD':
     command_logger=get_logger('%s_%s'%(package_name,command_id))
-    LogicNormal.module_load(command,logger=command_logger)
+    kwargs['logger']=command_logger
+    return LogicNormal.module_load(command,**kwargs)
    else:
     if app.config['config']['is_py2']:
      p=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)
@@ -376,8 +378,8 @@ class LogicNormal(object):
    args=command
    mod_command_load=getattr(mod,'main')
    if mod_command_load:
-    mod_command_load(*args,**kwargs)
-   return 'success'
+    ret=mod_command_load(*args,**kwargs)
+   return ret
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())

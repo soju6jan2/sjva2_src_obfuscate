@@ -2,7 +2,6 @@ import traceback
 import os
 import json
 import time
-import copy
 import re
 from framework.common.torrent import logger
 from system.model import ModelSetting as SystemModelSetting

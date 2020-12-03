@@ -188,6 +188,24 @@ def api(sub):
     ret['log']=u'정상적으로 설치하였습니다.<br>파일을 업데이트 하였습니다.'
    else:
     ret['log']=u'정상적으로 설치하였습니다.'
+  elif sub=='execute':
+   command_id=request.args.get('id')
+   mode=request.args.get('mode')
+   if mode is None:
+    mode='json'
+   kwargs={}
+   for key,value in request.args.items():
+    if key in['apikey','id','mode']:
+     continue
+    if key not in kwargs:
+     kwargs[key]=value
+   ret=LogicNormal.execute_thread_function_job(int(command_id),**kwargs)
+   if mode=='json':
+    return jsonify(ret)
+   elif mode=='return':
+    return str(ret)
+   elif mode=='redirect':
+    return redirect(ret)
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc()) 
