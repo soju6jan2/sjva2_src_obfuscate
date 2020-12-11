@@ -26,4 +26,11 @@ def get_web_title():
   return SystemModelSetting.get('web_title')
  except:
   return 'SJ Video Assitant'
+def show_menu():
+ from flask import request
+ from system.model import ModelSetting as SystemModelSetting
+ if SystemModelSetting.get_bool('hide_menu'):
+  if request.full_path.find('/login')!=-1:
+   return False
+ return True
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

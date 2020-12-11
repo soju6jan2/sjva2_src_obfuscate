@@ -1,4 +1,4 @@
-version='0.2.17.16'
+version='0.2.17.18'
 import os
 import sys
 path_app_root=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -17,7 +17,7 @@ from framework.class_scheduler import Scheduler
 from framework.logger import get_logger
 from framework.menu import get_menu_map,init_menu,get_plugin_menu
 from.user import User
-from.init_web import get_menu,get_theme,get_login_status,get_web_title
+from.init_web import get_menu,get_theme,get_login_status,get_web_title,show_menu
 from.init_etc import check_api,make_default_dir,pip_install
 make_default_dir(path_data)
 package_name=__name__.split('.')[0]
@@ -132,12 +132,14 @@ try:
  app.jinja_env.globals.update(get_login_status=get_login_status)
  app.jinja_env.globals.update(get_web_title=get_web_title)
  app.jinja_env.globals.update(get_plugin_menu=get_plugin_menu)
+ app.jinja_env.globals.update(show_menu=show_menu)
  app.jinja_env.filters['get_menu']=get_menu
  app.jinja_env.filters['get_theme']=get_theme
  app.jinja_env.filters['get_menu_map']=get_menu_map
  app.jinja_env.filters['get_login_status']=get_login_status
  app.jinja_env.filters['get_web_title']=get_web_title
  app.jinja_env.filters['get_plugin_menu']=get_plugin_menu
+ app.jinja_env.filters['show_menu']=show_menu
  app.jinja_env.add_extension('jinja2.ext.loopcontrols')
  system.LogicPlugin.custom_plugin_update()
  from.init_plugin import plugin_init

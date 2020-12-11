@@ -14,8 +14,12 @@ class ProcessAV(object):
     tmp=FileProcess.change_filename_censored(filename)
     if tmp is not None:
      arg=os.path.splitext(tmp)[0].split('cd')[0]
-     data=FileProcess.test_dmm(arg,use_discord_proxy=True)
+     data=FileProcess.test_dmm(arg)
      if data and 'update' in data:
+      from framework.common.notify import discord_proxy_image
+      poster_ret=discord_proxy_image(data['update']['poster'])
+      if poster_ret is not None:
+       data['update']['poster']=poster_ret
       ret={'type':'dmm','data':data}
       return ret
      data=FileProcess.test_javdb(arg)
