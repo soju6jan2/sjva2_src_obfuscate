@@ -14,8 +14,8 @@ headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537
 def get_stream_info_by_web(content_type,media_code,quality):
  ooc='isTrusted=false^type=oocCreate^eventPhase=0^bubbles=false^cancelable=false^defaultPrevented=false^composed=false^timeStamp=3336.340000038035^returnValue=true^cancelBubble=false^NONE=0^CAPTURING_PHASE=1^AT_TARGET=2^BUBBLING_PHASE=3^'
  try:
-  data={'apiKey':'1e7952d0917d6aab1f0293a063697610','info':'Y','networkCode':'CSND0900','osCode':'CSOD0900','teleCode':'CSCD0900','mediaCode':media_code,'screenCode':'CSSD0100','callingFrom':'HTML5','streamCode':quality,'deviceId':SystemModelSetting.get('site_tving_deviceid'),'adReq':'adproxy','ooc':ooc,'wm':'Y',}
-  cookies={'_tving_token':SystemModelSetting.get('site_tving_token').split('=')[1],'onClickEvent2':py_urllib.quote(ooc)}
+  data={'apiKey':'1e7952d0917d6aab1f0293a063697610','info':'Y','networkCode':'CSND0900','osCode':'CSOD0900','teleCode':'CSCD0900','mediaCode':media_code,'screenCode':'CSSD0100','callingFrom':'HTML5','streamCode':quality,'deviceId':SystemModelSetting.get('site_tving_deviceid'),'adReq':'adproxy','ooc':ooc,'wm':'Y','uuid':SystemModelSetting.get('site_tving_uuid')}
+  cookies={'_tving_token':SystemModelSetting.get('site_tving_token').split('=')[1],'onClickEvent2':py_urllib.quote(ooc),'TP2wgas1K9Q8F7B359108383':'Y',}
   if True or content_type=='live':
    headers['referer']='https://www.tving.com/%s/player/%s'%(content_type,media_code)
    url='https://www.tving.com/streaming/info'
