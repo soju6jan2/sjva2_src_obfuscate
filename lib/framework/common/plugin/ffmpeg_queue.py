@@ -195,6 +195,14 @@ class FfmpegQueue(object):
       new_list.append(_)
     FfmpegQueueEntity.entity_list=new_list
     ret['ret']='refresh'
+   elif cmd=='remove':
+    new_list=[]
+    for _ in FfmpegQueueEntity.entity_list:
+     if _.entity_id==entity_id:
+      continue
+     new_list.append(_)
+    FfmpegQueueEntity.entity_list=new_list
+    ret['ret']='refresh' 
    return ret
   except Exception as exception:
    self.P.logger.error('Exception:%s',exception)
