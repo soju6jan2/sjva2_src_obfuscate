@@ -103,10 +103,11 @@ class Ffmpeg(object):
      for key,value in self.headers.items():
       if key.lower()=='user-agent':
        headers_command.append('-user_agent')
-       headers_command.append('"%s"'%value)
+       headers_command.append(value)
+       pass
       else:
        headers_command.append('-headers')
-       headers_command.append('%s: %s'%(key,value))
+       headers_command.append('\'%s:%s\''%(key,value))
      command=[Logic.path_ffmpeg,'-y']+headers_command+['-i',self.url,'-c','copy','-bsf:a','aac_adtstoasc','-metadata','network=%s'%user]
    else:
     command=[Logic.path_ffmpeg,'-y','-http_proxy',self.proxy,'-i',self.url,'-c','copy','-bsf:a','aac_adtstoasc','-metadata','network=%s'%user]

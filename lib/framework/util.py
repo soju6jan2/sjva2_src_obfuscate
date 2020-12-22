@@ -153,6 +153,17 @@ class Util(object):
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
   return False
+ @staticmethod
+ def make_apikey(url):
+  from framework import SystemModelSetting
+  url=url.format(ddns=SystemModelSetting.get('ddns'))
+  if SystemModelSetting.get_bool('auth_use_apikey'):
+   if url.find('?')==-1:
+    url+='?'
+   else:
+    url+='&'
+   url+='apikey=%s'%SystemModelSetting.get('auth_apikey')
+  return url
 class SingletonClass(object):
  __instance=None
  @classmethod
