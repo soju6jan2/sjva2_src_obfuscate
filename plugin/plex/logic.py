@@ -579,19 +579,23 @@ class Logic(object):
  def plungin_command(req):
   try:
    command=req.form['cmd']
-   param1=req.form['param1']if 'param1' in req.form else ''
-   param2=req.form['param2']if 'param2' in req.form else ''
-   server_url=db.session.query(ModelSetting).filter_by(key='server_url').first().value
-   server_token=db.session.query(ModelSetting).filter_by(key='server_token').first().value
-   if param1!='':
-    param1=py_urllib.quote(param1)
-   url='%s/:/plugins/com.plexapp.plugins.SJVA/function/command?cmd=%s&param1=%s&param2=%s&X-Plex-Token=%s'%(server_url,command,param1,param2,server_token)
-   logger.debug('URL:%s',url)
-   request=py_urllib2.Request(url)
-   response=py_urllib2.urlopen(request)
-   data=response.read()
-   data=json.loads(data)
-   return data
+   if command=='get_plugin_list':
+    url='https://raw.githubusercontent.com/soju6jan/sjva_support/master/plex_install_plugin_list.json'
+    return{'ret':'success','data':requests.get(url).json()['list']}
+   else:
+    param1=req.form['param1']if 'param1' in req.form else ''
+    param2=req.form['param2']if 'param2' in req.form else ''
+    server_url=db.session.query(ModelSetting).filter_by(key='server_url').first().value
+    server_token=db.session.query(ModelSetting).filter_by(key='server_token').first().value
+    if param1!='':
+     param1=py_urllib.quote(param1)
+    url='%s/:/plugins/com.plexapp.plugins.SJVA/function/command?cmd=%s&param1=%s&param2=%s&X-Plex-Token=%s'%(server_url,command,param1,param2,server_token)
+    logger.debug('URL:%s',url)
+    request=py_urllib2.Request(url)
+    response=py_urllib2.urlopen(request)
+    data=response.read()
+    data=json.loads(data)
+    return data
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc()) 

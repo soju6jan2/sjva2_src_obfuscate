@@ -81,7 +81,6 @@ class TelegramBot(object):
      plugin_name=data['plugin']
      target=None
      if 'policy_level' in data:
-      logger.debug(data)
       if data['policy_level']>app.config['config']['level']:
        return
      if 'target' in data:

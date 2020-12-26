@@ -40,7 +40,7 @@ def discord_proxy_set_target(source,target):
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def discord_proxy_image(image_url,webhook_url=None):
+def discord_proxy_image(image_url,webhook_url=None,retry=True):
  ret=discord_proxy_get_target(image_url)
  if ret is not None:
   return ret
@@ -64,6 +64,8 @@ def discord_proxy_image(image_url,webhook_url=None):
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
+  if retry:
+   return discord_proxy_image(image_url,webhook_url=None,retry=False)
 """
 def discord_proxy_image_file(image_path, webhook_url=None):
     if webhook_url is None or webhook_url == '':
