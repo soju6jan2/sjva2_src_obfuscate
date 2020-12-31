@@ -1,4 +1,4 @@
-version='0.2.17.25'
+version='0.2.18.0'
 import os
 import sys
 path_app_root=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -83,6 +83,7 @@ try:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
  from system.logic_auth import SystemLogicAuth
+ SystemLogicAuth.do_auth()
  tmp=SystemLogicAuth.get_auth_status()
  app.config['config']['auth_status']=tmp['ret']
  app.config['config']['auth_desc']=tmp['desc']

@@ -1,5 +1,5 @@
 import os
-import traceback
+import traceback,time
 import requests
 from discord_webhook import DiscordWebhook,DiscordEmbed
 from framework.common.notify import logger
@@ -64,8 +64,12 @@ def discord_proxy_image(image_url,webhook_url=None,retry=True):
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
+  logger.debug(data)
   if retry:
+   time.sleep(3)
    return discord_proxy_image(image_url,webhook_url=None,retry=False)
+  else:
+   return image_url
 """
 def discord_proxy_image_file(image_path, webhook_url=None):
     if webhook_url is None or webhook_url == '':
