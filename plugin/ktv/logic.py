@@ -14,6 +14,7 @@ from framework import app,db,scheduler,celery
 from framework.job import Job
 from framework.util import Util
 from framework.event import MyEvent
+from tool_base import ToolBaseNotify
 from.model import ModelSetting,ModelKtvFile,ModelKtvLibrary
 from.entity_show import EntityLibraryPathRoot,EntityLibraryPath,EntityShow
 package_name=__name__.split('.')[0]
@@ -317,8 +318,7 @@ class Logic(object):
       img=None
       if entity is not None and entity.daum_info is not None and entity.daum_info.poster_url is not None:
        img=entity.daum_info.poster_url
-      import framework.common.notify as Notify
-      Notify.send_message(telegram_log,image_url=img,message_id='fileprocess_ktv_result')
+      ToolBaseNotify.send_message(telegram_log,image_url=img,message_id='fileprocess_ktv_result')
     except Exception as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc())
@@ -415,8 +415,7 @@ class Logic(object):
      logger.debug('>> direct commit!!')
     if ModelSetting.query.filter_by(key='telegram').first().value=='True':
      text='<PLEX 스캔 완료 - KTV>\n%s\n\n%s'%(modelfile.filename,modelfile.plex_part)
-     import framework.common.notify as Notify
-     Notify.send_message(text,message_id='fileprocess_ktv_scan_completed')
+     ToolBaseNotify.send_message(text,message_id='fileprocess_ktv_scan_completed')
   except Exception as exception:
    logger.debug('>>>>> receive_scan_result')
    logger.error('Exception:%s',exception)

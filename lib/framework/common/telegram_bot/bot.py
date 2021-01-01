@@ -9,6 +9,7 @@ from framework import app
 from framework.common.telegram_bot import logger
 from framework.common.util import AESCipher
 from system.model import ModelSetting as SystemModelSetting
+from tool_base import ToolBaseNotify
 class TelegramBot(object):
  bot=None
  message_loop=None
@@ -24,8 +25,7 @@ class TelegramBot(object):
     logger.debug('TelegramBot bot : %s',me)
     TelegramBot.message_loop=MessageLoop(TelegramBot.bot,TelegramBot.receive_callback)
     TelegramBot.message_loop.run_as_thread()
-    import framework.common.notify as Notify
-    Notify.send_message('텔레그램 메시지 수신을 시작합니다. %s'%(datetime.datetime.now()))
+    ToolBaseNotify.send_message('텔레그램 메시지 수신을 시작합니다. %s'%(datetime.datetime.now()))
     TelegramBot.SUPER_BOT=Bot(TelegramBot.SUPER_TOKEN)
     if SystemModelSetting.get('ddns')=='https://sjva-server.soju6jan.com':
      MessageLoop(TelegramBot.SUPER_BOT,TelegramBot.super_receive_callback).run_as_thread()
@@ -45,8 +45,7 @@ class TelegramBot(object):
       chat_list=SystemModelSetting.get_list('telegram_resend_chat_id')
       if str(chat_id)not in chat_list:
        for c in chat_list:
-        import framework.common.notify as Notify
-        Notify.send_telegram_message(msg['text'],SystemModelSetting.get('telegram_bot_token'),chat_id=c)
+        ToolBaseNotify.send_telegram_message(msg['text'],SystemModelSetting.get('telegram_bot_token'),chat_id=c)
    except Exception as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())

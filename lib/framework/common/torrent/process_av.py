@@ -16,8 +16,8 @@ class ProcessAV(object):
      arg=os.path.splitext(tmp)[0].split('cd')[0]
      data=FileProcess.test_dmm(arg)
      if data and 'update' in data:
-      from framework.common.notify import discord_proxy_image
-      poster_ret=discord_proxy_image(data['update']['poster'])
+      from tool_expand import ToolExpandDiscord
+      poster_ret=ToolExpandDiscord.discord_proxy_image(data['update']['poster'])
       if poster_ret is not None:
        data['update']['poster']=poster_ret
       ret={'type':'dmm','data':data}
