@@ -15,6 +15,11 @@ if app.config['config']['is_py3']:
 class AESCipher(object):
  @staticmethod
  def encrypt(raw,mykey=None):
+  try:
+   Random.atfork()
+  except Exception as exception:
+   logger.error('Exception:%s',exception)
+   logger.error(traceback.format_exc())
   if app.config['config']['is_py2']:
    raw=pad(raw)
    iv=Random.new().read(AES.block_size)
