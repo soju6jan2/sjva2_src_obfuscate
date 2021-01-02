@@ -5,7 +5,7 @@ class _NasValidationManager(ValidationManager):
  @staticmethod
  def validate(response):
   status=response.status_code
-  if status is not 200:
+  if status!=200:
    raise SynologyException('The API request cannot been made')
   rsp=response.json()
   if not rsp['success']:
