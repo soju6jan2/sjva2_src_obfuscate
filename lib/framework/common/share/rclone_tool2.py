@@ -134,7 +134,7 @@ class RcloneTool2(object):
  def can_use_relay(rclone_path,config_path,remote_path):
   try:
    folderid=RcloneTool2.getid(rclone_path,config_path,remote_path)
-   config_path=os.path.join(path_app_root,'lib','framework','common','share','tool.pyo')
+   config_path=os.path.join(path_app_root,'lib','framework','common','share','tool.html')
    tmp=RcloneTool2.lsjson(rclone_path,config_path,'remote_test:{%s}'%folderid)
    if tmp is not None:
     return True
@@ -245,8 +245,8 @@ class RcloneTool2(object):
  @staticmethod
  def do_relay_copy(rclone_path,sourceid,targetid):
   try:
-   sa_worker_path=os.path.join(path_app_root,'lib','framework','common','share','tool.pyo')
-   account_file_path=sa_worker_path.replace('tool.pyo','account/')
+   sa_worker_path=os.path.join(path_app_root,'lib','framework','common','share','tool.html')
+   account_file_path=sa_worker_path.replace('tool.html','account/')
    target_remote='worker1:{%s}'%(targetid)
    tmp=RcloneTool2.lsjson(rclone_path,sa_worker_path,target_remote,['--dirs-only','--drive-service-account-file-path',account_file_path])
    logger.debug("mmmmmmmmmmmmmmmmmmmmmmmmm")

@@ -66,7 +66,11 @@ class ToolExpandFileProcess(object):
    if filename is not None:
     base,ext=os.path.splitext(filename)
     tmps=base.split('-')
-    tmp='%s-%s%s'%(tmps[0],str(int(tmps[1])).zfill(3),ext)
+    tmp2=tmps[1].split('cd')
+    if len(tmp2)==1:
+     tmp='%s-%s%s'%(tmps[0],str(int(tmps[1])).zfill(3),ext)
+    elif len(tmp2)==2:
+     tmp='%s-%scd%s%s'%(tmps[0],str(int(tmp2[0])).zfill(3),tmp2[1],ext)
     logger.debug('filename3 : %s',tmp)
     return tmp
   except Exception as exception:
