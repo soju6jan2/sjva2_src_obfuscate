@@ -64,6 +64,7 @@ class ToolExpandDiscord(object):
   if webhook_url is None or webhook_url=='':
    webhook_url= cls.webhook_list[random.randint(0,4)] 
   try:
+   logger.debug('webhook_url : %s',webhook_url)
    from framework import py_urllib
    webhook=DiscordWebhook(url=webhook_url,content='')
    embed=DiscordEmbed()
@@ -74,10 +75,16 @@ class ToolExpandDiscord(object):
    byteio=io.BytesIO()
    webhook.add_file(file=byteio.getvalue(),filename='dummy')
    response=webhook.execute()
-   data=response.json()
-   target=data['embeds'][0]['image']['proxy_url']
-   cls.discord_proxy_set_target(image_url,target)
-   return target
+   data=None
+   if type(response)==type([]):
+    if len(response)>0:
+     data=response[0].json()
+   else:
+    data=response[0].json() 
+   if data is not None:
+    target=data['embeds'][0]['image']['proxy_url']
+    cls.discord_proxy_set_target(image_url,target)
+    return target
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())

@@ -1,4 +1,4 @@
-version='0.2.18.4'
+version='0.2.18.5'
 import os
 import sys
 path_app_root=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -164,4 +164,8 @@ except Exception as exception:
  logger.error('Exception:%s',exception)
  logger.error(traceback.format_exc())
 from.init_route import*
+try:
+ from lib_metadata import*
+except:
+ pass
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

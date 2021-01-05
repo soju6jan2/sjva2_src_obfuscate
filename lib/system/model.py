@@ -95,4 +95,14 @@ class ModelSetting(db.Model):
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    logger.error('Error Key:%s Value:%s',key,value)
+ @staticmethod
+ def make_apikey(url):
+  url=url.format(ddns=ModelSetting.get('ddns'))
+  if ModelSetting.get_bool('auth_use_apikey'):
+   if url.find('?')==-1:
+    url+='?'
+   else:
+    url+='&'
+   url+='apikey=%s'%ModelSetting.get('auth_apikey')
+  return url
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
