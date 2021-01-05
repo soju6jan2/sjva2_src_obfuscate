@@ -40,6 +40,8 @@ class ToolExpandDiscord(object):
  @classmethod
  def discord_proxy_set_target(cls,source,target):
   try:
+   if source is None or target is None:
+    return
    if target.startswith('https://images-ext-')and target.find('discordapp.net')!=-1:
     from framework import py_urllib
     from system.model import ModelSetting as SystemModelSetting
@@ -51,8 +53,13 @@ class ToolExpandDiscord(object):
  webhook_list=['https://discordapp.com/api/webhooks/723161710030225510/_kqNtqrPtEH8pBV9oh-STl9qplcx1iZXa0VnyZNtQzk8LJs9jJt1p19abWVUwmRUgbzt','https://discordapp.com/api/webhooks/794660845232848946/3B4UaxHTD_UyfDu_B79FaWeOuXQlctjvxY_pU6a7G2D58OU6qXepzlHpvQF4O2tM35g-','https://discordapp.com/api/webhooks/794660932386029589/XfehQxY7gLJgKNlZCAP5RQv6vMVXfroWa9SiXBqiNN84no5Hrsukoo5_dS-ZrOApTSRo','https://discordapp.com/api/webhooks/794661043863027752/A9O-vZSHIgfQ3KX7wO5_e2xisqpLw5TJxg2Qs1stBHxyd5PK-Zx0IJbAQXmyDN1ixZ-n','https://discordapp.com/api/webhooks/794661121184497674/cZi0nYDWOifmWb97X7zJQoIvZu-qXaKYHANxQBquzWqhybBKG7dqccL8uIIKHRwfR3D9']
  @classmethod
  def discord_proxy_image(cls,image_url,webhook_url=None,retry=True):
+  data=None
+  logger.debug('discord_proxy_image : %s',image_url)
+  if image_url is None or image_url=='':
+   return image_url
   ret=cls.discord_proxy_get_target(image_url)
   if ret is not None:
+   logger.debug('TARGET : %s',ret)
    return ret
   if webhook_url is None or webhook_url=='':
    webhook_url= cls.webhook_list[random.randint(0,4)] 
