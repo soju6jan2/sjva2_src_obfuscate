@@ -15,7 +15,6 @@ from framework.util import Util
 from system.logic import SystemLogic
 from.model import ModelRcloneServe
 from.logic import Logic
-from.import plugin
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 class LogicServe(object):

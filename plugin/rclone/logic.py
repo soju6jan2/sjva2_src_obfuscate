@@ -17,7 +17,6 @@ from framework.util import Util
 from system.logic import SystemLogic
 from system.logic_command import SystemLogicCommand
 from.model import ModelSetting,ModelRcloneJob,ModelRcloneFile,ModelRcloneMount,ModelRcloneServe
-import plugin
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 class Logic(object):
@@ -430,6 +429,7 @@ class Logic(object):
      pass
     elif isinstance(data,TransStatus):
      Logic.current_data['ts']=data.__dict__
+   from.import plugin
    plugin.socketio_callback(cmd,Logic.current_data)
   except Exception as exception:
    logger.error('Exception:%s',exception)
