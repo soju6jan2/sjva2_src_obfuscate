@@ -266,28 +266,22 @@ def dmm_update(arg,use_discord_proxy=False):
   data=page.text
   tree=html.fromstring(data)
   ret={}
-  nodes=tree.xpath('//*[@id="mu"]/div/table//tr/td[1]/div[1]/div')
+  nodes=tree.xpath('//*[@id="mu"]/div/table//tr/td[1]/div[1]/div[2]')
   if not nodes:
    logger.debug('CRITICAL!!!')
    return data
-  a_nodes=nodes[0].xpath('.//a')
   ret['poster_full']=''
   ret['poster']=''
   try:
-   if a_nodes:
-    nodes=a_nodes
-    tag=nodes[0].xpath('.//img')[0]
-    ret['poster_full']=a_nodes[0].attrib['href']
-    ret['poster']=tag.attrib['src']
-   else:
-    tag=nodes[0].xpath('.//img')[0]
-    ret['poster']=tag.attrib['src']
-    ret['poster_full']=ret['poster']
-  except Exception as exception:
-   tag=tree.xpath('//*[@id="mu"]/div/table//tr/td[1]/div[1]/div/img')[0]
-   ret['poster_full']=tag.attrib['src']
+   a_nodes=nodes[0].xpath('.//a')
+   anodes=a_nodes
+   tag=anodes[0].xpath('.//img')[0]
+   ret['poster_full']=a_nodes[0].attrib['href']
    ret['poster']=tag.attrib['src']
-   pass
+  except:
+   tag=nodes[0].xpath('.//img')[0]
+   ret['poster']=img_tag.attrib['src']
+   ret['poster_full']=ret['poster']
   if ret['poster']!='' and use_discord_proxy:
    ret['poster']='%s/av_agent/api/discord_proxy?url=%s'%(SystemModelSetting.get('ddns'),ret['poster'])
    if SystemModelSetting.get_bool('auth_use_apikey'):

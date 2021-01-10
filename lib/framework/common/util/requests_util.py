@@ -12,6 +12,7 @@ def get_json_with_auth_session(referer,url,data):
   ci_session=res.headers['Set-Cookie'].split('ci_session=')[1].split(';')[0]
   headers['Cookie']='ci_session=%s; USERCONTRY=kr; LANGU=kr;'%ci_session
   res=session.post(url,headers=headers,data=data)
+  logger.debug('get_json_with_auth_session status_code : %s',res.status_code)
   return res.json(),headers
  except Exception as exception:
   logger.error('Exception:%s',exception)

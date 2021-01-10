@@ -192,4 +192,19 @@ def movie_contents_detail(movie_id):
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
+def search(keyword):
+ try:
+  param=get_baseparameter()
+  param['keyword']=keyword
+  url="https://apis.wavve.com/search/instance/keywords?%s"%(py_urllib.urlencode(param))
+  response=session.get(url,headers=config['headers'])
+  data=response.json()
+  if response.status_code==200:
+   return data
+  else:
+   if 'resultcode' in data:
+    logger.debug(data['resultmessage'])
+ except Exception as exception:
+  logger.error('Exception:%s',exception)
+  logger.error(traceback.format_exc()) 
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

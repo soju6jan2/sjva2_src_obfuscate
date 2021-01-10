@@ -59,9 +59,7 @@ class ToolExpandFileProcess(object):
    logger.error(traceback.format_exc())
  @classmethod
  def change_filename_censored(cls,filename):
-  logger.debug('filename1 : %s',filename)
   filename=cls.change_filename_censored_old(filename)
-  logger.debug('filename2 : %s',filename)
   try:
    if filename is not None:
     base,ext=os.path.splitext(filename)
@@ -71,7 +69,6 @@ class ToolExpandFileProcess(object):
      tmp='%s-%s%s'%(tmps[0],str(int(tmps[1])).zfill(3),ext)
     elif len(tmp2)==2:
      tmp='%s-%scd%s%s'%(tmps[0],str(int(tmp2[0])).zfill(3),tmp2[1],ext)
-    logger.debug('filename3 : %s',tmp)
     return tmp
   except Exception as exception:
    logger.debug('filename : %s',filename)
@@ -103,6 +100,10 @@ class ToolExpandFileProcess(object):
   match=re.compile(regex).match(filename)
   if match:
    filename='%s.%s'%(match.group('code'),match.group('ext'))
+  regex=r'^\(.*?\)(?P<code>.*?)\.(?P<ext>%s)$'%EXTENSION
+  match=re.compile(regex).match(filename)
+  if match:
+   filename='%s.%s'%(match.group('code'),match.group('ext'))
   regex=r'^\d{3,4}(?P<code>.*?)\.(?P<ext>%s)$'%EXTENSION
   match=re.compile(regex).match(filename)
   if match:
@@ -124,23 +125,25 @@ class ToolExpandFileProcess(object):
   if match:
    ret='scute-%s.%s'%(match.group('code'),match.group('ext'))
    return ret.lower()
-  regex=r'^(?P<name>[a-zA-Z]+)[-_]?(?P<no>\d+)(([-_]?(cd)?(?P<part_no>\d))|[-_]?(?P<part_char>\w))?\.(?P<ext>%s)$'%EXTENSION
-  match=re.compile(regex).match(filename)
-  if match:
-   ret=filename
-   part=None
-   if match.group('part_no')is not None:
-    part='cd%s'%match.group('part_no')
-   elif match.group('part_char')is not None:
-    if app.config['config']['is_py2']:
-     part='cd%s'%(ord(match.group('part_char').lower())-ord('a')+1)
+  logger.debug('5. %s',filename)
+  regex_list=[r'^(?P<name>[a-zA-Z]+)[-_]?(?P<no>\d+)(([-_]?(cd|part)?(?P<part_no>\d))|[-_]?(?P<part_char>\w))?\.(?P<ext>%s)$'%EXTENSION,r'^\w+.\w+@(?P<name>[a-zA-Z]+)[-_]?(?P<no>\d+)(([-_\.]?(cd|part)?(?P<part_no>\d))|[-_\.]?(?P<part_char>\w))?\.(?P<ext>%s)$'%EXTENSION]
+  for regex in regex_list:
+   match=re.compile(regex).match(filename)
+   if match:
+    ret=filename
+    part=None
+    if match.group('part_no')is not None:
+     part='cd%s'%match.group('part_no')
+    elif match.group('part_char')is not None:
+     if app.config['config']['is_py2']:
+      part='cd%s'%(ord(match.group('part_char').lower())-ord('a')+1)
+     else:
+      part='cd%s'%(match.group('part_char').lower()-'a'+1)
+    if part is None:
+     ret='%s-%s.%s'%(match.group('name').lower(),match.group('no'),match.group('ext'))
     else:
-     part='cd%s'%(match.group('part_char').lower()-'a'+1)
-   if part is None:
-    ret='%s-%s.%s'%(match.group('name').lower(),match.group('no'),match.group('ext'))
-   else:
-    ret='%s-%s%s.%s'%(match.group('name').lower(),match.group('no'),part,match.group('ext'))
-   return ret.lower()
+     ret='%s-%s%s.%s'%(match.group('name').lower(),match.group('no'),part,match.group('ext'))
+    return ret.lower()
   regex=r'(?P<name>[a-zA-Z]+\d+)\-(?P<no>\d+).*?\.(?P<ext>%s)$'%EXTENSION
   match=re.compile(regex).match(filename)
   if match:
@@ -165,6 +168,18 @@ class ToolExpandFileProcess(object):
   match=re.compile(regex).search(original_filename)
   if match:
    ret='%s-%s.%s'%(match.group('name'),match.group('no'),match.group('ext'))
+   return ret.lower()
+  regex=r'\w+.\w+@(?P<name>[a-zA-Z]+)(?P<no>\d{5})\.(cd|part)(?P<part_no>\d+)\.(?P<ext>%s)$'%EXTENSION
+  match=re.compile(regex).match(original_filename)
+  if match:
+   ret=filename
+   part=None
+   if match.group('part_no')is not None:
+    part='cd%s'%match.group('part_no')
+   if part is None:
+    ret='%s-%s.%s'%(match.group('name').lower(),match.group('no'),match.group('ext'))
+   else:
+    ret='%s-%s%s.%s'%(match.group('name').lower(),match.group('no'),part,match.group('ext'))
    return ret.lower()
   regex=r'\w+.\w+@(?P<name>[a-zA-Z]+)(?P<no>\d{5}).*?.(?P<ext>%s)$'%EXTENSION
   match=re.compile(regex).search(original_filename)

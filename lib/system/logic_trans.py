@@ -3,7 +3,7 @@ import traceback
 import json
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify
 from framework.logger import get_logger
-from framework import path_app_root,py_urllib2
+from framework import path_app_root,py_urllib2,py_urllib
 from framework.util import Util
 from.plugin import package_name,logger
 from.model import ModelSetting
@@ -94,6 +94,33 @@ class SystemLogicTrans(object):
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc()) 
   return text
+ @staticmethod
+ def trans_name(name):
+  trans_papago_key=ModelSetting.get_list('trans_papago_key')
+  for tmp in trans_papago_key:
+   client_id,client_secret=tmp.split(',')
+   try:
+    if client_id=='' or client_id is None or client_secret=='' or client_secret is None:
+     return
+    logger.debug(name)
+    encText=py_urllib.quote(str(name))
+    logger.debug(encText)
+    url="https://openapi.naver.com/v1/krdict/romanization?query="+encText
+    requesturl=py_urllib2.Request(url)
+    requesturl.add_header("X-Naver-Client-Id",client_id)
+    requesturl.add_header("X-Naver-Client-Secret",client_secret)
+    response=py_urllib2.urlopen(requesturl)
+    data=json.load(response,encoding="utf-8")
+    rescode=response.getcode()
+    logger.debug(data)
+    if rescode==200:
+     return data
+    else:
+     continue
+   except Exception as exception:
+    logger.error('Exception:%s',exception)
+    logger.error(traceback.format_exc()) 
+  return 
  @staticmethod
  def trans_google(text,source='ja',target='ko'):
   try:

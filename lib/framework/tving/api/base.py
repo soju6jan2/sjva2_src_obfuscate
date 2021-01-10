@@ -61,6 +61,7 @@ def get_episode_json_default(episode_code,quality):
   headers['Cookie']=SystemModelSetting.get('site_tving_token')
   r=session.get(url,headers=headers,proxies=get_proxies())
   data=r.json()
+  logger.debug(url)
   url=data['body']['stream']['broadcast']['broad_url']
   decrypted_url=decrypt(episode_code,ts,url)
   if decrypted_url.find('m3u8')==-1:
@@ -301,6 +302,7 @@ def get_program_programid(programid):
   url='https://api.tving.com/v2/media/program/%s?pageNo=1&pageSize=10&order=name'%programid
   url+=config['default_param']
   res=requests.get(url)
+  logger.debug(url)
   return res.json()
  except Exception as exception:
   logger.error('Exception:%s',exception)
@@ -376,6 +378,14 @@ def get_device_list(token):
   headers['Cookie']=token
   r=session.get(url,headers=headers)
   data=r.json()
+  return data
+ except Exception as exception:
+  logger.error('Exception:%s',exception)
+  logger.error(traceback.format_exc())
+def search_tv(keyword):
+ try:
+  url='https://search.tving.com/search/common/module/getAkc.jsp?kwd='+py_urllib.quote(str(keyword))
+  data=requests.get(url).json()['akcRsb']['dataList']
   return data
  except Exception as exception:
   logger.error('Exception:%s',exception)

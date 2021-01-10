@@ -8,7 +8,7 @@ def convert_vtt_to_srt(fileContents):
  for tmp in data.split('\n'):
   match=regex.match(tmp)
   if match:
-   if pre_line is not None and pre_line!=str(idx):
+   if pre_line!=str(idx):
     ret.append(str(idx))
    idx+=1
   ret.append(tmp.strip())
