@@ -385,8 +385,9 @@ def get_device_list(token):
 def search_tv(keyword):
  try:
   url='https://search.tving.com/search/common/module/getAkc.jsp?kwd='+py_urllib.quote(str(keyword))
-  data=requests.get(url).json()['akcRsb']['dataList']
-  return data
+  data=requests.get(url).json()
+  if 'dataList' in data['akcRsb']:
+   return data['akcRsb']['dataList']
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())

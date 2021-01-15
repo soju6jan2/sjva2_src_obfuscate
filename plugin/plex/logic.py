@@ -252,11 +252,9 @@ class Logic(object):
       s=s.strip()
       s_url,s_token=s.split('&')
       url='%s/:/plugins/com.plexapp.plugins.SJVA/function/WaitFile?section_id=&filename=%s&callback=&callback_id=&type_add_remove=ADD&call_from=FILE_MANAGER&X-Plex-Token=%s'%(s_url.strip(),encode_filename,s_token.strip())
-      request=py_urllib2.Request(url)
-      response=py_urllib2.urlopen(request)
-      data=response.read()
       logger.debug(url)
-      logger.debug('scan_server : %s ret:%s',s_url,data)
+      res=requests.get(url,timeout=30)
+      logger.debug('scan_server : %s status_code:%s',res.status_code)
      except Exception as exception:
       logger.debug('Exception:%s',exception)
       logger.debug(traceback.format_exc()) 

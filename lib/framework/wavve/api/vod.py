@@ -192,19 +192,41 @@ def movie_contents_detail(movie_id):
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def search(keyword):
+def search(keyword,search_type='all'):
  try:
   param=get_baseparameter()
   param['keyword']=keyword
   url="https://apis.wavve.com/search/instance/keywords?%s"%(py_urllib.urlencode(param))
   response=session.get(url,headers=config['headers'])
   data=response.json()
+  logger.debug(url)
   if response.status_code==200:
-   return data
+   if search_type=='all':
+    return data
+   else:
+    for item in data:
+     if item['type']==search_type:
+      return item
   else:
    if 'resultcode' in data:
     logger.debug(data['resultmessage'])
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc()) 
+def search_tv(keyword):
+ try:
+  url='https://apis.wavve.com/cf/search/band.js?type=program&keyword=%s&offset=0&limit=20&orderby=score&isplayymovie=y&apikey=E5F3E0D30947AA5440556471321BB6D9&&device=pc&drm=wm&partner=pooq&pooqzone=none&region=kor&targetage=all'%(py_urllib.quote(str(keyword)))
+  response=session.get(url,headers=config['headers'])
+  data=response.json()
+  if response.status_code==200:
+   if 'celllist' in data['band']:
+    return data['band']['celllist']
+  else:
+   if 'resultcode' in data:
+    logger.debug(data['resultmessage'])
+ except Exception as exception:
+  logger.error('Exception:%s',exception)
+  logger.error(traceback.format_exc()) 
+def search_movie(keyword):
+ return search(keyword,search_type='moviekeywordlist')
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -34,7 +34,7 @@ def get_proxies():
 def get_proxy():
  if SystemModelSetting.get_bool('site_wavve_use_proxy'):
   return SystemModelSetting.get('site_wavve_proxy_url')
-def streaming(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y'):
+def streaming(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y',return_url=False):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -64,6 +64,8 @@ def streaming(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y'):
   param['ishevc']=ishevc
   param['lastplayid']='none'
   url="%s/streaming?%s"%(config['base_url'],py_urllib.urlencode(param))
+  if return_url:
+   return url
   response=session.get(url,headers=config['headers'],proxies=get_proxies())
   data=response.json()
   if response.status_code==200:

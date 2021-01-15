@@ -235,12 +235,7 @@ class EntityShow(object):
    self.log+='1-2. Daum에 에피소드 정보 없음\n'
    logger.debug(' - 다음 회차 정보 없음')
    if True and self.filename_no!=-1:
-    if self.except_genre_remove_epi_number is not None and('all' in self.except_genre_remove_epi_number or self.daum_info.genre in self.except_genre_remove_epi_number):
-     self.log+=' 1-2-1. 파일명에 회차는 있지만 Daum에 정보가 없어서 회차정보 삭제. 삭제 제외 장르\n'
-    else:
-     self.log+=' 1-2-1. 파일명에 회차는 있지만 Daum에 정보가 없어서 회차정보 삭제\n'
-     self.filename_no=-1 
-     flag_need_rename=True
+    pass
    else:
     self.log+='1-2-2. 파일명과 Daum 모두 회차 정보 없음\n'
   if flag_need_rename:

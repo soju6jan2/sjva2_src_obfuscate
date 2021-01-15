@@ -28,6 +28,7 @@ class ToolExpandDiscord(object):
  @classmethod
  def discord_proxy_get_target(cls,image_url):
   try:
+   return
    from framework import py_urllib
    url='{server_plugin_ddns}/server/normal/discord_proxy/get_target?source={source}'.format(server_plugin_ddns=server_plugin_ddns,source=py_urllib.quote_plus(image_url))
    data=requests.get(url).json()
@@ -39,6 +40,7 @@ class ToolExpandDiscord(object):
  @classmethod
  def discord_proxy_set_target(cls,source,target):
   try:
+   return
    if source is None or target is None:
     return False
    if requests.get(target).status_code!=200:
@@ -90,4 +92,65 @@ class ToolExpandDiscord(object):
     return cls.discord_proxy_image(image_url,webhook_url=None,retry=False)
    else:
     return image_url
+ @classmethod
+ def discord_proxy_image_localfile(cls,filepath,retry=True):
+  data=None
+  webhook_url= cls.webhook_list[random.randint(0,9)] 
+  try:
+   from discord_webhook import DiscordWebhook,DiscordEmbed
+   webhook=DiscordWebhook(url=webhook_url,content='')
+   import io
+   with open(filepath,'rb')as fh:
+    byteio=io.BytesIO(fh.read())
+   webhook.add_file(file=byteio.getvalue(),filename='image.jpg')
+   embed=DiscordEmbed()
+   embed.set_image(url="attachment://image.jpg")
+   response=webhook.execute()
+   data=None
+   if type(response)==type([]):
+    if len(response)>0:
+     data=response[0].json()
+   else:
+    data=response.json() 
+   if data is not None and 'attachments' in data:
+    target=data['attachments'][0]['url']
+    if requests.get(target).status_code==200:
+     return target
+  except Exception as exception:
+   logger.error('Exception:%s',exception)
+   logger.error(traceback.format_exc())
+   if retry:
+    time.sleep(1)
+    return cls.discord_proxy_image_localfile(filepath,retry=False)
+ @classmethod 
+ def discord_cdn(cls,byteio=None,filepath=None,filename=None,webhook_url=None,content='',retry=True):
+  data=None
+  if webhook_url is None:
+   webhook_url= cls.webhook_list[random.randint(0,9)] 
+  try:
+   from discord_webhook import DiscordWebhook,DiscordEmbed
+   webhook=DiscordWebhook(url=webhook_url,content=content)
+   if byteio is None and filepath is not None:
+    import io
+    with open(filepath,'rb')as fh:
+     byteio=io.BytesIO(fh.read())
+   webhook.add_file(file=byteio.getvalue(),filename=filename)
+   embed=DiscordEmbed()
+   response=webhook.execute()
+   data=None
+   if type(response)==type([]):
+    if len(response)>0:
+     data=response[0].json()
+   else:
+    data=response.json() 
+   if data is not None and 'attachments' in data:
+    target=data['attachments'][0]['url']
+    if requests.get(target).status_code==200:
+     return target
+  except Exception as exception:
+   logger.error('Exception:%s',exception)
+   logger.error(traceback.format_exc())
+   if retry:
+    time.sleep(1)
+    return cls.discord_proxy_image_localfile(filepath,retry=False)
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

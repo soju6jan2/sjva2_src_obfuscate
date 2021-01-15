@@ -14,7 +14,7 @@ class ProcessAV(object):
     tmp=FileProcess.change_filename_censored(filename)
     if tmp is not None:
      arg=os.path.splitext(tmp)[0].split('cd')[0]
-     data=FileProcess.test_dmm(arg)
+     data=FileProcess.test_dmm(arg,use_discord_proxy=False)
      if data and 'update' in data:
       ret={'type':'dmm','data':data}
       return ret
