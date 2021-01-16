@@ -158,7 +158,7 @@ class Logic(object):
   try:
    server_url=req.form['server_url']
    server_token=req.form['server_token']
-   url='%s/:/plugins/com.plexapp.agents.sj_daum/function/version?X-Plex-Token=%s'%(server_url,server_token)
+   url='%s/:/plugins/com.plexapp.agents.sjva_agent/function/version?X-Plex-Token=%s'%(server_url,server_token)
    logger.debug(url)
    page=requests.get(url)
    return page.text
