@@ -1,4 +1,4 @@
-version='0.2.18.14'
+version='0.2.18.17'
 import os
 import sys
 path_app_root=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -51,6 +51,17 @@ try:
  db=SQLAlchemy(app,session_options={"autoflush":False})
  scheduler=Scheduler()
  socketio=SocketIO(app,cors_allowed_origins="*")
+ try:
+  try:
+   from flask_cors import CORS
+  except:
+   os.system("{} install flask-cors".format(app.config['config']['pip']))
+   from flask_cors import CORS
+  CORS(app)
+ except Exception as exception:
+  logger.error('CORS(app)!!!')
+  logger.error('Exception:%s',exception)
+  logger.error(traceback.format_exc())
  login_manager=LoginManager()
  login_manager.init_app(app)
  login_manager.login_view="login"
