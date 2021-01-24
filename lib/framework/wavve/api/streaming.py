@@ -65,6 +65,7 @@ def streaming(contenttype,contentid,quality,action='hls',ishevc='y',isabr='y',re
   param['lastplayid']='none'
   url="%s/streaming?%s"%(config['base_url'],py_urllib.urlencode(param))
   if return_url:
+   logger.debug(url)
    return url
   response=session.get(url,headers=config['headers'],proxies=get_proxies())
   data=response.json()
@@ -144,7 +145,7 @@ def get_prefer_url(url):
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
  return url
-def streaming2(contenttype,contentid,quality,action='dash',ishevc='n',isabr='y'):
+def streaming2(contenttype,contentid,quality,action='dash',ishevc='n',isabr='y',return_url=False):
  if quality=='FHD':
   quality='1080p'
  elif quality=='HD':
@@ -174,6 +175,8 @@ def streaming2(contenttype,contentid,quality,action='dash',ishevc='n',isabr='y')
   param['ishevc']=ishevc
   param['lastplayid']='none'
   url="%s/streaming?%s"%(config['base_url'],py_urllib.urlencode(param))
+  if return_url:
+   return url
   response=session.get(url,headers=config['headers'],proxies=get_proxies())
   data=response.json()
   if response.status_code==200:
@@ -192,6 +195,19 @@ def streaming2(contenttype,contentid,quality,action='dash',ishevc='n',isabr='y')
   else:
    if 'resultcode' in data:
     pass
+ except Exception as exception:
+  logger.error('Exception:%s',exception)
+  logger.error(traceback.format_exc())
+def getpermissionforcontent(contentid,contenttype='movie'):
+ try:
+  param=get_baseparameter()
+  param['contentid']=contentid
+  param['contenttype']=contenttype
+  param['credential']=SystemModelSetting.get('site_wavve_credential')
+  url="%s/getpermissionforcontent?%s"%(config['base_url'],py_urllib.urlencode(param))
+  response=session.get(url,headers=config['headers'])
+  data=response.json()
+  return data
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())

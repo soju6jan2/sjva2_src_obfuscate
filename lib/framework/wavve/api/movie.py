@@ -1,6 +1,6 @@
 import traceback
 import json
-from framework import py_urllib
+from framework import py_urllib,SystemModelSetting
 from framework.wavve.api import session,get_baseparameter,config,logger
 def movie_contents_movieid(movie_id):
  try:

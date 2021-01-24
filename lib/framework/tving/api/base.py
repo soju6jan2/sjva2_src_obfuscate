@@ -302,7 +302,6 @@ def get_program_programid(programid):
   url='https://api.tving.com/v2/media/program/%s?pageNo=1&pageSize=10&order=name'%programid
   url+=config['default_param']
   res=requests.get(url)
-  logger.debug(url)
   return res.json()
  except Exception as exception:
   logger.error('Exception:%s',exception)

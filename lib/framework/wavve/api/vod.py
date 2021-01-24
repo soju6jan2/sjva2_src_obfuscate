@@ -213,8 +213,23 @@ def search(keyword,search_type='all'):
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc()) 
+def search2(keyword,type_name):
+ try:
+  url='https://apis.wavve.com/cf/search/band.js?type=%s&keyword=%s&offset=0&limit=20&orderby=score&isplayymovie=y&apikey=E5F3E0D30947AA5440556471321BB6D9&&device=pc&drm=wm&partner=pooq&pooqzone=none&region=kor&targetage=all'%(type_name,py_urllib.quote(str(keyword)))
+  response=session.get(url,headers=config['headers'])
+  data=response.json()
+  if response.status_code==200:
+   if 'celllist' in data['band']:
+    return data['band']['celllist']
+  else:
+   if 'resultcode' in data:
+    logger.debug(data['resultmessage'])
+ except Exception as exception:
+  logger.error('Exception:%s',exception)
+  logger.error(traceback.format_exc()) 
 def search_tv(keyword):
  try:
+  return search2(keyword,'program')
   url='https://apis.wavve.com/cf/search/band.js?type=program&keyword=%s&offset=0&limit=20&orderby=score&isplayymovie=y&apikey=E5F3E0D30947AA5440556471321BB6D9&&device=pc&drm=wm&partner=pooq&pooqzone=none&region=kor&targetage=all'%(py_urllib.quote(str(keyword)))
   response=session.get(url,headers=config['headers'])
   data=response.json()
@@ -228,5 +243,18 @@ def search_tv(keyword):
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc()) 
 def search_movie(keyword):
- return search(keyword,search_type='moviekeywordlist')
+ try:
+  url='https://apis.wavve.com/cf/search/list.js?keyword=%s&limit=20&offset=0&orderby=score&type=movie'%(py_urllib.quote(str(keyword)))
+  response=session.get(url,headers=config['headers'])
+  data=response.json()
+  if response.status_code==200:
+   if 'celllist' in data['cell_toplist']:
+    return data['cell_toplist']['celllist']
+  else:
+   if 'resultcode' in data:
+    logger.debug(data['resultmessage'])
+ except Exception as exception:
+  logger.error('Exception:%s',exception)
+  logger.error(traceback.format_exc()) 
+ return search2(keyword,'all')
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

@@ -21,13 +21,18 @@ def get_stream_info_by_web(content_type,media_code,quality):
    url='https://www.tving.com/streaming/info'
    res=requests.post(url,data=data,headers=headers,cookies=cookies,proxies=get_proxies())
    data=res.json()
+   logger.debug(json.dumps(data,indent=4))
    ret={}
-   ret['uri']=data['stream']['broadcast']['widevine']['broad_url']
-   ret['drm_scheme']='widevine'
-   ret['drm_license_uri']='http://cj.drmkeyserver.com/widevine_license'
-   ret['drm_key_request_properties']={'origin':'https://www.tving.com','sec-fetch-site':'cross-site','sec-fetch-mode':'cors','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36','Host':'cj.drmkeyserver.com','referer':'https://www.tving.com/','AcquireLicenseAssertion':data['stream']['drm_license_assertion'],}
-   data['play_info']=ret
-   return data
+   if 'widevine' in data['stream']['broadcast']:
+    ret['uri']=data['stream']['broadcast']['widevine']['broad_url']
+    ret['drm_scheme']='widevine'
+    ret['drm_license_uri']='http://cj.drmkeyserver.com/widevine_license'
+    ret['drm_key_request_properties']={'origin':'https://www.tving.com','sec-fetch-site':'cross-site','sec-fetch-mode':'cors','user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36','Host':'cj.drmkeyserver.com','referer':'https://www.tving.com/','AcquireLicenseAssertion':data['stream']['drm_license_assertion'],}
+    data['play_info']=ret
+    return data
+   else:
+    data['play_info']={'hls':data['stream']['broadcast']['broad_url']}
+    return data
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
