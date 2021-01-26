@@ -341,8 +341,8 @@ def get_movie_json2(code,quality='stream50'):
   headers['Cookie']=SystemModelSetting.get('site_tving_token')
   r=session.get(url,headers=headers,proxies=get_proxies())
   data=r.json()
-  return data
   logger.debug(url)
+  return data
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
@@ -381,7 +381,7 @@ def get_device_list(token):
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
-def search_tv(keyword):
+def search(keyword):
  try:
   url='https://search.tving.com/search/common/module/getAkc.jsp?kwd='+py_urllib.quote(str(keyword))
   data=requests.get(url).json()
