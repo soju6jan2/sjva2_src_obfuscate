@@ -136,11 +136,16 @@ def get_filename(data,quality):
    tmp=data["episodenumber"]
    episodeno=''
    if len(tmp):
-    if tmp=='특집':
-     episodeno='.특집'
+    if tmp==u'특집':
+     episodeno=u'.특집'
     else:
      tmps=tmp.split('-')
-     episodeno='.E0%s'%tmps[0]if len(tmps[0])==1 else '.E%s'%tmps[0]
+     if len(tmps[0])<6:
+      try:
+       is_number=int(tmps[0])
+       episodeno='.E0%s'%tmps[0]if len(tmps[0])==1 else '.E%s'%tmps[0]
+      except:
+       episodeno=u'.%s'%tmps[0]
    airdate=data["releasedate"].replace('-','')[2:]
    release="SW"
    if data['type']=='onair':

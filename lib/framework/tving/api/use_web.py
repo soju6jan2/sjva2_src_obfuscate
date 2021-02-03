@@ -21,7 +21,6 @@ def get_stream_info_by_web(content_type,media_code,quality):
    url='https://www.tving.com/streaming/info'
    res=requests.post(url,data=data,headers=headers,cookies=cookies,proxies=get_proxies())
    data=res.json()
-   logger.debug(json.dumps(data,indent=4))
    ret={}
    if 'widevine' in data['stream']['broadcast']:
     ret['uri']=data['stream']['broadcast']['widevine']['broad_url']

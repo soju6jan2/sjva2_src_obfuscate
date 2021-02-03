@@ -135,10 +135,7 @@ class ToolExpandFileProcess(object):
     if match.group('part_no')is not None:
      part='cd%s'%match.group('part_no')
     elif match.group('part_char')is not None:
-     if app.config['config']['is_py2']:
-      part='cd%s'%(ord(match.group('part_char').lower())-ord('a')+1)
-     else:
-      part='cd%s'%(match.group('part_char').lower()-'a'+1)
+     part='cd%s'%(ord(match.group('part_char').lower())-ord('a')+1)
     if part is None:
      ret='%s-%s.%s'%(match.group('name').lower(),match.group('no'),match.group('ext'))
     else:
