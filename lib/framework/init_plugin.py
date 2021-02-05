@@ -60,7 +60,7 @@ def plugin_init():
       for t in tmps:
        if not t.startswith('_'):
         add_plugin_list.append(t)
-        if app.config['config']['level']<=4:
+        if app.config['config']['level']<4:
          break
       plugins=plugins+add_plugin_list
       pass_include=pass_include+add_plugin_list
