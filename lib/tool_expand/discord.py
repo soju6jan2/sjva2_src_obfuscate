@@ -5,7 +5,7 @@ import requests
 from discord_webhook import DiscordWebhook,DiscordEmbed
 from framework import app
 from.import logger
-server_plugin_ddns='https://sjva-server2.soju6jan.com'
+server_plugin_ddns='https://meta.sjva.me'
 class ToolExpandDiscord(object):
  @classmethod
  def send_discord_message(cls,text,image_url=None,webhook_url=None):
