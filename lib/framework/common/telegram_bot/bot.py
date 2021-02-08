@@ -27,7 +27,7 @@ class TelegramBot(object):
     TelegramBot.message_loop.run_as_thread()
     ToolBaseNotify.send_message('텔레그램 메시지 수신을 시작합니다. %s'%(datetime.datetime.now()))
     TelegramBot.SUPER_BOT=Bot(TelegramBot.SUPER_TOKEN)
-    if SystemModelSetting.get('ddns')=='https://sjva-server.soju6jan.com':
+    if SystemModelSetting.get('ddns')=='https://server.sjva.me':
      MessageLoop(TelegramBot.SUPER_BOT,TelegramBot.super_receive_callback).run_as_thread()
      pass
     while TelegramBot.message_loop is not None:

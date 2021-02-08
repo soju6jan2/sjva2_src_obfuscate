@@ -1,4 +1,4 @@
-version='0.2.18.32'
+version='0.2.18.33'
 import os
 import sys
 path_app_root=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -107,7 +107,7 @@ try:
   sys.exit()
  app.register_blueprint(system.blueprint)
  try:
-  if SystemModelSetting.get('ddns').find('sjva-server.soju6jan.com')!=-1:
+  if SystemModelSetting.get('ddns').find('server.sjva.me')!=-1:
    app.config['config']['is_sjva_server']=True
    app.config['config']['is_server']=True
    app.config['config']['is_admin']=True

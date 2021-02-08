@@ -11,7 +11,7 @@ from.process_av import ProcessAV
 class TorrentProcess:
  @staticmethod
  def is_broadcast_member():
-  if SystemModelSetting.get('ddns').find('https://sjva-server.soju6jan.com')!=-1:
+  if SystemModelSetting.get('ddns').find('https://server.sjva.me')!=-1:
    return True
   return False
  @staticmethod

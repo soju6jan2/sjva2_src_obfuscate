@@ -86,8 +86,8 @@ class SystemLogic(object):
  def get_recent_version():
   try:
    import requests
-   url='https://sjva-server.soju6jan.com/version'
-   if ModelSetting.get('ddns')=='https://sjva-server.soju6jan.com':
+   url='https://server.sjva.me/version'
+   if ModelSetting.get('ddns')=='https://server.sjva.me':
     url='https://sjva-dev.soju6jan.com/version'
    SystemLogic.recent_version=requests.get(url).text
    return True
