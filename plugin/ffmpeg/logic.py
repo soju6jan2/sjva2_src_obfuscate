@@ -45,8 +45,7 @@ class Status(enum.Enum):
   tmp=[Status.READY,Status.WRONG_URL,Status.WRONG_DIRECTORY,Status.EXCEPTION,Status.ERROR,Status.DOWNLOADING,Status.USER_STOP,Status.COMPLETED,Status.TIME_OVER,Status.PF_STOP,Status.FORCE_STOP,Status.HTTP_FORBIDDEN,Status.ALREADY_DOWNLOADING]
   return tmp[value]
 class Logic(object):
- db_default={'temp_path':os.path.join(path_data,'download_tmp'),'save_path':os.path.join(path_data,'download'),'max_pf_count':'0','if_fail_remove_tmp_file':'True','timeout_minute':'60',}
- path_ffmpeg=None
+ db_default={'temp_path':os.path.join(path_data,'download_tmp'),'save_path':os.path.join(path_data,'download'),'max_pf_count':'0','if_fail_remove_tmp_file':'True','timeout_minute':'60','ffmpeg_path':'ffmpeg',}
  @staticmethod
  def db_init():
   try:
@@ -61,11 +60,6 @@ class Logic(object):
  def plugin_load():
   try:
    Logic.db_init()
-   Logic.path_ffmpeg=os.path.join(path_app_root,'bin',platform.system(),'ffmpeg')
-   if platform.system()=='Windows':
-    Logic.path_ffmpeg+='.exe'
-   else:
-    Logic.path_ffmpeg='ffmpeg'
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
@@ -74,26 +68,6 @@ class Logic(object):
   try:
    from ffmpeg.interface_program_ffmpeg import Ffmpeg
    Ffmpeg.plugin_unload()
-  except Exception as exception:
-   logger.error('Exception:%s',exception)
-   logger.error(traceback.format_exc())
- @staticmethod
- def setting_save(req):
-  try:
-   for key,value in req.form.items():
-    logger.debug('Key:%s Value:%s',key,value)
-    entity=db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
-    entity.value=value
-   db.session.commit()
-   return True 
-  except Exception as exception:
-   logger.error('Exception:%s',exception)
-   logger.error(traceback.format_exc())
-   return False
- @staticmethod
- def get_setting_value(key):
-  try:
-   return db.session.query(ModelSetting).filter_by(key=key).first().value
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())

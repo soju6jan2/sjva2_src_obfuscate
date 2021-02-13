@@ -28,18 +28,16 @@ def home():
 @blueprint.route('/<sub>')
 @login_required
 def detail(sub):
+ arg=ModelSetting.to_dict()
  if sub=='setting':
-  setting_list=db.session.query(ModelSetting).all()
-  arg=Util.db_list_to_dict(setting_list)
-  arg['ffmpeg_path']=Logic.path_ffmpeg
-  return render_template('plugin_ffmpeg.html',sub=sub,arg=arg)
+  return render_template('{package_name}_{sub}.html'.format(package_name=package_name,sub=sub),arg=arg)
  elif sub=='download':
   now=str(datetime.now(timezone('Asia/Seoul'))).replace(':','').replace('-','').replace(' ','-')
-  return render_template('plugin_ffmpeg.html',sub=sub,arg=('%s'%now).split('.')[0]+'.mp4')
+  arg['temp_filename']=('%s'%now).split('.')[0]+'.mp4'
+  return render_template('{package_name}_{sub}.html'.format(package_name=package_name,sub=sub),arg=arg)
  elif sub=='list':
-  return render_template('plugin_ffmpeg_list2.html')
+  return render_template('{package_name}_{sub}.html'.format(package_name=package_name,sub=sub),arg=arg)
  elif sub=='log':
-  logger.debug(package_name)
   return render_template('log.html',package=package_name)
  return render_template('sample.html',title='%s - %s'%(package_name,sub))
 @blueprint.route('/ajax/<sub>',methods=['GET','POST'])
@@ -47,12 +45,8 @@ def detail(sub):
 def ajax(sub):
  try: 
   if sub=='setting_save':
-   try:
-    ret=Logic.setting_save(request)
-    return jsonify(ret)
-   except Exception as exception:
-    logger.error('Exception:%s',exception)
-    logger.error(traceback.format_exc())
+   ret=ModelSetting.setting_save(request)
+   return jsonify(ret)
   elif sub=='ffmpeg_version':
    ret=Ffmpeg.get_version()
    return jsonify(ret)
@@ -91,14 +85,14 @@ def api(sub):
  if sub=='download':
   ret={}
   try:
-   max_pf_count=Logic.get_setting_value('max_pf_count')
+   max_pf_count=ModelSetting.get('max_pf_count')
    url=request.args.get('url')
    filename=request.args.get('filename')
    caller_id=request.args.get('id')
    package_name=request.args.get('caller')
    save_path=request.args.get('save_path')
    if save_path is None:
-    save_path=Logic.get_setting_value('save_path')
+    save_path=ModelSetting.get('save_path')
    else:
     if not os.path.exists(save_path):
      os.makedirs(save_path) 

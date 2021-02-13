@@ -97,7 +97,7 @@ class Ffmpeg(object):
     logger.error(traceback.format_exc())
    if self.proxy is None:
     if self.headers is None:
-     command=[Logic.path_ffmpeg,'-y','-i',self.url,'-c','copy','-bsf:a','aac_adtstoasc','-metadata','network=%s'%user]
+     command=[ModelSetting.get('ffmpeg_path'),'-y','-i',self.url,'-c','copy','-bsf:a','aac_adtstoasc','-metadata','network=%s'%user]
     else:
      headers_command=[]
      for key,value in self.headers.items():
@@ -108,9 +108,9 @@ class Ffmpeg(object):
       else:
        headers_command.append('-headers')
        headers_command.append('\'%s:%s\''%(key,value))
-     command=[Logic.path_ffmpeg,'-y']+headers_command+['-i',self.url,'-c','copy','-bsf:a','aac_adtstoasc','-metadata','network=%s'%user]
+     command=[ModelSetting.get('ffmpeg_path'),'-y']+headers_command+['-i',self.url,'-c','copy','-bsf:a','aac_adtstoasc','-metadata','network=%s'%user]
    else:
-    command=[Logic.path_ffmpeg,'-y','-http_proxy',self.proxy,'-i',self.url,'-c','copy','-bsf:a','aac_adtstoasc','-metadata','network=%s'%user]
+    command=[ModelSetting.get('ffmpeg_path'),'-y','-http_proxy',self.proxy,'-i',self.url,'-c','copy','-bsf:a','aac_adtstoasc','-metadata','network=%s'%user]
    if platform.system()=='Windows':
     now=str(datetime.now()).replace(':','').replace('-','').replace(' ','-')
     filename=('%s'%now)+'.mp4'
@@ -262,7 +262,7 @@ class Ffmpeg(object):
  @staticmethod
  def get_version():
   try:
-   command=u'%s -version'%(Logic.path_ffmpeg)
+   command=u'%s -version'%(ModelSetting.get('ffmpeg_path'))
    command=command.split(' ')
    if app.config['config']['is_py2']:
     process=subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,universal_newlines=True,bufsize=1)

@@ -123,4 +123,21 @@ def get_ip():
   user_ip=headers_list[0]if headers_list else request.remote_addr
   logger.debug('IIIIIIIIIIIIIIIIIIPPPPPPPPPPPPPPPPPP : %s',user_ip)
   return jsonify(user_ip)
+@app.route('/global/ajax/<sub>',methods=['GET','POST'])
+@login_required
+def global_ajax(sub):
+ logger.debug('1111111111111111111111111111111')
+ if sub=='listdir':
+  if 'path' in request.form:
+   if os.path.isfile(request.form['path']):
+    return jsonify('')
+   if 'only_dir' in request.form and request.form['only_dir'].lower()=='true':
+    result_list=[name for name in os.listdir(request.form['path'])if os.path.isdir(os.path.join(request.form['path'],name))]
+   else:
+    result_list=os.listdir(request.form['path'])
+   result_list.sort()
+   result_list=['..']+result_list
+   return jsonify(result_list)
+  else:
+   return jsonify(None) 
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
