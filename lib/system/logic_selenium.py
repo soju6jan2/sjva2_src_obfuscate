@@ -54,6 +54,12 @@ class SystemLogicSelenium(object):
     driver=SystemLogicSelenium.get_driver()
     data=driver.get_cookies()
     return jsonify(data)
+   elif sub=='daum_capcha':
+    daum_capcha=req.form['daum_capcha']
+    driver=SystemLogicSelenium.get_driver()
+    driver.find_element_by_xpath('//input[@id="answer"]').send_keys(daum_capcha)
+    driver.find_element_by_xpath('//input[@value="%s"]'%u'확인').click()
+    return jsonify({'ret':'success'})
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())

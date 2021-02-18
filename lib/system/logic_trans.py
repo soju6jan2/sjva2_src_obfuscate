@@ -1,4 +1,4 @@
-import os
+import os,sys
 import traceback
 import json
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify
@@ -84,7 +84,10 @@ class SystemLogicTrans(object):
     requesturl.add_header("X-Naver-Client-Id",client_id)
     requesturl.add_header("X-Naver-Client-Secret",client_secret)
     response=py_urllib2.urlopen(requesturl,data=data.encode("utf-8"))
-    data=json.load(response,encoding="utf-8")
+    if sys.version_info[0]==2:
+     data=json.load(response,encoding='utf8')
+    else:
+     data=json.load(response)
     rescode=response.getcode()
     if rescode==200:
      return data['message']['result']['translatedText']
@@ -110,7 +113,10 @@ class SystemLogicTrans(object):
     requesturl.add_header("X-Naver-Client-Id",client_id)
     requesturl.add_header("X-Naver-Client-Secret",client_secret)
     response=py_urllib2.urlopen(requesturl)
-    data=json.load(response,encoding="utf-8")
+    if sys.version_info[0]==2:
+     data=json.load(response,encoding='utf8')
+    else:
+     data=json.load(response)
     rescode=response.getcode()
     logger.debug(data)
     if rescode==200:
@@ -132,7 +138,10 @@ class SystemLogicTrans(object):
    requesturl=py_urllib2.Request(url)
    requesturl.add_header("X-HTTP-Method-Override","GET")
    response=py_urllib2.urlopen(requesturl,data=data.encode("utf-8"))
-   data=json.load(response,encoding="utf-8")
+   if sys.version_info[0]==2:
+    data=json.load(response,encoding='utf8')
+   else:
+    data=json.load(response)
    rescode=response.getcode()
    if rescode==200:
     return data['data']['translations'][0]['translatedText']

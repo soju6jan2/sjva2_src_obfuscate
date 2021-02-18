@@ -25,6 +25,27 @@
     - 컬렉션 옵션 추가
 
 
+##### ■ 0.2.18.38 (2021-02-18) #####
+  - 토렌트 자료는 릴레이 공유 방식으로 변경완료 [(매뉴얼)](https://sjva.me/wiki/서비스/구글_드라이브_공유)<br>
+    - 예전 방식은 이제 불가능하여 게시판 글 일괄 삭제<br>
+  - python3 json.load 명령 버그 수정[(관련글)](https://sjva.me/bbs/board.php?bo_table=tip&wr_id=4681)<br>
+
+##### ■ 0.2.18.36 (2021-02-17) #####
+  - hdhomerun 옵션 추가 [(관련글)](https://sjva.me/bbs/board.php?bo_table=tip&wr_id=4681)<br>
+    방송 url은 db에 저장되어 있기 때문에 바뀐 옵션을 적용하려면 IP 변경 버튼을 클릭해야 함<br>
+  ![](https://cdn.discordapp.com/attachments/631112094015815681/811573818975453216/unknown.png)<br>
+
+
+##### ■ 0.2.18.35 (2021-02-15) #####
+  - 설정 - selenium에서 Daum 캡챠 전달하여 차단 푸는 방법 추가 by <span style="font-weight:bold; color:brown">이치로<span>
+
+    - selenium 테스트에서 'https://search.daum.net/search?w=tot&DA=YZR&t__nil_searchbox=btn&sug=&sugo=&sq=&o=&q=비밀의 숲' Go
+    - 화면표시 클릭 => 캡챠 확인 => 다음 캡챠항목에 값 입력 => 캡챠풀기 클릭.
+    - 검색이 잘 되는지 확인 후 쿠키정보에서 Tiara 값을 읽어 Site-Daum 설정에 입력
+    
+    ![](https://cdn.discordapp.com/attachments/631112094015815681/810779425674100736/unknown.png)<br>
+
+
 ##### ■ 0.2.18.34 (2021-02-13) #####
   - Global UI - 로컬 파일, 폴더 선택 팝업창 추가 by <span style="font-weight:bold; color:brown">떡잎<span><br>
   - 로그인시 다음 페이지가 Restart일 경우 다시 재시작하는 문제 수정 <span style="font-weight:bold; color:brown">떡잎<span><br>

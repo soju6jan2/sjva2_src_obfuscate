@@ -1,4 +1,4 @@
-import traceback
+import sys,traceback
 import json
 from framework import py_urllib,py_urllib2
 from framework.wavve.api import session,get_baseparameter,config,logger
@@ -50,7 +50,10 @@ def get_live_quality_list(source_id):
   url='%s?%s'%(url,py_urllib.urlencode(params))
   request=py_urllib2.Request(url)
   response=py_urllib2.urlopen(request)
-  data=json.load(response,encoding='utf8')
+  if sys.version_info[0]==2:
+   data=json.load(response,encoding='utf8')
+  else:
+   data=json.load(response)
   result=data['result']['qualityList'][0]['quality']
   return result
  except Exception as exception:

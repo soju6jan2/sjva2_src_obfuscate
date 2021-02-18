@@ -62,8 +62,11 @@ def get_episode_json_default(episode_code,quality):
   r=session.get(url,headers=headers,proxies=get_proxies())
   data=r.json()
   logger.debug(url)
+  logger.debug(json.dumps(data,indent=4))
+  logger.debug('json message : %s',data['body']['result']['message'])
   url=data['body']['stream']['broadcast']['broad_url']
   decrypted_url=decrypt(episode_code,ts,url)
+  logger.debug(decrypted_url)
   if decrypted_url.find('m3u8')==-1:
    decrypted_url=decrypted_url.replace('rtmp','http')
    decrypted_url=decrypted_url.replace('?','/playlist.m3u8?')
@@ -71,12 +74,14 @@ def get_episode_json_default(episode_code,quality):
    tmps=decrypted_url.split('playlist.m3u8')
    r=session.get(decrypted_url,headers=headers,proxies=get_proxies())
    lines=r.text.split('\n')
+   logger.debug(lines)
    i=-1
    last=''
    while len(last)==0:
     last=lines[i].strip()
     i-=1
    decrypted_url='%s%s'%(tmps[0],last)
+  logger.debug('last decrypted_url : %s',decrypted_url)
   return data,decrypted_url
  except Exception as exception:
   logger.error('Exception:%s',exception)
