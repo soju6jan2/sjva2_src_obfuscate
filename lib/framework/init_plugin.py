@@ -21,7 +21,7 @@ def plugin_init():
   plugin_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),'plugin')
   sys.path.insert(0,plugin_path)
   try:
-   from system.model import ModelSetting as SystemModelSetting
+   from.import SystemModelSetting
    plugins=['command']
    for plugin in os.listdir(plugin_path):
     if SystemModelSetting.get_bool('use_plugin_{}'.format(plugin)):
@@ -30,50 +30,43 @@ def plugin_init():
    plugins=os.listdir(plugin_path)
   pass_include=[]
   except_plugin_list=[]
-  if app.config['config']['run_by_migration']==False:
-   if app.config['config']['server']or app.config['config']['is_debug']:
-    server_plugin_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),'server')
+  if app.config['config']['is_server']or app.config['config']['is_debug']:
+   server_plugin_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),'server')
+   if os.path.exists(server_plugin_path):
+    sys.path.insert(0,server_plugin_path)
+    plugins=plugins+os.listdir(server_plugin_path)
+    pass_include=pass_include+os.listdir(server_plugin_path)
+  try:
+   server_plugin_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),'data','custom')
+   sys.path.append(server_plugin_path)
+   tmps=os.listdir(server_plugin_path)
+   add_plugin_list=[]
+   for t in tmps:
+    if not t.startswith('_'):
+     add_plugin_list.append(t)
+   plugins=plugins+add_plugin_list
+   pass_include=pass_include+add_plugin_list
+  except Exception as exception:
+   logger.error('Exception:%s',exception)
+   logger.error(traceback.format_exc())
+  try:
+   server_plugin_path=SystemModelSetting.get('plugin_dev_path')
+   if server_plugin_path!='':
     if os.path.exists(server_plugin_path):
-     sys.path.insert(0,server_plugin_path)
-     plugins=plugins+os.listdir(server_plugin_path)
-     pass_include=pass_include+os.listdir(server_plugin_path)
-   try:
-    server_plugin_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),'data','custom')
-    sys.path.append(server_plugin_path)
-    tmps=os.listdir(server_plugin_path)
-    add_plugin_list=[]
-    for t in tmps:
-     if not t.startswith('_'):
-      add_plugin_list.append(t)
-    plugins=plugins+add_plugin_list
-    pass_include=pass_include+add_plugin_list
-   except Exception as exception:
-    logger.error('Exception:%s',exception)
-    logger.error(traceback.format_exc())
-   try:
-    server_plugin_path=system.SystemLogic.get_setting_value('plugin_dev_path')
-    if server_plugin_path!='':
-     if os.path.exists(server_plugin_path):
-      sys.path.append(server_plugin_path)
-      tmps=os.listdir(server_plugin_path)
-      add_plugin_list=[]
-      for t in tmps:
-       if not t.startswith('_'):
-        add_plugin_list.append(t)
-        if app.config['config']['level']<4:
-         break
-      plugins=plugins+add_plugin_list
-      pass_include=pass_include+add_plugin_list
-   except Exception as exception:
-    logger.error('Exception:%s',exception)
-    logger.error(traceback.format_exc())
-   plugins=sorted(plugins)
-  """
-        try: plugins.remove('epg')
-        except: pass
-        try: plugins.remove('epg_maker')
-        except: pass
-        """  
+     sys.path.append(server_plugin_path)
+     tmps=os.listdir(server_plugin_path)
+     add_plugin_list=[]
+     for t in tmps:
+      if not t.startswith('_'):
+       add_plugin_list.append(t)
+       if app.config['config']['level']<4:
+        break
+     plugins=plugins+add_plugin_list
+     pass_include=pass_include+add_plugin_list
+  except Exception as exception:
+   logger.error('Exception:%s',exception)
+   logger.error(traceback.format_exc())
+  plugins=sorted(plugins)
   for plugin_name in plugins:
    if plugin_name.startswith('_'):
     continue

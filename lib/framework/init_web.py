@@ -33,4 +33,21 @@ def show_menu():
   if request.full_path.find('/login')!=-1:
    return False
  return True
+def jinja_initialize(app):
+ from.menu import get_menu_map,get_plugin_menu
+ app.jinja_env.globals.update(get_menu=get_menu)
+ app.jinja_env.globals.update(get_theme=get_theme)
+ app.jinja_env.globals.update(get_menu_map=get_menu_map)
+ app.jinja_env.globals.update(get_login_status=get_login_status)
+ app.jinja_env.globals.update(get_web_title=get_web_title)
+ app.jinja_env.globals.update(get_plugin_menu=get_plugin_menu)
+ app.jinja_env.globals.update(show_menu=show_menu)
+ app.jinja_env.filters['get_menu']=get_menu
+ app.jinja_env.filters['get_theme']=get_theme
+ app.jinja_env.filters['get_menu_map']=get_menu_map
+ app.jinja_env.filters['get_login_status']=get_login_status
+ app.jinja_env.filters['get_web_title']=get_web_title
+ app.jinja_env.filters['get_plugin_menu']=get_plugin_menu
+ app.jinja_env.filters['show_menu']=show_menu
+ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

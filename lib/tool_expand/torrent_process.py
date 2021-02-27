@@ -1,30 +1,57 @@
+import requests,re,json,time
+import traceback,unicodedata
+from datetime import datetime
 import traceback
 import os
 import json
 import time
 import copy
-from framework import logger
-from system.model import ModelSetting as SystemModelSetting
-from.process_movie import ProcessMovie
-from.process_av import ProcessAV
-class TorrentProcess:
- @staticmethod
- def is_broadcast_member():
+from framework import SystemModelSetting,py_urllib
+from framework.util import Util
+from tool_expand import ToolExpandFileProcess
+from.plugin import P
+logger=P.logger
+class TorrentProcess(object):
+ @classmethod
+ def is_broadcast_member(cls):
   if SystemModelSetting.get('ddns')=='https://server.sjva.me':
    return True
   return False
- @staticmethod
- def server_process(save_list,category=None):
-  if TorrentProcess.is_broadcast_member():
+ @classmethod
+ def receive_new_data(cls,entity,package_name):
+  try:
+   if not cls.is_broadcast_member():
+    return
+   if package_name=='bot_downloader_ktv':
+    cls.append('ktv',entity)
+   elif package_name=='bot_downloader_movie':
+    cls.append('movie',entity)
+   elif package_name=='bot_downloader_av':
+    cls.append('av',entity)
+  except Exception as exception:
+   logger.error('Exception:%s',exception)
+   logger.error(traceback.format_exc())
+ @classmethod
+ def append(cls,type,data):
+  try:
+   import requests
+   import json
+   response=requests.post("https://sjva.me/sjva/torrent_%s.php"%type,data={'data':json.dumps(data.as_dict())})
+  except Exception as exception:
+   logger.error('Exception:%s',exception)
+   logger.error(traceback.format_exc())
+ @classmethod
+ def server_process(cls,save_list,category=None):
+  if cls.is_broadcast_member():
    logger.debug(category)
    if category=='KTV':
-    TorrentProcess.server_process_ktv(save_list)
+    cls.server_process_ktv(save_list)
    elif category=='MOVIE':
-    return TorrentProcess.server_process_movie(save_list)
+    return cls.server_process_movie(save_list)
    elif category=='AV':
-    return TorrentProcess.server_process_av(save_list)
- @staticmethod
- def server_process_ktv(save_list):
+    return cls.server_process_av(save_list,'censored')
+ @classmethod
+ def server_process_ktv(cls,save_list):
   for item in save_list:
    item=item.as_dict()
    if item['torrent_info']is not None:
@@ -35,7 +62,7 @@ class TorrentProcess:
       info['video_count']=0
       info['files_original']=copy.deepcopy(info['files'])
       for f in info['files']:
-       TorrentProcess.analyse_torrent_info_file(f)
+       cls.analyse_torrent_info_file(f)
        if f['type']=='video':
         import ktv
         entity=ktv.EntityShow(f['filename'],by='only_filename')
@@ -78,8 +105,8 @@ class TorrentProcess:
     except Exception as exception:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc()) 
- @staticmethod
- def server_process_movie(save_list):
+ @classmethod
+ def server_process_movie(cls,save_list):
   lists=[]
   for item in save_list:
    item=item.as_dict()
@@ -92,7 +119,7 @@ class TorrentProcess:
    if item['torrent_info']is not None:
     try:
      for info in item['torrent_info']:
-      fileinfo=TorrentProcess.get_max_size_fileinfo(info)
+      fileinfo=cls.get_max_size_fileinfo(info)
       movie=ProcessMovie.get_info_from_rss(fileinfo['filename'])
       torrent_info={}
       torrent_info['name']=info['name']
@@ -140,20 +167,16 @@ class TorrentProcess:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc()) 
   return lists
- @staticmethod
- def server_process_av(save_list):
+ @classmethod
+ def server_process_av(cls,save_list,av_type):
   lists=[]
   for item in save_list:
    item=item.as_dict()
-   av_type=item['board']
-   av_type='censored' if av_type in['NONE','torrent_ymav','censored_tor']else av_type
-   av_type='uncensored' if av_type in['torrent_nmav','uncensored_tor']else av_type
-   av_type='western' if av_type in['torrent_amav','white_tor']else av_type
    if item['torrent_info']is not None:
     try:
      for info in item['torrent_info']:
-      fileinfo=TorrentProcess.get_max_size_fileinfo(info)
-      av=ProcessAV.process(fileinfo['filename'],av_type)
+      fileinfo=cls.get_max_size_fileinfo(info)
+      av=cls.server_process_av2(fileinfo['filename'],av_type)
       if av is None:
        if av_type=='western' and fileinfo['dirname']!='':
         av=ProcessAV.process(fileinfo['dirname'],av_type)
@@ -204,8 +227,8 @@ class TorrentProcess:
      logger.error('Exception:%s',exception)
      logger.error(traceback.format_exc()) 
   return lists
- @staticmethod
- def analyse_torrent_info_file(file_info):
+ @classmethod
+ def analyse_torrent_info_file(cls,file_info):
   try:
    file_info['dirs']=os.path.split(file_info['path'])
    file_info['filename']=os.path.basename(file_info['dirs'][-1])
@@ -220,8 +243,8 @@ class TorrentProcess:
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
- @staticmethod
- def get_max_size_fileinfo(torrent_info):
+ @classmethod
+ def get_max_size_fileinfo(cls,torrent_info):
   try:
    ret={}
    max_size=-1
@@ -243,4 +266,29 @@ class TorrentProcess:
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
+ @classmethod
+ def server_process_av2(filename,av_type):
+  try:
+   if av_type=='censored':
+    tmp=ToolExpandFileProcess.change_filename_censored(filename)
+    from metadata import Logic as MetadataLogic
+    data=MetadataLogic.get_module('jav_censored').search(search_name,all_find=False,do_trans=False)
+    if len(data)>0 and data[0]['score']>95:
+     meta_info=MetadataLogic.get_module('jav_censored').info(data[0]['code'])
+     ret={'type':'dvd','data':meta_info}
+    else:
+     data=MetadataLogic.get_module('jav_censored_ama').search(search_name,all_find=False,do_trans=False)
+     process_no_meta=False
+     if data is not None and len(data)>0 and data[0]['score']>95:
+      meta_info=MetadataLogic.get_module('jav_censored_ama').info(data[0]['code'])
+      if meta_info is not None:
+       ret={'type':'ama','data':meta_info}
+     else:
+      ret={'type':'etc'}
+   else:
+    ret={'type':av_type}
+   return ret
+  except Exception as exception:
+   logger.error('Exxception:%s',exception)
+   logger.error(traceback.format_exc()) 
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

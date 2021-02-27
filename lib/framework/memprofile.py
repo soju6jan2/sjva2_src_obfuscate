@@ -14,8 +14,8 @@ class HeapMon:
    self.enabled=False
   if self.enabled:
    self._h=hpy()
-  self.hsize=0L
-  self.hdiff=0L
+  self.hsize=0
+  self.hdiff=0
  @staticmethod
  def getReadableSize(lv):
   if not isinstance(lv,(int,long)):
