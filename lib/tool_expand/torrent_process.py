@@ -9,8 +9,8 @@ import copy
 from framework import SystemModelSetting,py_urllib
 from framework.util import Util
 from tool_expand import ToolExpandFileProcess
-from.plugin import P
-logger=P.logger
+from framework.logger import get_logger
+logger=get_logger('torrent_process')
 class TorrentProcess(object):
  @classmethod
  def is_broadcast_member(cls):
@@ -107,6 +107,7 @@ class TorrentProcess(object):
      logger.error(traceback.format_exc()) 
  @classmethod
  def server_process_movie(cls,save_list):
+  from framework.common.torrent.process_movie import ProcessMovie
   lists=[]
   for item in save_list:
    item=item.as_dict()
@@ -172,14 +173,14 @@ class TorrentProcess(object):
   lists=[]
   for item in save_list:
    item=item.as_dict()
+   logger.debug(item['title'])
    if item['torrent_info']is not None:
     try:
      for info in item['torrent_info']:
       fileinfo=cls.get_max_size_fileinfo(info)
       av=cls.server_process_av2(fileinfo['filename'],av_type)
-      if av is None:
-       if av_type=='western' and fileinfo['dirname']!='':
-        av=ProcessAV.process(fileinfo['dirname'],av_type)
+      logger.debug(fileinfo)
+      logger.debug(av)
       if av is None:
        logger.debug(u'AV 검색 실패')
        logger.debug(fileinfo['filename'])
@@ -267,24 +268,28 @@ class TorrentProcess(object):
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  @classmethod
- def server_process_av2(filename,av_type):
+ def server_process_av2(cls,filename,av_type):
   try:
+   logger.debug('filename :%s, av_type:%s',filename,av_type)
    if av_type=='censored':
     tmp=ToolExpandFileProcess.change_filename_censored(filename)
+    logger.debug(tmp)
     from metadata import Logic as MetadataLogic
-    data=MetadataLogic.get_module('jav_censored').search(search_name,all_find=False,do_trans=False)
+    data=MetadataLogic.get_module('jav_censored').search(tmp,all_find=False,do_trans=False)
+    logger.debug(data)
     if len(data)>0 and data[0]['score']>95:
      meta_info=MetadataLogic.get_module('jav_censored').info(data[0]['code'])
      ret={'type':'dvd','data':meta_info}
     else:
-     data=MetadataLogic.get_module('jav_censored_ama').search(search_name,all_find=False,do_trans=False)
+     data=MetadataLogic.get_module('jav_censored_ama').search(tmp,all_find=False,do_trans=False)
      process_no_meta=False
+     logger.debug(data)
      if data is not None and len(data)>0 and data[0]['score']>95:
       meta_info=MetadataLogic.get_module('jav_censored_ama').info(data[0]['code'])
       if meta_info is not None:
        ret={'type':'ama','data':meta_info}
      else:
-      ret={'type':'etc'}
+      ret={'type':'etc','data':None}
    else:
     ret={'type':av_type}
    return ret

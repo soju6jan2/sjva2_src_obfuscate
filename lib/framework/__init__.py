@@ -12,7 +12,6 @@ from flask import Flask,redirect,render_template,Response,request,jsonify,send_f
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO,emit 
 from flask_login import LoginManager,login_user,logout_user,current_user,login_required
-from flask_cors import CORS
 from.py_version_func import*
 from framework.class_scheduler import Scheduler
 from framework.logger import get_logger
@@ -38,6 +37,7 @@ try:
  db=SQLAlchemy(app,session_options={"autoflush":False})
  scheduler=Scheduler()
  socketio=SocketIO(app,cors_allowed_origins="*")
+ from flask_cors import CORS
  CORS(app)
  login_manager=LoginManager()
  login_manager.init_app(app)
@@ -91,6 +91,7 @@ except Exception as exception:
  logger.error('Exception:%s',exception)
  logger.error(traceback.format_exc())
 from.init_route import*
+from.util import Util
 try:
  from tool_expand import TorrentProcess
  TorrentProcess.server_process(None,category='None')
