@@ -6,7 +6,7 @@ import os
 import json
 import time
 import copy
-from framework import SystemModelSetting,py_urllib
+from framework import app,SystemModelSetting,py_urllib
 from framework.util import Util
 from tool_expand import ToolExpandFileProcess
 from framework.logger import get_logger
@@ -14,7 +14,7 @@ logger=get_logger('torrent_process')
 class TorrentProcess(object):
  @classmethod
  def is_broadcast_member(cls):
-  if SystemModelSetting.get('ddns')=='https://server.sjva.me':
+  if app.config['config']['is_server']or app.config['config']['is_debug']:
    return True
   return False
  @classmethod
@@ -174,13 +174,30 @@ class TorrentProcess(object):
   for item in save_list:
    item=item.as_dict()
    logger.debug(item['title'])
+   logger.debug(json.dumps(item,indent=4))
+   if item['torrent_info']is None:
+    from torrent_info import Logic as TorrentInfoLogic
+    for m in item['magnet']:
+     logger.debug('Get_torrent_info:%s',m)
+     for i in range(1):
+      tmp=None
+      try:
+       tmp=TorrentInfoLogic.parse_magnet_uri(m,no_cache=True)
+      except:
+       logger.debug('Timeout..')
+      if tmp is not None:
+       break
+     if tmp is not None:
+      if item['torrent_info']is None:
+       item['torrent_info']=[]
+      item['torrent_info'].append(tmp)
    if item['torrent_info']is not None:
     try:
      for info in item['torrent_info']:
       fileinfo=cls.get_max_size_fileinfo(info)
       av=cls.server_process_av2(fileinfo['filename'],av_type)
       logger.debug(fileinfo)
-      logger.debug(av)
+      logger.debug(json.dumps(av,indent=4))
       if av is None:
        logger.debug(u'AV 검색 실패')
        logger.debug(fileinfo['filename'])
@@ -198,16 +215,27 @@ class TorrentProcess(object):
       if av is not None:
        av_info={}
        av_info['meta']=av['type']
-       av_info['code_show']=av['data']['update']['code_show']
-       av_info['title']=av['data']['update']['title_ko']
-       av_info['poster']=av['data']['update']['poster']
-       av_info['genre']=av['data']['update']['genre']
+       av_info['code_show']=av['data']['originaltitle']
+       av_info['title']=av['data']['title']
+       try:
+        av_info['poster']=av['data']['thumb'][1]['value']
+       except:
+        try:
+         av_info['poster']=av['data']['thumb'][0]['value']
+        except:
+         av_info['poster']=None
+       av_info['genre']=av['data']['genre']
+       if av_info['genre']is None:
+        av_info['genre']=[]
        av_info['performer']=[]
-       for t in av['data']['update']['performer']:
-        if t['name_kor']!='':
-         av_info['performer'].append(t['name_kor'])
-       av_info['studio']=av['data']['update']['studio_ko']
-       av_info['date']=av['data']['update']['date']
+       if av['data']['actor']is not None:
+        for actor in av['data']['actor']:
+         av_info['performer'].append(actor['name'])
+       av_info['studio']=av['data']['studio']
+       av_info['date']=av['data']['premiered']
+       av_info['trailer']=''
+       if av['data']['extras']is not None and len(av['data']['extras'])>0:
+        av_info['trailer']=av['data']['extras'][0]['content_url']
       else:
        logger.debug('AV 검색 실패')
        logger.debug(fileinfo['filename'])
@@ -273,7 +301,9 @@ class TorrentProcess(object):
    logger.debug('filename :%s, av_type:%s',filename,av_type)
    if av_type=='censored':
     tmp=ToolExpandFileProcess.change_filename_censored(filename)
-    logger.debug(tmp)
+    logger.debug('TMP1: %s',tmp)
+    tmp=ToolExpandFileProcess.remove_extension(tmp)
+    logger.debug('TMP2: %s',tmp)
     from metadata import Logic as MetadataLogic
     data=MetadataLogic.get_module('jav_censored').search(tmp,all_find=False,do_trans=False)
     logger.debug(data)
@@ -288,8 +318,6 @@ class TorrentProcess(object):
       meta_info=MetadataLogic.get_module('jav_censored_ama').info(data[0]['code'])
       if meta_info is not None:
        ret={'type':'ama','data':meta_info}
-     else:
-      ret={'type':'etc','data':None}
    else:
     ret={'type':av_type}
    return ret

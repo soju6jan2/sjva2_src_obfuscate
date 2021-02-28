@@ -8,6 +8,14 @@ from.import logger
 EXTENSION='mp4|avi|mkv|ts|wmv|m2ts|smi|srt|ass|m4v|flv|asf|mpg|ogm'
 class ToolExpandFileProcess(object):
  @classmethod
+ def remove_extension(cls,filename):
+  ret=filename
+  regex=r'(.*?)\.(?P<ext>%s)$'%EXTENSION
+  match=re.compile(regex).match(filename)
+  if match:
+   ret=filename.replace('.'+match.group('ext'),'')
+  return ret
+ @classmethod
  def remove_small_file_and_move_target(cls,path,size,target=None,except_ext=None,small_move_path=None):
   try:
    if target is None:
