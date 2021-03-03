@@ -62,7 +62,6 @@ def get_episode_json_default(episode_code,quality):
   r=session.get(url,headers=headers,proxies=get_proxies())
   data=r.json()
   logger.debug(url)
-  logger.debug(json.dumps(data,indent=4))
   logger.debug('json message : %s',data['body']['result']['message'])
   url=data['body']['stream']['broadcast']['broad_url']
   decrypted_url=decrypt(episode_code,ts,url)

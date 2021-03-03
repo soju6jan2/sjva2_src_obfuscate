@@ -126,7 +126,7 @@ def get_ip():
 @app.route('/global/ajax/<sub>',methods=['GET','POST'])
 @login_required
 def global_ajax(sub):
- logger.debug('1111111111111111111111111111111')
+ logger.debug('/global/ajax/%s',sub)
  if sub=='listdir':
   if 'path' in request.form:
    if os.path.isfile(request.form['path']):
