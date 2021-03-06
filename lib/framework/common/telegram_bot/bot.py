@@ -10,10 +10,11 @@ from framework.common.telegram_bot import logger
 from framework.common.util import AESCipher
 from system.model import ModelSetting as SystemModelSetting
 from tool_base import ToolBaseNotify
+from tool_base import ToolAESCipher
 class TelegramBot(object):
  bot=None
  message_loop=None
- SUPER_TOKEN='817624975:AAH345UYRGaq3YOAo_VITy6LKaYF0p1O1wc'
+ SUPER_TOKEN=ToolAESCipher.decrypt('EexNViIUHLKxkZpKLzFglJ1yMIfYdzU5Ug2UF2DQNS0OY3HnsV35mNokVsZdw67X0unxHUF8nnWWnxstXeO/LA==')
  SUPER_BOT=None
  SJVA_BOT_CHANNEL_CHAT_ID=['-1001424350090','-1001290967798','-1001428878939','-1001478260118','-1001276582768','-1001287732044','-1001185127926','-1001236433271','-1001241700529','-1001231080344','-1001176084443','-1001338380585','-1001107581425','-1001374760690','-1001195790611','-1001239823262','-1001300536937','-1001417416651','-1001411726438','-1001312832402','-1001473554220','-1001214198736','-1001366983815','-1001202840141']
  @staticmethod

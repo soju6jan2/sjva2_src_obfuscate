@@ -199,18 +199,25 @@ class RcloneTool2(object):
    logger.error(traceback.format_exc())
    emit('에러 : {}'.format(str(e)))
  @staticmethod
- def do_user_download(rclone_path,config_path,folderid,remote_path):
+ def do_user_download(rclone_path,config_path,folderid,remote_path,change_parent_arg=None):
   try:
-   ret={'completed':False,'folderid':'','lsjson':None}
-   source_remote='{gdrive_remote}:{{{folderid}}}'.format(gdrive_remote=remote_path.split(':')[0],folderid=folderid)
-   command=[rclone_path,'--config',config_path,'move',source_remote,remote_path,'--drive-server-side-across-configs=true','-v','--delete-empty-src-dirs','--drive-use-trash=false']
-   return_log=SystemLogicCommand.execute_command_return(command)
-   logger.debug('확인:%s',return_log)
-   if(return_log.find('Transferred')!=-1 and return_log.find('100%')!=-1)or(return_log.find('Checks:')!=-1 and return_log.find('100%')!=-1):
-    RcloneTool2.purge(rclone_path,config_path,source_remote)
-    logger.debug('성공')
+   if change_parent_arg is None:
+    source_remote='{gdrive_remote}:{{{folderid}}}'.format(gdrive_remote=remote_path.split(':')[0],folderid=folderid)
+    command=[rclone_path,'--config',config_path,'move',source_remote,remote_path,'--drive-server-side-across-configs=true','-v','--delete-empty-src-dirs','--drive-use-trash=false']
+    return_log=SystemLogicCommand.execute_command_return(command)
+    logger.debug('확인:%s',return_log)
+    if(return_log.find('Transferred')!=-1 and return_log.find('100%')!=-1)or(return_log.find('Checks:')!=-1 and return_log.find('100%')!=-1):
+     RcloneTool2.purge(rclone_path,config_path,source_remote)
+     logger.debug('성공')
+     return True
+    logger.debug('성공xxxxxxxxxxxxx')
+   else:
+    source_remote='{gdrive_remote}:{{{folderid}}}/{change_parent_arg}'.format(gdrive_remote=remote_path.split(':')[0],folderid=folderid,change_parent_arg=change_parent_arg)
+    command=[rclone_path,'--config',config_path,'backend','chpar',source_remote,remote_path]
+    logger.debug(' '.join(command))
+    return_log=SystemLogicCommand.execute_command_return(command)
+    logger.debug(return_log)
     return True
-   logger.debug('성공xxxxxxxxxxxxx')
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())

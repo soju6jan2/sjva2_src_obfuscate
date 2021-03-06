@@ -21,10 +21,11 @@ from.logic_command2 import SystemLogicCommand2
 from.logic_notify import SystemLogicNotify
 from.logic_telegram_bot import SystemLogicTelegramBot
 from.logic_auth import SystemLogicAuth
+from.logic_tool_crypt import SystemLogicToolDecrypt
 from.logic_env import SystemLogicEnv
 from.logic_site import SystemLogicSite
 blueprint=Blueprint(package_name,package_name,url_prefix='/%s'%package_name,template_folder='templates')
-menu={'main':[package_name,u'설정'],'sub':[['setting',u'일반설정'],['plugin',u'플러그인'],['information',u'정보'],['log',u'로그']],'sub2':{'setting':[['basic',u'기본'],['auth',u'인증'],['env',u'시스템'],['notify',u'알림'],['telegram_bot',u'텔레그램 봇'],['selenium',u'Selenium'],['trans',u'번역'],['site',u'Site'],['memo',u'메모']],'rss':[['setting',u'설정'],['job',u'작업'],['list',u'목록']],'cache':[['setting',u'설정'],['list',u'목록']]},} 
+menu={'main':[package_name,u'설정'],'sub':[['setting',u'일반설정'],['plugin',u'플러그인'],['information',u'정보'],['tool',u'Tool'],['log',u'로그']],'sub2':{'setting':[['basic',u'기본'],['auth',u'인증'],['env',u'시스템'],['notify',u'알림'],['telegram_bot',u'텔레그램 봇'],['selenium',u'Selenium'],['trans',u'번역'],['site',u'Site'],['memo',u'메모']],'rss':[['setting',u'설정'],['job',u'작업'],['list',u'목록']],'cache':[['setting',u'설정'],['list',u'목록']],'tool':[['crypt',u'암호화']],},} 
 def plugin_load():
  logger.debug('plugin_load:%s',package_name)
  SystemLogic.plugin_load()
@@ -49,6 +50,8 @@ def first_menu(sub):
   return render_template('%s_%s.html'%(package_name,sub),arg=None)
  elif sub=='setting':
   return redirect('/%s/%s/basic'%(package_name,sub))
+ elif sub=='tool':
+  return redirect('/%s/%s/crypt'%(package_name,sub))
  elif sub=='plugin':
   arg=ModelSetting.to_dict()
   return render_template('system_plugin.html',arg=arg)
@@ -112,6 +115,11 @@ def second_menu(sub,sub2):
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
    elif sub2=='memo':
     return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
+  elif sub=='tool':
+   arg=ModelSetting.to_dict()
+   arg['sub']=sub2
+   if sub2=='crypt':
+    return render_template('%s_%s_%s.html'%(package_name,sub,sub2),arg=arg)
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
@@ -170,7 +178,9 @@ def second_ajax(sub,sub2):
   elif sub=='env':
    return SystemLogicEnv.process_ajax(sub2,request)
   elif sub=='site':
-   return SystemLogicSite.process_ajax(sub2,request) 
+   return SystemLogicSite.process_ajax(sub2,request)
+  elif sub=='crypt':
+   return SystemLogicToolDecrypt.process_ajax(sub2,request)
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
