@@ -124,7 +124,7 @@ class SystemLogicAuth(object):
    data=requests.post('https://sjva.me/sjva/auth.php',data={'apikey':apikey,'user_id':user_id,'sjva_id':ModelSetting.get('sjva_id')}).json()
    if data['result']=='success':
     ret['ret']=True
-    ret['msg']=u'총 %s개 등록<br>레벨:%s, 포인트:%s'%(data['count'],data['level'],data['point'])
+    ret['msg']=u'총 %s개 등록<br>회원등급:%s, 포인트:%s'%(data['count'],data['level'],data['point'])
     ret['level']=int(data['level'])
     ret['point']=int(data['point'])
     ModelSetting.set('auth_status',SystemLogicAuth.make_auth_status(ret['level'],ret['point']))

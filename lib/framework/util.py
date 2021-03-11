@@ -136,11 +136,11 @@ class Util(object):
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
  @staticmethod
- def makezip(zip_path):
+ def makezip(zip_path,zip_extension='zip'):
   import zipfile
   try:
    if os.path.isdir(zip_path):
-    zipfilename=os.path.join(os.path.dirname(zip_path),'%s.zip'%os.path.basename(zip_path))
+    zipfilename=os.path.join(os.path.dirname(zip_path),'%s.%s'%(os.path.basename(zip_path),zip_extension))
     fantasy_zip=zipfile.ZipFile(zipfilename,'w')
     for f in os.listdir(zip_path):
      src=os.path.join(zip_path,f)

@@ -3,8 +3,8 @@ import traceback
 import json
 import datetime
 import time
-from telepot import Bot,glance
-from telepot.loop import MessageLoop
+from telepot2 import Bot,glance
+from telepot2.loop import MessageLoop
 from framework import app
 from framework.common.telegram_bot import logger
 from framework.common.util import AESCipher
@@ -14,9 +14,11 @@ from tool_base import ToolAESCipher
 class TelegramBot(object):
  bot=None
  message_loop=None
- SUPER_TOKEN=ToolAESCipher.decrypt('EexNViIUHLKxkZpKLzFglJ1yMIfYdzU5Ug2UF2DQNS0OY3HnsV35mNokVsZdw67X0unxHUF8nnWWnxstXeO/LA==')
+ SUPER_TOKEN=ToolAESCipher.decrypt('gyGqcYaMYfKNqutj6uETk2WHdjt3EiltpvCs9aC45upbx/UV1lTfmeH2a9nIDRin/ogO106xDJvpYjhmuDeW3Q==')
+ ADMIN_TOKEN=ToolAESCipher.decrypt('AemiErWy5XT2Q08WAH78qpP0B0NHPGSRiwyANuruFaxGTnTavdtN2QP6ZqV0LUV6Sb0TouMZcyHXAqa5HUFr/w==')
  SUPER_BOT=None
- SJVA_BOT_CHANNEL_CHAT_ID=['-1001424350090','-1001290967798','-1001428878939','-1001478260118','-1001276582768','-1001287732044','-1001185127926','-1001236433271','-1001241700529','-1001231080344','-1001176084443','-1001338380585','-1001107581425','-1001374760690','-1001195790611','-1001239823262','-1001300536937','-1001417416651','-1001411726438','-1001312832402','-1001473554220','-1001214198736','-1001366983815','-1001202840141']
+ ADMIN_BOT=None
+ SJVA_BOT_CHANNEL_CHAT_ID=['-1001424350090','-1001290967798','-1001428878939','-1001478260118','-1001276582768','-1001287732044','-1001185127926','-1001236433271','-1001241700529','-1001231080344','-1001176084443','-1001338380585','-1001107581425','-1001374760690','-1001195790611','-1001239823262','-1001300536937','-1001417416651','-1001411726438','-1001312832402','-1001473554220','-1001214198736','-1001366983815','-1001336003806','-1001229313654','-1001403657137','-1001202840141']
  @staticmethod
  def start(bot_token):
   try:
@@ -29,7 +31,8 @@ class TelegramBot(object):
     ToolBaseNotify.send_message('텔레그램 메시지 수신을 시작합니다. %s'%(datetime.datetime.now()))
     TelegramBot.SUPER_BOT=Bot(TelegramBot.SUPER_TOKEN)
     if SystemModelSetting.get('ddns')=='https://server.sjva.me':
-     MessageLoop(TelegramBot.SUPER_BOT,TelegramBot.super_receive_callback).run_as_thread()
+     TelegramBot.ADMIN_BOT=Bot(TelegramBot.ADMIN_TOKEN)
+     MessageLoop(TelegramBot.ADMIN_BOT,TelegramBot.super_receive_callback).run_as_thread()
      pass
     while TelegramBot.message_loop is not None:
      time.sleep(60*60)
@@ -125,7 +128,7 @@ class TelegramBot(object):
       logger.error('Exception:%s',exception)
       logger.error(traceback.format_exc())
       text='%s님이 봇 채널에 입장해 있지 않은 것 같습니다.\n%s'%(name,'https://t.me/sjva_bot_channel')
-     TelegramBot.SUPER_BOT.sendMessage(chat_id,text)
+     TelegramBot.ADMIN_BOT.sendMessage(chat_id,text)
     elif msg['text'].startswith('/where'):
      try:
       tmp=msg['text'].split(' ')
@@ -141,21 +144,21 @@ class TelegramBot(object):
          if data is not None:
           if data['status']=='administrator':
            logger.debug('getChatMemner result : %s',data)
-           text=json.dumps(data,indent=2)+'\n'+'%s번 방에 있습니다. 32번=%s, 33번=%s'%((idx+1),len(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID)-1,len(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID))
+           text=json.dumps(data,indent=2)+'\n'+'%s번 방에 있습니다. 입장방=%s'%((idx+1),len(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID)-1,len(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID))
            break
         except Exception as exception:
          logger.error('Exception:%s',exception)
          logger.error(traceback.format_exc())
       else:
        text='/where 봇ID(숫자형식) 를 입력하세요.'
-      TelegramBot.SUPER_BOT.sendMessage(chat_id,text)
+      TelegramBot.ADMIN_BOT.sendMessage(chat_id,text)
      except Exception as exception:
       logger.error('Exception:%s',exception)
       logger.error(traceback.format_exc())
-      TelegramBot.SUPER_BOT.sendMessage(chat_id,str(e)) 
+      TelegramBot.ADMIN_BOT.sendMessage(chat_id,str(e)) 
     else:
      text='Your ID : %s'%(user_id)
-     TelegramBot.SUPER_BOT.sendMessage(chat_id,text)
+     TelegramBot.ADMIN_BOT.sendMessage(chat_id,text)
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())

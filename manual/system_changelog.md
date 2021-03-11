@@ -24,11 +24,24 @@
   - jav-censored
     - 컬렉션 옵션 추가
 
+##### ■ 0.2.19.5 (2021-03-10) #####
+  - telepot 라이브러리를 sjva 안에 내장 후 버그 수정.<br>
 
-##### ■ 0.2.19.0 (2021-03-06) #####
+
+##### ■ 0.2.19.4 (2021-03-09) #####
+  - 관리봇 변경 : super_sjva_bot => https://t.me/sjva_admin_bot. super_sjva_bot은 대답하지 않음.<br>
+  - rclone 1.54.1 적용 by <span style="font-weight:bold; color:brown">이치로<span> [링크](https://github.com/wiserain/rclone/releases)
+    - 구드공에 1.54.1 버전 필요.
+  
+
+##### <span style="color:red">■ 0.2.19.1 (2021-03-06)</span> #####
   - 구드공 방식 변경<br>
-    - 이치로님의 rclone 1.54.0-2 버전 필수. [(링크))](https://github.com/wiserain/rclone/releases/tag/v1.54.0-2)<br>
+    - 이치로님의 rclone 1.54.0-2 버전 필수. [링크](https://github.com/wiserain/rclone/releases/tag/v1.54.0-2)<br>
     - 음악 제외 이전 완료.<br>
+    - 업데이트 이전에 수신된 봇 자료를 받는 경우 source, copy_ 폴더안에 내용이 중복으로 있음. 방식 변경으로 인한 문제로 시간이 지나면 해결됨. <br>
+
+  
+  ⚠️⚠️ 작업 중 실수로 봇 TV + 구드를 이용하시는 분들 폴더에 AV 파일 들어가 있을 수도 있습니다. ⚠️⚠️
 
 ##### ■ 0.2.18.46 (2021-03-03) #####
   - 구드공 방식 변경중<br>
