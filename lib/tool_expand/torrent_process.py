@@ -203,6 +203,8 @@ class TorrentProcess(object):
        logger.debug(fileinfo['filename'])
        logger.debug(av_type)
        continue
+      if info['num_files']>30:
+       continue
       torrent_info={}
       torrent_info['name']=info['name']
       torrent_info['size']=info['total_size']

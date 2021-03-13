@@ -144,7 +144,7 @@ class TelegramBot(object):
          if data is not None:
           if data['status']=='administrator':
            logger.debug('getChatMemner result : %s',data)
-           text=json.dumps(data,indent=2)+'\n'+'%s번 방에 있습니다. 입장방=%s'%((idx+1),len(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID)-1,len(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID))
+           text=json.dumps(data,indent=2)+'\n'+u'%s번 방에 있습니다. 입장방=%s번 방'%((idx+1),len(TelegramBot.SJVA_BOT_CHANNEL_CHAT_ID)-1)
            break
         except Exception as exception:
          logger.error('Exception:%s',exception)

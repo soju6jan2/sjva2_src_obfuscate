@@ -123,7 +123,7 @@ class RcloneTool2(object):
  @staticmethod
  def can_use_share(rclone_path,config_path,remote_path):
   try:
-   size_data=RcloneTool2.size(rclone_path,config_path,'%s:{1vgB9BQaDjjKDa04k6st7po7HUqGeYY5o}'%remote_path.split(':')[0])
+   size_data=RcloneTool2.size(rclone_path,config_path,'%s:{1XFTIbU6FrKCUnuBM6TXQmChQUUMYxZA4}'%remote_path.split(':')[0])
    if size_data['count']==1 and size_data['bytes']==7:
     return True
   except Exception as exception:
@@ -198,26 +198,43 @@ class RcloneTool2(object):
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    emit('에러 : {}'.format(str(e)))
+ """
+    @staticmethod
+    def do_user_download(rclone_path, config_path, folderid, remote_path, change_parent_arg=None):
+        try:
+            if change_parent_arg is None:
+                source_remote = '{gdrive_remote}:{{{folderid}}}'.format(gdrive_remote=remote_path.split(':')[0], folderid=folderid)
+                command = [rclone_path, '--config', config_path, 'move', source_remote, remote_path, '--drive-server-side-across-configs=true', '-v', '--delete-empty-src-dirs', '--drive-use-trash=false']
+                return_log = SystemLogicCommand.execute_command_return(command)
+                logger.debug('확인:%s', return_log)
+                if (return_log.find('Transferred') != -1 and return_log.find('100%') != -1) or (return_log.find('Checks:') != -1 and return_log.find('100%') != -1):
+                    #RcloneTool2.rmdir(rclone_path, config_path, source_remote)
+                    RcloneTool2.purge(rclone_path, config_path, source_remote)
+                    logger.debug('성공')
+                    return True
+                logger.debug('성공xxxxxxxxxxxxx')
+            else:
+                source_remote = '{gdrive_remote}:{{{folderid}}}/{change_parent_arg}'.format(gdrive_remote=remote_path.split(':')[0], folderid=folderid, change_parent_arg=change_parent_arg)
+                command = [rclone_path, '--config', config_path, 'backend', 'chpar', source_remote, remote_path]
+                logger.debug(' '.join(command))
+                return_log = SystemLogicCommand.execute_command_return(command)
+                logger.debug(return_log)
+                return True
+        except Exception as exception: 
+            logger.error('Exception:%s', exception)
+            logger.error(traceback.format_exc())
+        return False
+    """ 
  @staticmethod
  def do_user_download(rclone_path,config_path,folderid,remote_path,change_parent_arg=None):
   try:
-   if change_parent_arg is None:
-    source_remote='{gdrive_remote}:{{{folderid}}}'.format(gdrive_remote=remote_path.split(':')[0],folderid=folderid)
-    command=[rclone_path,'--config',config_path,'move',source_remote,remote_path,'--drive-server-side-across-configs=true','-v','--delete-empty-src-dirs','--drive-use-trash=false']
-    return_log=SystemLogicCommand.execute_command_return(command)
-    logger.debug('확인:%s',return_log)
-    if(return_log.find('Transferred')!=-1 and return_log.find('100%')!=-1)or(return_log.find('Checks:')!=-1 and return_log.find('100%')!=-1):
-     RcloneTool2.purge(rclone_path,config_path,source_remote)
-     logger.debug('성공')
-     return True
-    logger.debug('성공xxxxxxxxxxxxx')
-   else:
-    source_remote='{gdrive_remote}:{{{folderid}}}/{change_parent_arg}'.format(gdrive_remote=remote_path.split(':')[0],folderid=folderid,change_parent_arg=change_parent_arg)
-    command=[rclone_path,'--config',config_path,'backend','chpar',source_remote,remote_path]
-    logger.debug(' '.join(command))
-    return_log=SystemLogicCommand.execute_command_return(command)
-    logger.debug(return_log)
-    return True
+   source_remote='{gdrive_remote}:{{{folderid}}}'.format(gdrive_remote=remote_path.split(':')[0],folderid=folderid)
+   command=[rclone_path,'--config',config_path,'backend','chpar',source_remote,remote_path,'-o','depth=1','-o','delete-empty-src-dir','--drive-use-trash=false']
+   logger.debug(' '.join(command))
+   return_log=SystemLogicCommand.execute_command_return(command)
+   logger.debug(return_log)
+   logger.debug('확인:%s',return_log)
+   return True
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())

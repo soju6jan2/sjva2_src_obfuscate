@@ -1,4 +1,4 @@
-version='0.2.19.6'
+version='0.2.19.8'
 import os
 import sys
 import platform

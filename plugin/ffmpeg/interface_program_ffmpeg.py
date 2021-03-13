@@ -226,7 +226,9 @@ class Ffmpeg(object):
        self.current_duration+=int(match.group(3))*100
        self.current_duration+=int(match.group(2))*100*60
        self.current_duration+=int(match.group(1))*100*60*60
-       self.percent=int(self.current_duration*100/self.duration)
+       try:
+        self.percent=int(self.current_duration*100/self.duration)
+       except:pass
        self.current_bitrate=match.group('bitrate')
        self.current_speed=match.group('speed')
        self.download_time=datetime.now()-self.start_time
