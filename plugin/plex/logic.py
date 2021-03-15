@@ -321,12 +321,13 @@ class Logic(object):
     logger.error('Exception3:%s',exception)
   return py_urllib.quote(ret)
  @staticmethod
- def send_scan_command2(plugin_name,section_id,filename,callback_id,type_add_remove,call_from):
+ def send_scan_command2(plugin_name,section_id,filename,callback_id,type_add_remove,call_from,callback_url=None):
   logger.debug('send_scan_command2')
   try:
    server_url=db.session.query(ModelSetting).filter_by(key='server_url').first().value
    server_token=db.session.query(ModelSetting).filter_by(key='server_token').first().value
-   callback_url='%s/%s/api/scan_completed'%(SystemModelSetting.get('ddns'),plugin_name)
+   if callback_url is None:
+    callback_url='%s/%s/api/scan_completed'%(SystemModelSetting.get('ddns'),plugin_name)
    logger.debug('send_scan_command PATH:%s ID:%s',filename,section_id)
    encode_filename=Logic.get_filename_encoding_for_plex(filename)
    url='%s/:/plugins/com.plexapp.plugins.SJVA/function/WaitFile?section_id=%s&filename=%s&callback=%s&callback_id=%s&type_add_remove=%s&call_from=%s&X-Plex-Token=%s'%(server_url,section_id,encode_filename,py_urllib.quote(callback_url),callback_id,type_add_remove,call_from,server_token)
