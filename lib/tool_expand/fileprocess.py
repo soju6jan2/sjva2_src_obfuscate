@@ -67,7 +67,14 @@ class ToolExpandFileProcess(object):
    logger.error(traceback.format_exc())
  @classmethod
  def change_filename_censored(cls,filename):
+  match=re.compile('\d{2}id',re.I).search(filename.lower())
+  id_before=None
+  if match:
+   id_before=match.group(0)
+   filename=filename.lower().replace(id_before,'zzid')
   filename=cls.change_filename_censored_old(filename)
+  if id_before is not None:
+   filename=filename.replace('zzid',id_before)
   try:
    if filename is not None:
     base,ext=os.path.splitext(filename)
@@ -168,6 +175,8 @@ class ToolExpandFileProcess(object):
   match=re.compile(regex).search(filename)
   if match:
    ret='%s-%s.%s'%(match.group('name'),match.group('no'),match.group('ext'))
+   logger.debug('N1. %s -> %s'%(file,ret))
+   logger.debug('match 22')
    return ret.lower()
   regex=r'(?P<name>[a-zA-Z]+)\-(?P<no>\d+).*?\.(?P<ext>%s)$'%EXTENSION
   match=re.compile(regex).search(original_filename)

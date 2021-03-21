@@ -43,7 +43,6 @@ class TorrentProcess(object):
  @classmethod
  def server_process(cls,save_list,category=None):
   if cls.is_broadcast_member():
-   logger.debug(category)
    if category=='KTV':
     cls.server_process_ktv(save_list)
    elif category=='MOVIE':
@@ -174,7 +173,6 @@ class TorrentProcess(object):
   for item in save_list:
    item=item.as_dict()
    logger.debug(item['title'])
-   logger.debug(json.dumps(item,indent=4))
    if item['torrent_info']is None:
     from torrent_info import Logic as TorrentInfoLogic
     for m in item['magnet']:
@@ -196,15 +194,16 @@ class TorrentProcess(object):
      for info in item['torrent_info']:
       fileinfo=cls.get_max_size_fileinfo(info)
       av=cls.server_process_av2(fileinfo['filename'],av_type)
-      logger.debug(fileinfo)
-      logger.debug(json.dumps(av,indent=4))
       if av is None:
        logger.debug(u'AV 검색 실패')
        logger.debug(fileinfo['filename'])
-       logger.debug(av_type)
        continue
       if info['num_files']>30:
        continue
+      try:
+       if fileinfo['filename'].lower().find('ch_sd')!=-1:
+        continue
+      except:pass
       torrent_info={}
       torrent_info['name']=info['name']
       torrent_info['size']=info['total_size']
