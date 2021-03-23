@@ -25,18 +25,20 @@ class ToolExpandDiscord(object):
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
   return False
- @classmethod
- def discord_proxy_get_target(cls,image_url):
-  try:
-   return
-   from framework import py_urllib
-   url='{server_plugin_ddns}/server/normal/discord_proxy/get_target?source={source}'.format(server_plugin_ddns=server_plugin_ddns,source=py_urllib.quote_plus(image_url))
-   data=requests.get(url).json()
-   if data['ret']=='success':
-    if data['target'].startswith('https://images-ext-')and requests.get(data['target']).status_code==200:
-     return data['target']
-  except Exception as exception:
-   logger.error('server disconnect..')
+ """
+    @classmethod
+    def discord_proxy_get_target(cls, image_url):  #주석처리함
+        try:
+            return
+            from framework import py_urllib
+            url = '{server_plugin_ddns}/server/normal/discord_proxy/get_target?source={source}'.format(server_plugin_ddns=server_plugin_ddns, source=py_urllib.quote_plus(image_url))
+            data = requests.get(url).json()
+            if data['ret'] == 'success':
+                if data['target'].startswith('https://images-ext-') and requests.get(data['target']).status_code == 200:
+                    return data['target']
+        except Exception as exception: 
+            logger.error('server disconnect..')
+    """ 
  @classmethod
  def discord_proxy_set_target(cls,source,target):
   try:
@@ -87,6 +89,8 @@ class ToolExpandDiscord(object):
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
+   logger.debug(image_url)
+   logger.debug(data)
    if retry:
     time.sleep(1)
     return cls.discord_proxy_image(image_url,webhook_url=None,retry=False)

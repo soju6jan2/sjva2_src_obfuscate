@@ -306,13 +306,13 @@ class TorrentProcess(object):
     tmp=ToolExpandFileProcess.remove_extension(tmp)
     logger.debug('TMP2: %s',tmp)
     from metadata import Logic as MetadataLogic
-    data=MetadataLogic.get_module('jav_censored').search(tmp,all_find=False,do_trans=False)
+    data=MetadataLogic.get_module('jav_censored').search(tmp,manual=False)
     logger.debug(data)
     if len(data)>0 and data[0]['score']>95:
      meta_info=MetadataLogic.get_module('jav_censored').info(data[0]['code'])
      ret={'type':'dvd','data':meta_info}
     else:
-     data=MetadataLogic.get_module('jav_censored_ama').search(tmp,all_find=False,do_trans=False)
+     data=MetadataLogic.get_module('jav_censored_ama').search(tmp,manual=False)
      process_no_meta=False
      logger.debug(data)
      if data is not None and len(data)>0 and data[0]['score']>95:
