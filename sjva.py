@@ -24,6 +24,12 @@ try:
    print('Exception:%s',e)
 except Exception as exception:
  print('Exception:%s'%exception)
+try:
+ av_agent=os.path.join(os.path.dirname(os.path.abspath(__file__)),'data','custom','av_agent')
+ if os.path.exists(av_agent):
+  shutil.rmtree(av_agent)
+except Exception as exception:
+ print('Exception:%s'%exception)
 import framework
 import system
 app=framework.app
