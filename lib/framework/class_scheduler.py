@@ -6,7 +6,6 @@ import threading
 import time
 import sys
 from apscheduler.jobstores.base import JobLookupError
-from apscheduler.schedulers.gevent import GeventScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.executors.pool import ThreadPoolExecutor,ProcessPoolExecutor
 from apscheduler.triggers.cron import CronTrigger
@@ -19,15 +18,18 @@ logger=get_logger(package_name)
 class Scheduler(object):
  job_list=[]
  first_run_check_thread=None
- def __init__(self):
-  self.sched=GeventScheduler(timezone='Asia/Seoul')
+ def __init__(self,args):
+  try:
+   if args is None or(args is not None and args.use_gevent):
+    from apscheduler.schedulers.gevent import GeventScheduler
+    self.sched=GeventScheduler(timezone='Asia/Seoul')
+   else:
+    raise Exception('')
+  except:
+   from apscheduler.schedulers.background import BackgroundScheduler
+   self.sched=BackgroundScheduler(timezone='Asia/Seoul')
   self.sched.start()
   logger.debug('SCHEDULER..')
-  """
-        if sys.argv[0] == 'sjva.py':
-            first_run_check_thread = threading.Thread(target=self.first_run_check_thread_function, args=())
-            first_run_check_thread.start()
-        """  
  def first_run_check_thread_function(self):
   logger.warning('XX first_run_check_thread_function')
   try:
@@ -59,14 +61,6 @@ class Scheduler(object):
   except JobLookupError as err:
    logger.debug("fail to stop Scheduler: {err}".format(err=err))
    logger.debug(traceback.format_exc())
- """
-    def add_job(self, function, minutes, job_id):
-        from framework import app
-        if app.config['config']['run_by_real']:
-            self.sched.add_job(function, 'interval', minutes=minutes, id=job_id, args=(None))
-            job = self.sched.get_job(job_id) 
-            job.modify(next_run_time=datetime.now(timezone('Asia/Seoul')) + timedelta(seconds=5))
-    """ 
  def add_job_instance(self,job_instance,run=True):
   from framework import app
   if app.config['config']['run_by_real']and app.config['config']['auth_status']:

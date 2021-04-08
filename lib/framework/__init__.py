@@ -12,6 +12,7 @@ from flask import Flask,redirect,render_template,Response,request,jsonify,send_f
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO,emit 
 from flask_login import LoginManager,login_user,logout_user,current_user,login_required
+from.init_args import args
 from.py_version_func import*
 from framework.class_scheduler import Scheduler
 from framework.logger import get_logger
@@ -35,8 +36,11 @@ try:
  config_initialize('start')
  pip_install()
  db=SQLAlchemy(app,session_options={"autoflush":False})
- scheduler=Scheduler()
- socketio=SocketIO(app,cors_allowed_origins="*")
+ scheduler=Scheduler(args)
+ if args is not None and args.use_gevent==False:
+  socketio=SocketIO(app,cors_allowed_origins="*",async_mode='threading')
+ else:
+  socketio=SocketIO(app,cors_allowed_origins="*")
  from flask_cors import CORS
  CORS(app)
  login_manager=LoginManager()
@@ -76,7 +80,8 @@ try:
  init_menu(plugin_menu)
  system.SystemLogic.apply_menu_link()
  logger.debug('### menu loading completed')
- if sys.argv[0]=='sjva.py':
+ app.config['config']['port']=0
+ if sys.argv[0]=='sjva.py' or sys.argv[0]=='sjva3.py':
   try:
    app.config['config']['port']=SystemModelSetting.get_int('port')
    if app.config['config']['port']==19999 and app.config['config']['running_type']=='docker' and not os.path.exists('/usr/sbin/nginx'):
@@ -84,8 +89,16 @@ try:
     app.config['config']['port']=9999
   except:
    app.config['config']['port']=9999
-  logger.debug('PORT:%s',app.config['config']['port'])
+ if args is not None:
+  if args.port is not None:
+   app.config['config']['port']=args.port
+  app.config['config']['repeat']=args.repeat 
+  app.config['config']['use_celery']=args.use_celery
+  if platform.system()=='Windows':
+   app.config['config']['use_celery']=False
+  app.config['config']['use_gevent']=args.use_gevent
  logger.debug('### LAST')
+ logger.debug('### PORT:%s',app.config['config']['port'])
  logger.debug('### Now you can access SJVA by webbrowser!!')
 except Exception as exception:
  logger.error('Exception:%s',exception)

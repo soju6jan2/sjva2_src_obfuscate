@@ -5,7 +5,6 @@ import platform
 import time
 import threading
 from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify
-from celery.exceptions import TimeoutError,NotRegistered
 from framework.logger import get_logger
 from framework import path_app_root,path_data,celery,app
 from.plugin import logger,package_name
@@ -65,6 +64,7 @@ class SystemLogicEnv(object):
  def celery_test():
   if app.config['config']['use_celery']:
    from celery import Celery
+   from celery.exceptions import TimeoutError,NotRegistered
    data={}
    try:
     result=SystemLogicEnv.celery_test2.apply_async()
