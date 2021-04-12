@@ -72,6 +72,8 @@ class ToolExpandDiscord(object):
    byteio=io.BytesIO()
    webhook.add_file(file=byteio.getvalue(),filename='dummy')
    response=webhook.execute()
+   logger.debug(response)
+   logger.debug(type(response))
    data=None
    if type(response)==type([]):
     if len(response)>0:
