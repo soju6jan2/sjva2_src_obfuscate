@@ -58,7 +58,16 @@ class ToolExpandDiscord(object):
  webhook_list=['https://discord.com/api/webhooks/810372911872344114/7yLzAhRnBUcsbCB-dIG16tCEEw3Z7QkBSa9eKw7J7o7fQhF8M2o4L-e-WIXOYznxnFNO','https://discord.com/api/webhooks/810373137225089035/twZOBuMzJlxyiV87e0Ubers8yTeKd7a71mjGiBTMube7WbN5S3PlxlZYVa2ee3XeQjn3','https://discord.com/api/webhooks/810373216547766282/GFAS8enTYSoc58vqd7j3_ehrCT8odat8J1LuuAzluTtjxlAOLCNBQtsx7mhiMVC7BTqk','https://discord.com/api/webhooks/810373281127333928/Jpmrq9VUp9pQZLgD3RdDIxN-xP_ZuHUSqoWYUgpYIxeTBpS0HVhdotX9tepYDlMQmnMi','https://discord.com/api/webhooks/810373348776476683/h_uJLBBlHzD0w_CG0nUajFO-XEh3fvy-vQofQt1_8TMD7zHiR7a28t3jF-xBCP6EVlow','https://discord.com/api/webhooks/810373405508501534/wovhf-1pqcxW5h9xy7iwkYaf8KMDjHU49cMWuLKtBWjAnj-tzS1_j8RJ7tsMyViDbZCE','https://discord.com/api/webhooks/796558388326039552/k2VV356S1gKQa9ht-JuAs5Dqw5eVkxgZsLUzFoxmFG5lW6jqKl7zCBbbKVhs3pcLOetm','https://discord.com/api/webhooks/810373566452858920/Qf2V8BoLOy2kQzlZGHy5HZ1nTj7lK72ol_UFrR3_eHKEOK5fyR_fQ8Yw8YzVh9EQG54o','https://discord.com/api/webhooks/810373654411739157/SGgdO49OCkTNIlc_BSMSy7IXQwwXVonG3DsVfvBVE6luTCwvgCqEBpEk30WBeMMieCyI','https://discord.com/api/webhooks/810373722341900288/FwcRJ4YxYjpyHpnRwF5f2an0ltEm8JPqcWeZqQi3Qz4QnhEY-kR2sjF9fo_n6stMGnf_','https://discord.com/api/webhooks/810374116652744704/93MJfYgZSUF8M40Rnk_UoZEbLv0IbXdQjoZBDRJzHxbxq0YyOo9ngh2p6iJ6BjTkymQL','https://discord.com/api/webhooks/810374206168104960/Xv4p9xRH5W3Fmb7aqzDG22svg5oAc15jyMU-1iPR9yK7HmO4X9efqWclR48yf_lwX0HO','https://discord.com/api/webhooks/810374244222500864/4xbuvs5F9tpaIuXOSF41Io7hhE0GvNO-Di__vudmAU3TDyYL-PFmwfS4jVfkbrJzNgap','https://discord.com/api/webhooks/810374294416654346/T3-TEdKIg7rwMZeDzNr46KPDvO7ZF8pRdJ3lfl39lJw2XEZamAG8uACIXagbNMX_B0YN','https://discord.com/api/webhooks/810374337403289641/_esFkQXwlPlhxJWtlqDAdLg2Nujo-LjGPEG3mUmjiRZto69NQpkBJ0F2xtSNrCH4VAgb','https://discord.com/api/webhooks/810374384736534568/mH5-OkBVpi7XqJioaQ8Ma-NiL-bOx7B5nYJpL1gZ03JaJaUaIW4bCHeCt5O_VGLJwAtj','https://discord.com/api/webhooks/810374428604104724/Z1Tdxz3mb0ytWq5LHWi4rG5CeJnr9KWXy5aO_waeD0NcImQnhRXe7h7ra7UrIDRQ2jOg','https://discord.com/api/webhooks/810374475773509643/QCPPN4djNzhuOmbS3DlrGBunK0SVR5Py9vMyCiPL-0T2VPgitFZS4YM6GCLfM2fkrn4-','https://discord.com/api/webhooks/810374527652855819/5ypaKI_r-hYzwmdDlVmgAU6xNgU833L9tFlPnf3nw4ZDaPMSppjt77aYOiFks4KLGQk8','https://discord.com/api/webhooks/810374587917402162/lHrG7CEysGUM_41DMnrxL2Q8eh1-xPjJXstYE68WWfLQbuUAV3rOfsNB9adncJzinYKi',]
  @classmethod
  def discord_proxy_image(cls,image_url,webhook_url=None,retry=True):
+  if image_url=='' or image_url is None:
+   return
   data=None
+  """
+        if image_url is None or image_url == '':
+            return image_url
+        ret = cls.discord_proxy_get_target(image_url)
+        if ret is not None:
+            return ret
+        """  
   if webhook_url is None or webhook_url=='':
    webhook_url= cls.webhook_list[random.randint(10,len(cls.webhook_list)-1)] 
   try:
@@ -72,8 +81,6 @@ class ToolExpandDiscord(object):
    byteio=io.BytesIO()
    webhook.add_file(file=byteio.getvalue(),filename='dummy')
    response=webhook.execute()
-   logger.debug(response)
-   logger.debug(type(response))
    data=None
    if type(response)==type([]):
     if len(response)>0:
@@ -91,8 +98,6 @@ class ToolExpandDiscord(object):
   except Exception as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
-   logger.debug(image_url)
-   logger.debug(data)
    if retry:
     time.sleep(1)
     return cls.discord_proxy_image(image_url,webhook_url=None,retry=False)
