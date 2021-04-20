@@ -4,13 +4,13 @@ import time
 import shutil
 import re
 import requests
+from framework import app,db,scheduler,path_app_root,celery,py_urllib
+from framework.job import Job
+from framework.util import Util
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
 from plexapi.exceptions import BadRequest
 from plexapi.library import ShowSection
-from framework import app,db,scheduler,path_app_root,celery,py_urllib
-from framework.job import Job
-from framework.util import Util
 from.plugin import logger,package_name
 from.model import ModelSetting
 class LogicNormal(object):

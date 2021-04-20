@@ -16,14 +16,8 @@ from framework import app,db,scheduler,path_data,socketio,path_app_root
 from framework.util import Util,AlchemyEncoder
 from system.logic import SystemLogic
 from.model import ModelSetting,ModelGDriveScanJob,ModelGDriveScanFile
-try:
- import oauth2client
-except:
- try:
-  os.system("{} install oauth2client".format(app.config['config']['pip']))
-  import oauth2client
- except:
-  pass
+import oauth2client
+from apiclient.discovery import build
 from apiclient.discovery import build
 from oauth2client.file import Storage
 from oauth2client import tools

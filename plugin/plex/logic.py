@@ -8,6 +8,16 @@ import re
 import threading
 import json
 import requests
+from framework.logger import get_logger
+from framework import app,db,scheduler,path_app_root,socketio,SystemModelSetting,py_urllib2,py_urllib
+from framework.job import Job
+from framework.util import Util
+from system.logic import SystemLogic
+try:
+ import plexapi
+except ImportError:
+ os.system("{} install plexapi".format(app.config['config']['pip']))
+ import plexapi 
 from sqlalchemy import desc
 from sqlalchemy import or_,and_,func,not_
 from plexapi.myplex import MyPlexAccount
@@ -16,11 +26,6 @@ from plexapi.exceptions import BadRequest
 from plexapi.library import ShowSection
 from lxml import etree as ET
 import lxml
-from framework.logger import get_logger
-from framework import app,db,scheduler,path_app_root,socketio,SystemModelSetting,py_urllib2,py_urllib
-from framework.job import Job
-from framework.util import Util
-from system.logic import SystemLogic
 from framework.common.daum import DaumTV
 from.model import ModelSetting
 package_name=__name__.split('.')[0]
