@@ -45,7 +45,7 @@ class Status(enum.Enum):
   tmp=[Status.READY,Status.WRONG_URL,Status.WRONG_DIRECTORY,Status.EXCEPTION,Status.ERROR,Status.DOWNLOADING,Status.USER_STOP,Status.COMPLETED,Status.TIME_OVER,Status.PF_STOP,Status.FORCE_STOP,Status.HTTP_FORBIDDEN,Status.ALREADY_DOWNLOADING]
   return tmp[value]
 class Logic(object):
- db_default={'temp_path':os.path.join(path_data,'download_tmp'),'save_path':os.path.join(path_data,'download'),'max_pf_count':'0','if_fail_remove_tmp_file':'True','timeout_minute':'60','ffmpeg_path':'ffmpeg',}
+ db_default={'temp_path':os.path.join(path_data,'download_tmp'),'save_path':os.path.join(path_data,'download'),'max_pf_count':'0','if_fail_remove_tmp_file':'True','timeout_minute':'60','ffmpeg_path':'ffmpeg' if platform.system()!='Windows' else os.path.join(path_data,'bin','ffmpeg.exe'),}
  @staticmethod
  def db_init():
   try:

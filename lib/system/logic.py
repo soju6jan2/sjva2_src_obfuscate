@@ -21,7 +21,7 @@ package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 class SystemLogic(object):
  point=0
- db_default={'db_version':'1','port':'9999','ddns':'http://localhost:9999','url_filebrowser':'http://localhost:9998','id':'sjva','pw':'sjva','system_start_time':'','repeat':'','auto_restart_hour':'12','theme':'Default','log_level':'10','use_login':'False','link_json':'[]','plugin_dev_path':'','plugin_tving_level2':'False','web_title':'SJ Video Assistant','my_ip':'','wavve_guid':'','videoportal_adult':'False','trans_type':'0','trans_google_api_key':'','trans_papago_key':'','auth_use_apikey':'False','auth_apikey':'','hide_menu':'True','selenium_remote_url':'','selenium_remote_default_option':'--no-sandbox\n--disable-gpu','selenium_binary_default_option':'','notify_telegram_use':'False','notify_telegram_token':'','notify_telegram_chat_id':'','notify_telegram_disable_notification':'False','notify_discord_use':'False','notify_discord_webhook':'','notify_advaned_use':'False','notify_advaned_policy':u"# 각 플러그인 설정 설명에 명시되어 있는 ID = 형식\n# DEFAULT 부터 주석(#) 제거 후 작성\n\n# DEFAULT = ",'telegram_bot_token':'','telegram_bot_auto_start':'False','telegram_resend':'False','telegram_resend_chat_id':'','sjva_me_user_id':'','auth_status':'','sjva_id':'','site_daum_interval':'0 4 */3 * *','site_daum_auto_start':'False','site_daum_cookie':'TIARA=gaXEIPluo-wWAFlwZN6l8gN3yzhkoo_piP.Kymhuy.6QBt4Q6.cRtxbKDaWpWajcyteRHzrlTVpJRxLjwLoMvyYLVi_7xJ1L','site_daum_test':u'나쁜 녀석들','site_wavve_id':'','site_wavve_pw':'','site_wavve_credential':'','site_wavve_use_proxy':'False','site_wavve_proxy_url':'','site_tving_id':'','site_tving_pw':'','site_tving_login_type':'0','site_tving_token':'','site_tving_deviceid':'','site_tving_use_proxy':'False','site_tving_proxy_url':'','site_tving_uuid':'','memo':'','tool_crypt_use_user_key':'False','tool_crypt_user_key':'','tool_crypt_encrypt_word':'','tool_crypt_decrypt_word':'',}
+ db_default={'db_version':'1','port':'9999','ddns':'http://localhost:9999','id':'sjva','pw':'sjva','system_start_time':'','repeat':'','auto_restart_hour':'12','theme':'Default','log_level':'10','use_login':'False','link_json':'[{"type":"link","title":"위키","url":"https://sjva.me/wiki/public/start"}]','plugin_dev_path':'','plugin_tving_level2':'False','web_title':'SJ Video Assistant','my_ip':'','wavve_guid':'','videoportal_adult':'False','trans_type':'0','trans_google_api_key':'','trans_papago_key':'','auth_use_apikey':'False','auth_apikey':'','hide_menu':'True','selenium_remote_url':'','selenium_remote_default_option':'--no-sandbox\n--disable-gpu','selenium_binary_default_option':'','notify_telegram_use':'False','notify_telegram_token':'','notify_telegram_chat_id':'','notify_telegram_disable_notification':'False','notify_discord_use':'False','notify_discord_webhook':'','notify_advaned_use':'False','notify_advaned_policy':u"# 각 플러그인 설정 설명에 명시되어 있는 ID = 형식\n# DEFAULT 부터 주석(#) 제거 후 작성\n\n# DEFAULT = ",'telegram_bot_token':'','telegram_bot_auto_start':'False','telegram_resend':'False','telegram_resend_chat_id':'','sjva_me_user_id':'','auth_status':'','sjva_id':'','site_daum_interval':'0 4 */3 * *','site_daum_auto_start':'False','site_daum_cookie':'TIARA=gaXEIPluo-wWAFlwZN6l8gN3yzhkoo_piP.Kymhuy.6QBt4Q6.cRtxbKDaWpWajcyteRHzrlTVpJRxLjwLoMvyYLVi_7xJ1L','site_daum_test':u'나쁜 녀석들','site_wavve_id':'','site_wavve_pw':'','site_wavve_credential':'','site_wavve_use_proxy':'False','site_wavve_proxy_url':'','site_tving_id':'','site_tving_pw':'','site_tving_login_type':'0','site_tving_token':'','site_tving_deviceid':'','site_tving_use_proxy':'False','site_tving_proxy_url':'','site_tving_uuid':'','memo':'','tool_crypt_use_user_key':'False','tool_crypt_user_key':'','tool_crypt_encrypt_word':'','tool_crypt_decrypt_word':'',}
  db_default2={'use_category_vod':'True','use_category_file_process':'True','use_category_plex':'True','use_category_tool':'True'}
  db_default3={'use_plugin_ffmpeg':'False','use_plugin_ktv':'False','use_plugin_fileprocess_movie':'False','use_plugin_plex':'False','use_plugin_gdrive_scan':'False','use_plugin_rclone':'False','use_plugin_daum_tv':'False'}
  recent_version=None
@@ -232,51 +232,6 @@ class SystemLogic(object):
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    return False
- """
-    @staticmethod
-    def statistics_scheduler_function():
-        try:
-            import requests, json 
-            data = {}
-            data['user'] = SystemLogic.get_setting_value('id')
-            data['ip'] = SystemLogic.get_setting_value('unique')
-            data['info'] = SystemLogic.get_info()
-            data['scheduler'] = scheduler.get_job_list_info()
-            URL = 'https://sjva-server.soju6jan.com/statistics/api/update_check'
-            session = requests.Session()
-            res = session.post(URL, data={'data':json.dumps(data), 'point':str(SystemLogic.point)})
-            data = res.json()
-            if data['is_block_ip']:
-                try:
-                    from system import shutdown
-                    shutdown()
-                    import shutil
-                    shutil.rmtree("/app/data")
-                except:
-                    pass
-            elif 'need_update' in data and data['need_update']:
-                from system import restart
-                restart()
-            SystemLogic.point = data['point']
-            ModelSetting.set('my_ip', data['my_ip'])
-            #SystemLogic.point = int(res.text)
-            keys = ['use_category_vod', 'use_category_tv']
-            for key in keys:
-                if SystemLogic.point > 0:
-                    if SystemLogic.get_setting_value(key) == 'False':
-                        entity = db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
-                        entity.value = 'True'
-                        db.session.commit()
-                else:
-                    if SystemLogic.get_setting_value(key) == 'True':
-                        entity = db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
-                        entity.value = 'False'
-                        db.session.commit()
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
-            logger.error(traceback.format_exc())
-            return False
-    """ 
  @staticmethod
  def command_run(command_text):
   try:
@@ -300,23 +255,6 @@ class SystemLogic(object):
      ret['ret']='success'
      ret['log']='%s - %s'%(tmp[1],tmp[2])
      return ret
-   """
-            elif tmp[0] == 'reset':
-                if len(tmp) == 2:
-                    if tmp[1] == 'token':
-                        tmp[1] = 'unique'
-                    logger.debug(tmp[1])
-                    entity = db.session.query(ModelSetting).filter_by(key=tmp[1]).with_for_update().first()
-                    if entity is None:
-                        ret['ret'] = 'fail'
-                        ret['log'] = '%s not exist' % tmp[1]
-                        return ret
-                    entity.value = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
-                    db.session.commit()
-                    ret['ret'] = 'success'
-                    ret['log'] = 'reset token'
-                    return ret
-            """   
    ret['ret']='fail'
    ret['log']='wrong command'
    return ret

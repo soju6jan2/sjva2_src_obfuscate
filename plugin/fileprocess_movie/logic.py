@@ -12,7 +12,6 @@ from framework.util import Util
 from system.logic import SystemLogic
 from.model import ModelSetting,ModelFileprocessMovieItem
 from.logic_movie import LogicMovie
-import plex
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 class Logic(object):
@@ -170,7 +169,10 @@ class Logic(object):
    lists=query.all()
    ret['list']=[item.as_dict()for item in lists]
    ret['paging']=Util.get_paging_info(count,page,page_size)
-   ret['plex_server_hash']=plex.Logic.get_server_hash()
+   try:
+    ret['plex_server_hash']=plex.Logic.get_server_hash()
+   except:
+    ret['plex_server_hash']=''
    return ret
   except Exception as exception:
    logger.error('Exception:%s',exception)

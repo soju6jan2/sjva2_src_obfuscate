@@ -8,10 +8,11 @@ import re
 import threading
 import json
 import platform
+import sqlalchemy
 from sqlalchemy import desc
 from sqlalchemy import or_,and_,func,not_
 from framework.logger import get_logger
-from framework import app,db,scheduler,path_app_root
+from framework import app,db,scheduler,path_app_root,path_data
 from framework.job import Job
 from framework.util import Util
 from system.logic import SystemLogic
@@ -20,7 +21,7 @@ from.model import ModelSetting,ModelRcloneJob,ModelRcloneFile,ModelRcloneMount,M
 package_name=__name__.split('.')[0]
 logger=get_logger(package_name)
 class Logic(object):
- db_default={'auto_start':'False','interval':'10','web_page_size':'30','auro_start_rcd':'False','rclone_bin_path':'','rclone_config_path':'',}
+ db_default={'auto_start':'False','interval':'10','web_page_size':'30','auro_start_rcd':'False','rclone_bin_path':'rclone' if platform.system()!='Windows' else os.path.join(path_data,'bin','rclone.exe'),'rclone_config_path':os.path.join(path_app_root,'data','db','rclone.conf')}
  path_bin=path_rclone=path_config=None
  default_rclone_setting={'static':'--config %s --log-level INFO --stats 1s --stats-file-name-length 0','user':'--transfers=4 --checkers=8','move':'--delete-empty-src-dirs --create-empty-src-dirs --delete-after --drive-chunk-size=256M','copy':'--create-empty-src-dirs --delete-after --drive-chunk-size=256M','sync':'--create-empty-src-dirs --delete-after --drive-chunk-size=256M',}
  @staticmethod
@@ -277,7 +278,7 @@ class Logic(object):
    job.last_run_time=datetime.now()
    job.last_file_count=len(Logic.current_data['files'])
    db.session.commit()
-  except OperationalError as exception:
+  except sqlalchemy.exc.OperationalError as exception:
    logger.error('Exception:%s',exception)
    logger.error(traceback.format_exc())
    db.session.rollback()

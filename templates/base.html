@@ -160,8 +160,8 @@
     {{ left() }}
     {% block wide_menu %}{% endblock %}
     <!--</nav>-->
-    <main role="main" class="container">
-      
+    <main id="main_container" role="main" class="container">
+
       <div class="d-inline-block"></div>
       {{ menu_sub() }}
       <div>
@@ -778,4 +778,10 @@ function global_send_command(command, data={}) {
   });
 }
 
+function shutdown_confirm() {
+  document.getElementById("confirm_title").innerHTML = "종료 확인";
+  document.getElementById("confirm_body").innerHTML = "종료 하시겠습니까?";
+  $('#confirm_button').attr('onclick', 'window.location.href = "/system/shutdown";');
+  $("#confirm_modal").modal();
+}
 </script>

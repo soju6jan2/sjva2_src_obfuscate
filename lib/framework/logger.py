@@ -4,6 +4,18 @@ import logging.handlers
 from datetime import datetime
 from framework import path_data
 from pytz import timezone,utc
+class CustomFormatter(logging.Formatter):
+ grey="\x1b[38;21m"
+ yellow="\x1b[33;21m"
+ red="\x1b[31;21m"
+ bold_red="\x1b[31;1m"
+ reset="\x1b[0m"
+ format=u'[%(asctime)s|%(levelname)s|%(name)s:%(filename)s:%(lineno)s] %(message)s'
+ FORMATS={logging.DEBUG:grey+format+reset,logging.INFO:grey+format+reset,logging.WARNING:yellow+format+reset,logging.ERROR:red+format+reset,logging.CRITICAL:bold_red+format+reset}
+ def format(self,record):
+  log_fmt=self.FORMATS.get(record.levelno)
+  formatter=logging.Formatter(log_fmt)
+  return formatter.format(record)
 level_unset_logger_list=[]
 logger_list=[]
 def get_logger(name):
@@ -41,7 +53,7 @@ def get_logger(name):
   fileHandler=logging.handlers.RotatingFileHandler(filename=os.path.join(path_data,'log','%s.log'%name),maxBytes=file_max_bytes,backupCount=5,encoding='utf8',delay=True)
   streamHandler=logging.StreamHandler()
   fileHandler.setFormatter(formatter)
-  streamHandler.setFormatter(formatter)
+  streamHandler.setFormatter(CustomFormatter())
   logger.addHandler(fileHandler)
   logger.addHandler(streamHandler)
  return logger

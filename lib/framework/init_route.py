@@ -73,9 +73,7 @@ def hls_play():
 @app.route("/iframe/<sub>")
 @login_required
 def iframe(sub):
- if sub=='forum':
-  return render_template('iframe.html',site='https://soju6jan.com/sjva')
- elif sub=='file_manager':
+ if sub=='file_manager':
   if app.config['config']['is_debug']or current_user.is_authenticated:
    logger.debug(request.base_url)
    logger.debug(request.path)
