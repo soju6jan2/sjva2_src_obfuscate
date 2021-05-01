@@ -4,7 +4,7 @@ import shutil
 from framework import app,celery,logger
 class ToolShutil(object):
  @staticmethod
- def move(cls,source_path,target_path,run_in_celery=False):
+ def move(source_path,target_path,run_in_celery=False):
   try:
    if app.config['config']['use_celery']and run_in_celery==False:
     result=ToolShutil._move_task.apply_async((source_path,target_path))
