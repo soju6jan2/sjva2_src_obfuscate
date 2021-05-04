@@ -54,7 +54,7 @@ def get_version():
 @login_required
 def open_file(path):
  logger.debug('open_file :%s',path)
- return send_from_directory('',path)
+ return send_from_directory('/',path)
 @app.route("/file/<path:path>")
 @check_api
 def file2(path):

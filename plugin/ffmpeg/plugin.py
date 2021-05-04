@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 from pytz import timezone
 import requests
-from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify,session,send_from_directory
+from flask import Blueprint,request,Response,send_file,render_template,redirect,jsonify,session,send_from_directory,stream_with_context
 from flask_socketio import SocketIO,emit,send
 from flask_login import login_user,logout_user,current_user,login_required
 from framework import app,db,scheduler,path_app_root,socketio,path_data
@@ -21,7 +21,22 @@ menu={'main':[package_name,u'FFMPEG'],'sub':[['setting',u'설정'],['download',u
 def plugin_load():
  Logic.plugin_load() 
 def plugin_unload():
- Logic.plugin_unload() 
+ Logic.plugin_unload()
+ streaming_kill()
+def streaming_kill():
+ logger.debug('streaming_kill...')
+ global process_list
+ try:
+  for p in process_list:
+   if p is not None and p.poll()is None:
+    import psutil
+    process=psutil.Process(p.pid)
+    for proc in process.children(recursive=True):
+     proc.kill()
+    process.kill()
+ except Exception as e:
+  logger.error('Exception:%s',e)
+  logger.error(traceback.format_exc())
 @blueprint.route('/')
 def home():
  return redirect('/%s/list'%package_name)
@@ -72,6 +87,9 @@ def ajax(sub):
    for ffmpeg in Ffmpeg.instance_list:
     ret.append(ffmpeg.get_data())
    return jsonify(ret)
+  elif sub=='streaming_kill':
+   streaming_kill()
+   return jsonify('')
  except Exception as exception:
   logger.error('Exception:%s',exception)
   logger.error(traceback.format_exc())
@@ -146,4 +164,71 @@ def connect():
 @socketio.on('disconnect',namespace='/%s'%package_name)
 def disconnect():
  logger.debug('ffmpeg socketio disconnect')
+process_list=[]
+@blueprint.route('/streaming',methods=['GET'])
+def streaming():
+ mode=request.args.get('mode')
+ if mode=='file':
+  try:
+   import subprocess
+   filename= request.args.get('value')
+   if filename.endswith('mp4'):
+    url='/open_file%s'%filename
+    logger.debug(url)
+    return redirect(url)
+  except Exception as exception:
+   logger.error('Exception:%s',exception)
+   logger.error(traceback.format_exc())
+  def generate():
+   startTime=time.time()
+   buffer=[]
+   sentBurst=False
+   path_ffmpeg='ffmpeg'
+   ffmpeg_command=[path_ffmpeg,"-loglevel","quiet","-i",filename,'-ss','00:00:03','-t','00:03:00',"-vcodec","libvpx",'-vf','scale=320:-1',"-qmin","0","-qmax","50","-crf","50","-b:v","0.1M",'-acodec','libvorbis','-f','webm',"pipe:stdout"]
+   logger.debug(' '.join(ffmpeg_command))
+   process=subprocess.Popen(ffmpeg_command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,bufsize=-1)
+   global process_list
+   process_list.append(process)
+   while True:
+    line=process.stdout.read(1024)
+    buffer.append(line)
+    if sentBurst is False and time.time()>startTime+1 and len(buffer)>0:
+     sentBurst=True
+     for i in range(0,len(buffer)-2):
+      yield buffer.pop(0)
+    elif time.time()>startTime+1 and len(buffer)>0:
+     yield buffer.pop(0)
+    process.poll()
+    if isinstance(process.returncode,int):
+     if process.returncode>0:
+      logger.debug('FFmpeg Error :%s',process.returncode)
+     break
+   if process is not None and process.poll()is None:
+    process.kill()
+  return Response(stream_with_context(generate()),mimetype="video/MP2T")
+def get_video_info(filepath):
+ try:
+  from system.logic_command import SystemLogicCommand
+  command=['ffprobe','-v','error','-print_format','json','-show_format','-show_streams',"%s"%filepath]
+  ret=SystemLogicCommand.execute_command_return(command,format='json')
+  return ret
+ except Exception as exception:
+  logger.error('Exception:%s',exception)
+  logger.error(traceback.format_exc())
+"""
+ffmpeg version 3.4.8-0ubuntu0.2 Copyright (c) 2000-2020 the FFmpeg developers
+  built with gcc 7 (Ubuntu 7.5.0-3ubuntu1~18.04)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.2 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-librsvg --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+  libavutil      55. 78.100 / 55. 78.100
+  libavcodec     57.107.100 / 57.107.100
+  libavformat    57. 83.100 / 57. 83.100
+  libavdevice    57. 10.100 / 57. 10.100
+  libavfilter     6.107.100 /  6.107.100
+  libavresample   3.  7.  0 /  3.  7.  0
+  libswscale      4.  8.100 /  4.  8.100
+  libswresample   2.  9.100 /  2.  9.100
+  libpostproc    54.  7.100 / 54.  7.100
+Hyper fast Audio and Video encoder
+usage: ffmpeg [options] [[infile options] -i infile]... {[outfile options] outfile}...
+"""
 # Created by pyminifier (https://github.com/liftoff/pyminifier)

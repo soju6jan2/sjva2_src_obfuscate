@@ -179,7 +179,7 @@ def api(sub):
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())
    try:
-    os.system('chmod 777 %s'%download_path)
+    os.system('chmod 777 "%s"'%download_path)
    except Exception as exception:
     logger.error('Exception:%s',exception)
     logger.error(traceback.format_exc())

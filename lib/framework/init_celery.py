@@ -13,12 +13,15 @@ try:
  celery.conf['CELERY_ENABLE_UTC']=False
  celery.conf.update(task_serializer='pickle',result_serializer='pickle',accept_content=['pickle'],timezone='Asia/Seoul')
 except:
- from functools import wraps
- class DummyCelery:
-  def task(self,original_function):
-   @wraps(original_function)
-   def wrapper_function(*args,**kwargs): 
-    return original_function(*args,**kwargs) 
-   return wrapper_function
- celery=DummyCelery()
+ def ffff():
+  pass
+ class celery(object):
+  class task(object):
+   def __init__(self,*args,**kwargs):
+    if len(args)>0:
+     self.f=args[0]
+   def __call__(self,*args,**kwargs):
+    if len(args)>0 and type(args[0])==type(ffff):
+     return args[0]
+    self.f(*args,**kwargs)
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
