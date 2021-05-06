@@ -90,13 +90,15 @@ def init_menu(plugin_menus):
   try:
    index=-1
    for idx,item in enumerate(MENU_MAP[-1]['list']):
-    if 'name' in item and item['link'].find('file_manager')!=-1:
+    if 'link' in item and item['link'].find('file_manager')!=-1:
      index=idx
      break
    if index!=-1:
     del MENU_MAP[-1]['list'][index]
-  except:
-   pass
+  except Exception as exception:
+   import traceback
+   logger.error('Exception:%s',exception)
+   logger.error(traceback.format_exc())
  try:
   for category in MENU_MAP:
    new_category=[]

@@ -59,12 +59,12 @@ def open_file(path):
 @check_api
 def file2(path):
  logger.debug('file2 :%s',path)
- return send_from_directory('',path)
+ return send_from_directory('/',path)
 @app.route("/download_file/<path:path>")
 @login_required
 def download_file(path):
  logger.debug('download_file :%s',path)
- return send_from_directory('',path,as_attachment=True)
+ return send_from_directory('/',path,as_attachment=True)
 @app.route("/hls")
 def hls_play():
  url=request.args.get('url')
@@ -78,7 +78,11 @@ def iframe(sub):
    logger.debug(request.base_url)
    logger.debug(request.path)
    from system.logic import SystemLogic
-   site=SystemLogic.get_setting_value('ddns')+'/flaskfilemanager'
+   site=SystemLogic.get_setting_value('ddns')
+   if site=='http://localhost:9999':
+    site='flaskfilemanager'
+   else:
+    site+='/flaskfilemanager'
    logger.debug(site)
    return render_template('iframe.html',site=site)
   else:
@@ -124,7 +128,6 @@ def get_ip():
 @app.route('/global/ajax/<sub>',methods=['GET','POST'])
 @login_required
 def global_ajax(sub):
- logger.debug('/global/ajax/%s',sub)
  if sub=='listdir':
   if 'path' in request.form:
    if os.path.isfile(request.form['path']):
