@@ -4,12 +4,10 @@ from datetime import datetime
 import abc
 from framework import py_queue
 class FfmpegQueueEntity(abc.ABCMeta('ABC',(object,),{'__slots__':()})):
- static_index=1
- entity_list=[]
  def __init__(self,P,module_logic,info):
   self.P=P
   self.module_logic=module_logic
-  self.entity_id=FfmpegQueueEntity.static_index
+  self.entity_id=-1 
   self.info=info
   self.url=None
   self.ffmpeg_status=-1
@@ -23,14 +21,6 @@ class FfmpegQueueEntity(abc.ABCMeta('ABC',(object,),{'__slots__':()})):
   self.filepath=None
   self.quality=None
   self.headers=None
-  FfmpegQueueEntity.static_index+=1
-  FfmpegQueueEntity.entity_list.append(self)
- @classmethod
- def get_entity_by_entity_id(cls,entity_id):
-  for _ in cls.entity_list:
-   if _.entity_id==entity_id:
-    return _
-  return None
  def get_video_url(self):
   return self.url
  def get_video_filepath(self):
@@ -59,21 +49,14 @@ class FfmpegQueueEntity(abc.ABCMeta('ABC',(object,),{'__slots__':()})):
   tmp['quality']=self.quality
   tmp=self.info_dict(tmp)
   return tmp
- @classmethod
- def get_entity_list(cls):
-  ret=[]
-  for x in cls.entity_list:
-   tmp=x.as_dict()
-   ret.append(tmp)
-  return ret
 class FfmpegQueue(object):
- download_queue=None
- download_thread=None
- current_ffmpeg_count=0
- max_ffmpeg_count=1
- P=None
  def __init__(self,P,max_ffmpeg_count):
   self.P=P
+  self.static_index=1
+  self.entity_list=[]
+  self.current_ffmpeg_count=0
+  self.download_queue=None
+  self.download_thread=None
   self.max_ffmpeg_count=max_ffmpeg_count
   if self.max_ffmpeg_count is None or self.max_ffmpeg_count=='':
    self.max_ffmpeg_count=1
@@ -129,7 +112,7 @@ class FfmpegQueue(object):
     self.P.logger.error(traceback.format_exc())
  def ffmpeg_listener(self,**arg):
   import ffmpeg
-  entity=FfmpegQueueEntity.get_entity_by_entity_id(arg['plugin_id'])
+  entity=self.get_entity_by_entity_id(arg['plugin_id'])
   if entity is None:
    return
   if arg['type']=='status_change':
@@ -153,6 +136,9 @@ class FfmpegQueue(object):
   entity.refresh_status()
  def add_queue(self,entity):
   try:
+   entity.entity_id=self.static_index
+   self.static_index+=1
+   self.entity_list.append(entity)
    self.download_queue.put(entity)
    return True
   except Exception as exception:
@@ -169,7 +155,7 @@ class FfmpegQueue(object):
   try:
    if cmd=='cancel':
     self.P.logger.debug('command :%s %s',cmd,entity_id)
-    entity=FfmpegQueueEntity.get_entity_by_entity_id(entity_id)
+    entity=self.get_entity_by_entity_id(entity_id)
     if entity is not None:
      if entity.ffmpeg_status==-1:
       entity.cancel=True
@@ -188,32 +174,43 @@ class FfmpegQueue(object):
     if self.download_queue is not None:
      with self.download_queue.mutex:
       self.download_queue.queue.clear()
-     for _ in FfmpegQueueEntity.entity_list:
+     for _ in self.entity_list:
       if _.ffmpeg_status==5:
        import ffmpeg
        idx=_.ffmpeg_arg['data']['idx']
        ffmpeg.Ffmpeg.stop_by_idx(idx)
-    FfmpegQueueEntity.entity_list=[]
+    self.entity_list=[]
     ret['ret']='refresh'
    elif cmd=='delete_completed':
     new_list=[]
-    for _ in FfmpegQueueEntity.entity_list:
+    for _ in self.entity_list:
      if _.ffmpeg_status_kor in[u'파일 있음',u'취소',u'사용자중지']:
       continue
      if _.ffmpeg_status!=7:
       new_list.append(_)
-    FfmpegQueueEntity.entity_list=new_list
+    self.entity_list=new_list
     ret['ret']='refresh'
    elif cmd=='remove':
     new_list=[]
-    for _ in FfmpegQueueEntity.entity_list:
+    for _ in self.entity_list:
      if _.entity_id==entity_id:
       continue
      new_list.append(_)
-    FfmpegQueueEntity.entity_list=new_list
+    self.entity_list=new_list
     ret['ret']='refresh' 
    return ret
   except Exception as exception:
    self.P.logger.error('Exception:%s',exception)
    self.P.logger.error(traceback.format_exc())
+ def get_entity_by_entity_id(self,entity_id):
+  for _ in self.entity_list:
+   if _.entity_id==entity_id:
+    return _
+  return None
+ def get_entity_list(self):
+  ret=[]
+  for x in self.entity_list:
+   tmp=x.as_dict()
+   ret.append(tmp)
+  return ret
 # Created by pyminifier (https://github.com/liftoff/pyminifier)
